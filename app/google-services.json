@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "538248299353",
+    "project_id": "rhythm-lounge",
+    "storage_bucket": "rhythm-lounge.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:538248299353:android:0bede60deaa32f7f388248",
+        "android_client_info": {
+          "package_name": "edu.northeastern.rhythmlounge"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "538248299353-rq0d2gdeb081g60900g271o8qngpfr3b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAn-IE9Pt0EAOHLGmcK3pW8N2XupJwyeLA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "538248299353-rq0d2gdeb081g60900g271o8qngpfr3b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
