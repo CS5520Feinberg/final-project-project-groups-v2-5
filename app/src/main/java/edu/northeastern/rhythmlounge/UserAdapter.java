@@ -43,6 +43,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             super(itemView);
             username = itemView.findViewById(R.id.username);
             email = itemView.findViewById(R.id.email);
+
         }
 
         void bind(User user) {
