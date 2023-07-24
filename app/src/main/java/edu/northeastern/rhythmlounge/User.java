@@ -17,6 +17,9 @@ public class User {
     private String email;
     private List<String> followers;
     private List<String> following;
+    private String profilePictureUrl;
+    private String bannerPictureUrl;
+
 
     public User() {
     }
@@ -33,34 +36,34 @@ public class User {
         this.following = new ArrayList<>();
     }
 
+
     public String getUsername() {
         return username;
     }
-
     public void setUsername(String username) {
         this.username = username;
     }
-
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
-
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+    public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
+    public String getBannerPictureUrl() { return bannerPictureUrl; }
+    public void setBannerPictureUrl() { this.bannerPictureUrl = bannerPictureUrl; }
     public List<String> getFollowers() {
         return followers;
     }
-
     public void setFollowers(List<String> followers) {
         this.followers = followers;
     }
-
     public List<String> getFollowing() {
         return following;
     }
-
     public void setFollowing(List<String> following) {
         this.following = following;
     }
