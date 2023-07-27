@@ -12,6 +12,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * This is the activity for when one view is viewing another user's profile.
+ */
 public class OtherUserPageActivity extends AppCompatActivity {
 
     private TextView textViewUsername, textViewEmail, textViewFollowers, textViewFollowing;
