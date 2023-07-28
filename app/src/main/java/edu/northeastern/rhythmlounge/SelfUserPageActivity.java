@@ -1,40 +1,58 @@
 package edu.northeastern.rhythmlounge;
 
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.Manifest;
 
-<<<<<<< Updated upstream
-=======
+
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.PickVisualMediaRequest;
+
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
->>>>>>> Stashed changes
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.util.Objects;
+
+/**
+ * Represents an activity where users can view and modify their own user page.
+ */
 public class SelfUserPageActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 100;
 
     private TextView textViewOwnUsername, textViewOwnEmail, textViewOwnFollowers, textViewOwnFollowing;
 
+    private ImageView imageViewProfilePic;
+
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-<<<<<<< Updated upstream
-=======
     private FirebaseStorage fbStorage;
     private StorageReference storageReference;
 
     private ActivityResultLauncher<String> pickMedia;
 
 
->>>>>>> Stashed changes
-
+    /**
+     * Initializes activity and it's components
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b><i>Note: Otherwise it is null.</i></b>
+     *
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,8 +63,6 @@ public class SelfUserPageActivity extends AppCompatActivity {
 
         String currentUserId = getCurrentUserId();
         retrieveCurrentUser(currentUserId);
-<<<<<<< Updated upstream
-=======
 
         checkPermission();
 
@@ -65,7 +81,6 @@ public class SelfUserPageActivity extends AppCompatActivity {
         imageViewProfilePic.setOnClickListener(v -> openImageDialog());
 
 
->>>>>>> Stashed changes
     }
 
     /**
@@ -76,6 +91,7 @@ public class SelfUserPageActivity extends AppCompatActivity {
         textViewOwnEmail = findViewById(R.id.textViewOwnEmail);
         textViewOwnFollowers = findViewById(R.id.textViewOwnFollowers);
         textViewOwnFollowing = findViewById(R.id.textViewOwnFollowing);
+        imageViewProfilePic = findViewById(R.id.profile_pic);
     }
 
     /**
@@ -84,6 +100,8 @@ public class SelfUserPageActivity extends AppCompatActivity {
     private void initializeFirebaseElements() {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+        fbStorage = FirebaseStorage.getInstance();
+        storageReference = fbStorage.getReference();
     }
 
     /**
@@ -91,7 +109,7 @@ public class SelfUserPageActivity extends AppCompatActivity {
      * @return The user ID of the current user.
      */
     private String getCurrentUserId() {
-        return mAuth.getCurrentUser().getUid();
+        return Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
     }
 
     /**
@@ -101,6 +119,7 @@ public class SelfUserPageActivity extends AppCompatActivity {
     private void retrieveCurrentUser(String userId) {
         db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
             User currentUser = documentSnapshot.toObject(User.class);
+            assert currentUser != null;
             populateUIWithCurrentUserDetails(currentUser);
         });
     }
@@ -110,19 +129,22 @@ public class SelfUserPageActivity extends AppCompatActivity {
      * @param currentUser the current user object.
      */
     private void populateUIWithCurrentUserDetails(User currentUser) {
-<<<<<<< Updated upstream
-            textViewOwnUsername.setText(currentUser.getUsername());
-            textViewOwnEmail.setText(currentUser.getEmail());
-            textViewOwnFollowers.setText(String.valueOf(currentUser.getFollowers().size()));
-            textViewOwnFollowing.setText(String.valueOf(currentUser.getFollowing().size()));
-    }
-
-=======
+        // Populates username
         textViewOwnUsername.setText(currentUser.getUsername());
-        textViewOwnEmail.setText(currentUser.getEmail());
-        textViewOwnFollowers.setText(String.valueOf(currentUser.getFollowers().size()));
-        textViewOwnFollowing.setText(String.valueOf(currentUser.getFollowing().size()));
 
+        // Populates Email -
+        // NOTE: We might want to remove this later down the road, I added it simply to see if we could properly retrieve this type of information from firebase.
+        textViewOwnEmail.setText(currentUser.getEmail());
+
+        // Populate # of followers to UI
+        int followerCount = (currentUser.getFollowers() != null) ? currentUser.getFollowers().size() : 0;
+        textViewOwnFollowers.setText(String.valueOf(followerCount));
+
+        // Populate # of following to UI
+        int followingCount = (currentUser.getFollowing() != null) ? currentUser.getFollowing().size() : 0;
+        textViewOwnFollowing.setText(String.valueOf(followingCount));
+
+        // Populates the profile picture.
         if (currentUser.getProfilePictureUrl() != null && !currentUser.getProfilePictureUrl().isEmpty()) {
             // Load the image from the URL if it exists
             Glide.with(this).load(currentUser.getProfilePictureUrl()).into(imageViewProfilePic);
@@ -133,29 +155,28 @@ public class SelfUserPageActivity extends AppCompatActivity {
 
     }
 
-
-
-    //Profile Picture methods --------------------------------------------------------------------------------------------
     /**
-     * Checks if the READ_EXTERNAL_STORAGE permission is granted. If not, it requests that the user grant it.
+     * Checks whether the necessary permission to read external storage is granted.
+     * If not, this will request the user for permission.
      */
     private void checkPermission() {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    new AlertDialog.Builder(this)
-                            .setTitle("Permission needed")
-                            .setMessage("This permission is needed to access your media.")
-                            .setPositiveButton("OK", (dialog, which) -> ActivityCompat.requestPermissions(SelfUserPageActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE))
-                            .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                            .create().show();
-                } else {
-                    ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, PERMISSION_REQUEST_CODE);
-                }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Permission needed")
+                        .setMessage("This permission is needed to access your media.")
+                        .setPositiveButton("OK", (dialog, which) -> ActivityCompat.requestPermissions(SelfUserPageActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE))
+                        .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+                        .create().show();
+            } else {
+                ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.READ_EXTERNAL_STORAGE }, PERMISSION_REQUEST_CODE);
             }
+        }
+
     }
 
     /**
-     * Opens an AlertDialog that asks the user if they want to update their profile picture.
+     * Opens a dialog prompting the user to select a new profile picture.
      */
     private void openImageDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -168,8 +189,8 @@ public class SelfUserPageActivity extends AppCompatActivity {
     }
 
     /**
-     * Uploads a selected image to Firebase Storage and updates the user's profile picture URL in Firestore.
-     * @param imageUri imageUri The Uri of the selected image.
+     * Uploads the selected image to Firebase storage and updates the profile picture URL in the database.
+     * @param imageUri the URI of the selected image.
      */
     private void uploadImageToFirebaseStorage(Uri imageUri) {
         String userId = getCurrentUserId();
@@ -182,15 +203,17 @@ public class SelfUserPageActivity extends AppCompatActivity {
                 Toast.makeText(SelfUserPageActivity.this, "Profile picture updated", Toast.LENGTH_SHORT).show();
             }).addOnFailureListener(e -> {
                 Toast.makeText(SelfUserPageActivity.this, "Failed to update profile picture", Toast.LENGTH_SHORT).show();
+                Log.d("FirebaseError", "Firestore update failure: " + e.getMessage());
             });
         })).addOnFailureListener(e -> {
             Toast.makeText(SelfUserPageActivity.this, "Failed to upload profile picture", Toast.LENGTH_SHORT).show();
+            Log.d("FirebaseError", "Firebase Storage upload failure: " + e.getMessage());
         });
     }
 
     /**
      * This is bugged currently, if i leave the else, it will always state permission denied upon loading the activity.
-     * @param requestCode The request code passed in requestPermissions(
+     * @param requestCode The request code passed in {@link -requestPermissions(
      * android.app.Activity, String[], int)}
      * @param permissions The requested permissions. Never null.
      * @param grantResults The grant results for the corresponding permissions
@@ -206,13 +229,11 @@ public class SelfUserPageActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show();
 
+                /// BUG: If i leave this in it will always say Permission denied when starting the activity.
                 //} else {
                 //Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
-
-    // Profile Picture methods --------------------------------------------------------------------------------------------
->>>>>>> Stashed changes
 }
 

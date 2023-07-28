@@ -99,8 +99,12 @@ public class OtherUserPageActivity extends AppCompatActivity {
     private void populateUIWithOtherUserDetails(String otherUserId) {
         textViewUsername.setText(otherUser.getUsername());
         textViewEmail.setText(otherUser.getEmail());
-        textViewFollowers.setText(String.valueOf(otherUser.getFollowers().size()));
-        textViewFollowing.setText(String.valueOf(otherUser.getFollowing().size()));
+
+        int followerCount = (currentUser.getFollowers() != null) ? currentUser.getFollowers().size() : 0;
+        textViewFollowers.setText(String.valueOf(followerCount));
+
+        int followingCount = (currentUser.getFollowing() != null) ? currentUser.getFollowers().size() : 0;
+        textViewFollowing.setText(String.valueOf(followingCount));
 
         if (currentUser.getFollowing().contains(otherUserId)) {
             buttonFollowUnfollow.setText("Unfollow");
