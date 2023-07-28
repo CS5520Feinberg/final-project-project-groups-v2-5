@@ -18,6 +18,8 @@ public class User {
     private List<String> followers;
     private List<String> following;
 
+    private String profilePictureUrl;
+
     public User() {
     }
 
@@ -31,6 +33,7 @@ public class User {
         this.email = email;
         this.followers = new ArrayList<>();
         this.following = new ArrayList<>();
+
     }
 
     public String getUsername() {
@@ -65,6 +68,13 @@ public class User {
         this.following = following;
     }
 
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+    private void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
+    }
+
     /**
      * Method that allows a User A to add User B to their following list.
      * Additionally, this method adds User A to User B's list of followers.
@@ -97,4 +107,6 @@ public class User {
         // Removes the current user from the followers list of the current user to unfollow.
         db.collection("users").document(userIdToUnfollow).update("followers", FieldValue.arrayRemove(currentUserId));
     }
+
+
 }

@@ -12,6 +12,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
+ * This is the activity for when one view is viewing another user's profile.
+ */
 public class OtherUserPageActivity extends AppCompatActivity {
 
     private TextView textViewUsername, textViewEmail, textViewFollowers, textViewFollowing;
@@ -96,8 +99,12 @@ public class OtherUserPageActivity extends AppCompatActivity {
     private void populateUIWithOtherUserDetails(String otherUserId) {
         textViewUsername.setText(otherUser.getUsername());
         textViewEmail.setText(otherUser.getEmail());
-        textViewFollowers.setText(String.valueOf(otherUser.getFollowers().size()));
-        textViewFollowing.setText(String.valueOf(otherUser.getFollowing().size()));
+
+        int followerCount = (currentUser.getFollowers() != null) ? currentUser.getFollowers().size() : 0;
+        textViewFollowers.setText(String.valueOf(followerCount));
+
+        int followingCount = (currentUser.getFollowing() != null) ? currentUser.getFollowers().size() : 0;
+        textViewFollowing.setText(String.valueOf(followingCount));
 
         if (currentUser.getFollowing().contains(otherUserId)) {
             buttonFollowUnfollow.setText("Unfollow");
