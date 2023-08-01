@@ -71,7 +71,7 @@ public class User {
     public String getProfilePictureUrl() {
         return profilePictureUrl;
     }
-    private void setProfilePictureUrl(String profilePictureUrl) {
+    public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
     }
 
