@@ -79,6 +79,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     userObj.put("username", username);
                                     userObj.put("email", email);
 
+                                    // New code for creating following and followers arrays
                                     List<String> followers = new ArrayList<>();
                                     List<String> following = new ArrayList<>();
                                     userObj.put("followers", followers);
