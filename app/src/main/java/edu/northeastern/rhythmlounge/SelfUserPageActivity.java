@@ -2,18 +2,19 @@ package edu.northeastern.rhythmlounge;
 
 import static android.content.ContentValues.TAG;
 
+
+import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.Manifest;
-
 
 import androidx.activity.result.ActivityResultLauncher;
-
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -47,6 +48,8 @@ public class SelfUserPageActivity extends AppCompatActivity {
 
     private ActivityResultLauncher<String> pickMedia;
 
+    private Button buttonLogout;
+
 
     /**
      * Initializes activity and it's components
@@ -67,6 +70,15 @@ public class SelfUserPageActivity extends AppCompatActivity {
         retrieveCurrentUser(currentUserId);
 
         checkPermission();
+        buttonLogout.setOnClickListener(v -> {
+            mAuth.signOut(); // Sign out from Firebase
+            // Navigate back to MainActivity
+            Intent intent = new Intent(SelfUserPageActivity.this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); // This clears all other activities on top of the stack
+            startActivity(intent);
+            finish(); // Call this to finish the current activity
+        });
+
 
         pickMedia = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
             if (uri != null) {
@@ -90,6 +102,7 @@ public class SelfUserPageActivity extends AppCompatActivity {
         textViewOwnFollowers = findViewById(R.id.textViewOwnFollowers);
         textViewOwnFollowing = findViewById(R.id.textViewOwnFollowing);
         imageViewProfilePic = findViewById(R.id.profile_pic);
+        buttonLogout = findViewById(R.id.button_logout);
     }
 
     /**
@@ -120,7 +133,7 @@ public class SelfUserPageActivity extends AppCompatActivity {
             if (currentUser != null) {
                 populateUIWithCurrentUserDetails(currentUser);
             } else {
-                // Handle the situation when currentUser is null, for instance:
+                // Handle the situation when currentUser is null
                 Log.w(TAG, "No user found with id: " + userId);
             }
         });

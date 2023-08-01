@@ -13,11 +13,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -63,7 +61,11 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = editTextRegisterEmail.getText().toString().trim();
                 String password = editTextRegisterPassword.getText().toString().trim();
 
-                // validate the email, password, and username
+                // check if the username, email and password fields are empty
+                if(username.isEmpty() || email.isEmpty() || password.isEmpty()){
+                    Toast.makeText(RegisterActivity.this, "Please fill out all fields.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
@@ -77,6 +79,7 @@ public class RegisterActivity extends AppCompatActivity {
                                     userObj.put("username", username);
                                     userObj.put("email", email);
 
+                                    // New code for creating following and followers arrays
                                     List<String> followers = new ArrayList<>();
                                     List<String> following = new ArrayList<>();
                                     userObj.put("followers", followers);
