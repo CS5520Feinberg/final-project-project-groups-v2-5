@@ -3,42 +3,60 @@ package edu.northeastern.rhythmlounge;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
- * This is the activity for when one view is viewing another user's profile.
+ * OtherUserPageActivity allows a user to view another user's profile, which includes:
+ *      - username
+ *      - email (WARNING: we might not want to display this later)
+ *      - # of followers
+ *      - # of following
+ *      - profile picture
+ *
+ * Features:
+ *      - Follow/Unfollow
+ *
+ * @author James Bebarski
  */
 public class OtherUserPageActivity extends AppCompatActivity {
 
+    // Current UI elements for displaying information
     private TextView textViewUsername, textViewEmail, textViewFollowers, textViewFollowing;
+    private ImageView imageViewProfilePic;
     private Button buttonFollowUnfollow;
 
+    // The current user using the application and the other user they are viewing
     private User currentUser, otherUser;
 
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
+    private FirebaseAuth mAuth; // Firebase authentication instance
+    private FirebaseFirestore db; // Firebase Firestore instance
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_other_user_page);
 
+        // Initializes the view and the Firebase elements
         initializeViewElements();
         initializeFirebaseElements();
 
+        // Get the current user's ID and retrieve their details
         String currentUserId = getCurrentUserId();
         retrieveCurrentUser(currentUserId);
 
+        // Get the other user's ID from the intent and retrieve their details
         Intent intent = getIntent();
         String otherUserId = intent.getStringExtra("USER_ID");
 
+        // Handle the follow/unfollow button click
         retrieveOtherUser(otherUserId);
         handleFollowUnfollowButtonClick(otherUserId);
     }
@@ -51,6 +69,7 @@ public class OtherUserPageActivity extends AppCompatActivity {
         textViewEmail = findViewById(R.id.textViewEmail);
         textViewFollowers = findViewById(R.id.textViewFollowers);
         textViewFollowing = findViewById(R.id.textViewFollowing);
+        imageViewProfilePic = findViewById(R.id.other_user_profile_picture);
         buttonFollowUnfollow = findViewById(R.id.buttonFollowUnfollow);
     }
 
@@ -71,51 +90,95 @@ public class OtherUserPageActivity extends AppCompatActivity {
     }
 
     /**
-     * Retrieves the current user from the Firebase Firestore database.
-     * @param userId The user ID of the current user.
+     * Retrieves the current user's data from Firebase.
+     * If the other user's data is already available, populates the UI with their details.
+     * @param userId the user ID of the current user.
      */
     private void retrieveCurrentUser(String userId) {
-        db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> currentUser = documentSnapshot.toObject(User.class));
-    }
+    db.collection("users").document(userId)
+            .addSnapshotListener((snapshot, e) -> {
+                if (e != null || snapshot == null) return;
+                currentUser = snapshot.toObject(User.class);
+                if (otherUser != null) {
+                    populateUIWithOtherUserDetails(userId);
+                }
+            });
+}
 
     /**
-     * Retrieves the other user's data from Firebase Firestore database and populates the UI elements.
-     * @param otherUserId The user ID of the other user.
+     * Retrieves the other user's data from Firebase and populates the UI.
+     * @param otherUserId the user ID of the other user.
      */
     private void retrieveOtherUser(String otherUserId) {
-        db.collection("users").document(otherUserId).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                otherUser = documentSnapshot.toObject(User.class);
+        db.collection("users").document(otherUserId)
+            .addSnapshotListener((snapshot, e) -> {
+                if (e != null || snapshot == null) return;
+
+                otherUser = snapshot.toObject(User.class);
                 populateUIWithOtherUserDetails(otherUserId);
-            }
-        });
+            });
     }
 
     /**
-     * Populates the UI with the details of the other user.
-     * @param otherUserId The user ID of the other user.
+     * Populates the UI with the other user's details including:
+     *      - username
+     *      - email (WARNING: we might not want to display this later)
+     *      - # of followers
+     *      - # of following
+     *      - profile picture
+     *
+     * Handles displaying a default profile picture if the other user has not set one,
+     * and updates the follow/unfollow button based on the current user's following status.
+     * @param otherUserId the userId of the other user.
      */
     private void populateUIWithOtherUserDetails(String otherUserId) {
+
+    if (otherUser != null) {
+
+        // Set the username
         textViewUsername.setText(otherUser.getUsername());
+
+        // Set the email
         textViewEmail.setText(otherUser.getEmail());
 
-        int followerCount = (currentUser.getFollowers() != null) ? currentUser.getFollowers().size() : 0;
+        // Determine and set the follower count of the other user
+        int followerCount = (otherUser.getFollowers() != null) ? otherUser.getFollowers().size() : 0;
         textViewFollowers.setText(String.valueOf(followerCount));
 
-        int followingCount = (currentUser.getFollowing() != null) ? currentUser.getFollowers().size() : 0;
+        // Determine and set the following count of the other user
+        int followingCount = (otherUser.getFollowing() != null) ? otherUser.getFollowing().size() : 0;
         textViewFollowing.setText(String.valueOf(followingCount));
 
+        // Load the profile picture if one is available, otherwise use the built in default
+        if (otherUser.getProfilePictureUrl() != null && !otherUser.getProfilePictureUrl().isEmpty()) {
+            Glide.with(this).load(otherUser.getProfilePictureUrl()).into(imageViewProfilePic);
+        } else {
+            Glide.with(this).load(R.drawable.defaultprofilepicture).into(imageViewProfilePic);
+        }
+
+    } else {
+        // If something went wrong display an error message.
+        Toast.makeText(this, "Failed to load the user information.", Toast.LENGTH_LONG).show();
+        finish();
+    }
+
+    if (currentUser != null && currentUser.getFollowing() != null) {
+        // Update follow/unfollow button based on current user's following status
         if (currentUser.getFollowing().contains(otherUserId)) {
             buttonFollowUnfollow.setText("Unfollow");
         } else {
             buttonFollowUnfollow.setText("Follow");
         }
+    } else {
+        // Set default text for follow/unfollow button
+        buttonFollowUnfollow.setText("Follow");
     }
+}
 
     /**
      * Handles the click event for the follow/unfollow button.
-     * @param otherUserId The user ID of the other user.
+     * Updates the following status of the current user and changes the button text accordingly.
+     * @param otherUserId the user ID of the other user.
      */
     private void handleFollowUnfollowButtonClick(String otherUserId) {
         buttonFollowUnfollow.setOnClickListener(v -> {
@@ -128,4 +191,6 @@ public class OtherUserPageActivity extends AppCompatActivity {
             }
         });
     }
+
+
 }

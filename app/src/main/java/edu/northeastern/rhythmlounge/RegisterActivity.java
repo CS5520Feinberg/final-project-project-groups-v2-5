@@ -19,7 +19,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -76,6 +78,11 @@ public class RegisterActivity extends AppCompatActivity {
                                     Map<String, Object> userObj = new HashMap<>();
                                     userObj.put("username", username);
                                     userObj.put("email", email);
+
+                                    List<String> followers = new ArrayList<>();
+                                    List<String> following = new ArrayList<>();
+                                    userObj.put("followers", followers);
+                                    userObj.put("following", following);
 
                                     db.collection("users")
                                             .document(user.getUid())

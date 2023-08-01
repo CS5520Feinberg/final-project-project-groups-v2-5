@@ -21,6 +21,7 @@
         android:id="@+id/textViewOwnUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="username should appear here..."
         app:layout_constraintBottom_toTopOf="@+id/textViewOwnEmail"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,6 +33,7 @@
         android:id="@+id/textViewOwnEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="email should appear here..."
         app:layout_constraintBottom_toTopOf="@+id/textViewOwnFollowers"
         app:layout_constraintEnd_toEndOf="parent"
@@ -43,10 +45,10 @@
         android:id="@+id/textViewOwnFollowers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="# of Followers here..."
         app:layout_constraintBottom_toTopOf="@+id/textViewOwnFollowing"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewOwnEmail" />
 
@@ -65,10 +67,12 @@
         android:id="@+id/profile_pic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@+id/textViewOwnUsername"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
         app:srcCompat="@drawable/defaultprofilepicture" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -27,6 +27,7 @@
         <activity android:name=".LobbyActivity"></activity>
         <activity android:name=".SelfUserPageActivity"></activity>
         <activity android:name=".OtherUserPageActivity"></activity>
+        <activity android:name=".UserSearchActivity"></activity>
 
     </application>
 

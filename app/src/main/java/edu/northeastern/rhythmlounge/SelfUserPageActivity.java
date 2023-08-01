@@ -87,11 +87,7 @@ public class SelfUserPageActivity extends AppCompatActivity {
                 Log.d("PhotoPicker", "No media selected");
             }
         });
-
-
         imageViewProfilePic.setOnClickListener(v -> openImageDialog());
-
-
     }
 
     /**
