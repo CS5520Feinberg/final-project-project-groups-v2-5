@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                                     // Sign in success, navigate to the lobby
                                     Toast.makeText(MainActivity.this, "Authentication successful.",
                                             Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(MainActivity.this, SelfUserPageActivity.class));
+                                    startActivity(new Intent(MainActivity.this, UserSearchActivity.class));
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Toast.makeText(MainActivity.this, "Authentication failed.",
