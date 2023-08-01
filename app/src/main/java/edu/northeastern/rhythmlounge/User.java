@@ -108,5 +108,4 @@ public class User {
         db.collection("users").document(userIdToUnfollow).update("followers", FieldValue.arrayRemove(currentUserId));
     }
 
-
 }

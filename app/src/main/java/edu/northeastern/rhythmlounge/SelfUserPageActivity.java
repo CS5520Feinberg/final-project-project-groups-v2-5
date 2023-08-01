@@ -1,5 +1,7 @@
 package edu.northeastern.rhythmlounge;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -115,10 +117,15 @@ public class SelfUserPageActivity extends AppCompatActivity {
     private void retrieveCurrentUser(String userId) {
         db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
             User currentUser = documentSnapshot.toObject(User.class);
-            assert currentUser != null;
-            populateUIWithCurrentUserDetails(currentUser);
+            if (currentUser != null) {
+                populateUIWithCurrentUserDetails(currentUser);
+            } else {
+                // Handle the situation when currentUser is null, for instance:
+                Log.w(TAG, "No user found with id: " + userId);
+            }
         });
     }
+
 
     /**
      * Populates the UI with the details of the current user.

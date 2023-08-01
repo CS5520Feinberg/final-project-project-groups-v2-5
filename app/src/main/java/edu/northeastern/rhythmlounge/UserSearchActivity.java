@@ -91,6 +91,5 @@ public class UserSearchActivity extends AppCompatActivity {
                     userAdapter.notifyDataSetChanged();
                     userSuggestionRecyclerView.setVisibility(View.VISIBLE);
                 });
-
     }
 }
