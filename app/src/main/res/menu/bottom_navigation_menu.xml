@@ -21,7 +21,7 @@
 
     <item
         android:id="@+id/profile"
-        android:icon="@drawable/avatar"
+        android:icon="@drawable/profile"
         android:title="Profile" />
 
 </menu>
