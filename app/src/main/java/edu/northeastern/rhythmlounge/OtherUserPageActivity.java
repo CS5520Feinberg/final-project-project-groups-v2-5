@@ -32,7 +32,7 @@ public class OtherUserPageActivity extends AppCompatActivity {
     // Current UI elements for displaying information
     private TextView textViewUsername, textViewEmail, textViewFollowers, textViewFollowing;
     private ImageView imageViewProfilePic;
-    private Button buttonFollowUnfollow;
+    private Button buttonFollowUnfollow, buttonFollowers, buttonFollowing;
 
     // The current user using the application and the other user they are viewing
     private User currentUser, otherUser;
@@ -58,9 +58,18 @@ public class OtherUserPageActivity extends AppCompatActivity {
         String otherUserId = intent.getStringExtra("USER_ID");
         Log.d("OtherUserPageActivity", "Other User ID: " + otherUserId);
 
+        if (currentUserId.equals(otherUserId)) {
+            navigateToSelfUserProfile();
+            return;
+        }
+
         // Handle the follow/unfollow button click
+        retrieveCurrentUser(currentUserId);
         retrieveOtherUser(otherUserId);
         handleFollowUnfollowButtonClick(otherUserId);
+        handleFollowingButtonClick(otherUserId);
+        handleFollowersButtonClick(otherUserId);
+
 
     }
 
@@ -74,6 +83,8 @@ public class OtherUserPageActivity extends AppCompatActivity {
         textViewFollowing = findViewById(R.id.textViewFollowing);
         imageViewProfilePic = findViewById(R.id.other_user_profile_picture);
         buttonFollowUnfollow = findViewById(R.id.buttonFollowUnfollow);
+        buttonFollowers = findViewById(R.id.buttonFollowing);
+        buttonFollowing = findViewById(R.id.buttonFollowers);
     }
 
     /**
@@ -193,5 +204,27 @@ public class OtherUserPageActivity extends AppCompatActivity {
                 buttonFollowUnfollow.setText("Unfollow");
             }
         });
+    }
+
+    private void handleFollowersButtonClick(String otherUserId) {
+        buttonFollowers.setOnClickListener(v -> {
+            Intent intent = new Intent(OtherUserPageActivity.this, FollowersActivity.class);
+            intent.putExtra("USER_ID", otherUserId);
+            startActivity(intent);
+        });
+    }
+
+    private void handleFollowingButtonClick(String otherUserId) {
+        buttonFollowing.setOnClickListener(v -> {
+            Intent intent = new Intent(OtherUserPageActivity.this, FollowingActivity.class);
+            intent.putExtra("USER_ID", otherUserId);
+            startActivity(intent);
+        });
+    }
+
+    private void navigateToSelfUserProfile() {
+        Intent intent = new Intent(this, SelfUserPageActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
