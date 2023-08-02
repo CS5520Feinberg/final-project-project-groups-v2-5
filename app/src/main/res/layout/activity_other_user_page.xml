@@ -1,61 +1,99 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/other_user_profile_picture"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/defaultprofilepicture"
+        app:civ_border_color="#FF000000"
+        app:civ_border_width="2dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
     <TextView
-        android:id="@+id/textViewUsername"
+        android:id="@+id/textViewPlaylist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="other user appears here..."
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/textViewEmail"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"
+        android:text="Playlists"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/other_user_profile_picture"
+        app:layout_constraintHorizontal_bias="0.466"
+        app:layout_constraintStart_toStartOf="@+id/other_user_profile_picture"
         app:layout_constraintTop_toBottomOf="@+id/other_user_profile_picture" />
 
     <TextView
-        android:id="@+id/textViewFollowers"
+        android:id="@+id/textViewHostingEvents"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="# of Followers appears here..."
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonFollowers"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewEmail" />
+        android:layout_marginTop="156dp"
+        android:text="Hosting Events"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/other_user_profile_picture"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/other_user_profile_picture"
+        app:layout_constraintTop_toBottomOf="@+id/other_user_profile_picture" />
+
+    <TextView
+        android:id="@+id/textViewAttendingEvents"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="296dp"
+        android:text="Attending Events"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/other_user_profile_picture"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/other_user_profile_picture"
+        app:layout_constraintTop_toBottomOf="@+id/other_user_profile_picture" />
 
     <TextView
         android:id="@+id/textViewEmail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="other user email appears here..."
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/textViewFollowers"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/email_should_appear_here"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@+id/other_user_profile_picture"
         app:layout_constraintTop_toBottomOf="@+id/textViewUsername" />
 
     <TextView
-        android:id="@+id/textViewFollowing"
+        android:id="@+id/textViewUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="# of Following appears here..."
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonFollowing"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonFollowers" />
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:text="@string/username_should_appear_here"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@+id/other_user_profile_picture"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/textViewFollowers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:minWidth="20dp"
+        android:minHeight="20dp"
+        android:onClick="onFollowersClicked"
+        android:text="@string/followers"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@+id/other_user_profile_picture"
+        app:layout_constraintTop_toBottomOf="@+id/textViewEmail" />
 
     <Button
         android:id="@+id/buttonFollowUnfollow"
@@ -67,30 +105,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/other_user_profile_picture"
-        android:layout_width="128dp"
-        android:layout_height="128dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/textViewUsername"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:srcCompat="@drawable/defaultprofilepicture" />
-
     <Button
         android:id="@+id/buttonFollowers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="588dp"
         android:layout_marginBottom="16dp"
         android:text="Followers"
-        app:layout_constraintBottom_toTopOf="@+id/textViewFollowing"
+        app:layout_constraintBottom_toTopOf="@+id/textViewFollowers"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.801"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewFollowers" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewFollowers"
+        app:layout_constraintVertical_bias="0.351" />
 
     <Button
         android:id="@+id/buttonFollowing"
@@ -99,8 +126,10 @@
         android:text="Following"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.864"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewFollowing" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewFollowers"
+        app:layout_constraintVertical_bias="0.343" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

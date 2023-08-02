@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="DarkGrayButton" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/button_edit_background</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+
+</resources>

@@ -3,6 +3,7 @@ package edu.northeastern.rhythmlounge;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -80,11 +81,10 @@ public class OtherUserPageActivity extends AppCompatActivity {
         textViewUsername = findViewById(R.id.textViewUsername);
         textViewEmail = findViewById(R.id.textViewEmail);
         textViewFollowers = findViewById(R.id.textViewFollowers);
-        textViewFollowing = findViewById(R.id.textViewFollowing);
         imageViewProfilePic = findViewById(R.id.other_user_profile_picture);
         buttonFollowUnfollow = findViewById(R.id.buttonFollowUnfollow);
-        buttonFollowers = findViewById(R.id.buttonFollowers);
-        buttonFollowing = findViewById(R.id.buttonFollowing);
+        buttonFollowers = findViewById(R.id.buttonFollowing);
+        buttonFollowing = findViewById(R.id.buttonFollowers);
     }
 
     /**
@@ -157,11 +157,13 @@ public class OtherUserPageActivity extends AppCompatActivity {
 
         // Determine and set the follower count of the other user
         int followerCount = (otherUser.getFollowers() != null) ? otherUser.getFollowers().size() : 0;
-        textViewFollowers.setText(String.valueOf(followerCount));
 
         // Determine and set the following count of the other user
         int followingCount = (otherUser.getFollowing() != null) ? otherUser.getFollowing().size() : 0;
-        textViewFollowing.setText(String.valueOf(followingCount));
+
+        // Display the followers • following text
+        String followersFollowingText = followingCount + " Following • " + followerCount + " Followers";
+        textViewFollowers.setText(followersFollowingText);
 
         // Load the profile picture if one is available, otherwise use the built in default
         if (otherUser.getProfilePictureUrl() != null && !otherUser.getProfilePictureUrl().isEmpty()) {
@@ -227,4 +229,11 @@ public class OtherUserPageActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
+    public void onFollowersClicked(View view) {
+    }
+
+    public void onFollowingClicked(View view) {
+    }
+
 }

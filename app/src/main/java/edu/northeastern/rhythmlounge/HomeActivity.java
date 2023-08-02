@@ -7,7 +7,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.annotation.SuppressLint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ImageSpan;
+import android.widget.TextView;
 
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -40,6 +46,20 @@ public class HomeActivity extends AppCompatActivity {
             }
             return false;
         });
+
+        TextView textViewRhythmLounge = findViewById(R.id.textViewRhythmLounge);
+        String text = "hythm Lounge ";
+
+        @SuppressLint("UseCompatLoadingForDrawables")
+        Drawable logoDrawable = getResources().getDrawable(R.drawable.logo);
+
+        int logoSizePixels = (int) textViewRhythmLounge.getTextSize();
+        logoDrawable.setBounds(0, 0, logoSizePixels, logoSizePixels);
+        SpannableString spannableString = new SpannableString("  " + text);
+        ImageSpan imageSpan = new ImageSpan(logoDrawable, ImageSpan.ALIGN_BASELINE);
+        spannableString.setSpan(imageSpan, 0, 1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+
+        textViewRhythmLounge.setText(spannableString);
     }
 
     private static class ViewPagerAdapter extends FragmentPagerAdapter {
