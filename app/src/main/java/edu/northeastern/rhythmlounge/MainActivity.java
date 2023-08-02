@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     // Sign in success, navigate to the lobby
                                     Toast.makeText(MainActivity.this, "Authentication successful.", Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(MainActivity.this, SelfUserPageActivity.class));
+                                    startActivity(new Intent(MainActivity.this, HomeActivity.class));
                                 } else {
                                     // If sign in fails, display a message to the user.
                                     Toast.makeText(MainActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         // if the user is already signed in, then navigate to SelfUserPageActivity
         if (currentUser != null) {
-            startActivity(new Intent(MainActivity.this, SelfUserPageActivity.class));
+            startActivity(new Intent(MainActivity.this, HomeActivity.class));
             finish();
         }
     }
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            startActivity(new Intent(MainActivity.this, SelfUserPageActivity.class));
+                            startActivity(new Intent(MainActivity.this, SelfUserPageFragment.class));
                         } else {
                             // If sign in fails, display a message to the user.
                             if (task.getException() instanceof FirebaseAuthUserCollisionException) {
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Log.d(TAG, "linkWithCredential:success");
                                 FirebaseUser user = task.getResult().getUser();
-                                startActivity(new Intent(MainActivity.this, SelfUserPageActivity.class));
+                                startActivity(new Intent(MainActivity.this, SelfUserPageFragment.class));
                             } else {
                                 Log.w(TAG, "linkWithCredential:failure", task.getException());
                                 Toast.makeText(MainActivity.this, "Account linking failed.", Toast.LENGTH_SHORT).show();

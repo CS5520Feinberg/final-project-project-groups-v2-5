@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Rhythm Lounge</string>
+    <string name="logout">Logout</string>
+    <string name="username_should_appear_here">username should appear here...</string>
+    <string name="of_following_here"># of Following here...</string>
+    <string name="of_followers_here"># of Followers here...</string>
+    <string name="followers">Followers</string>
+    <string name="email_should_appear_here">email should appear here...</string>
+    <string name="following">Following</string>
 </resources>

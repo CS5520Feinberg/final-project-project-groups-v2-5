@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
     <application
         android:allowBackup="true"
@@ -15,6 +16,9 @@
         android:theme="@style/Theme.RhythmLounge"
         tools:targetApi="31">
         <activity
+            android:name=".HomeActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -23,13 +27,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterActivity"></activity>
-        <activity android:name=".LobbyActivity"></activity>
-        <activity android:name=".SelfUserPageActivity"></activity>
-        <activity android:name=".OtherUserPageActivity"></activity>
-        <activity android:name=".UserSearchActivity"></activity>
-        <activity android:name=".FollowersActivity"></activity>
-        <activity android:name=".FollowingActivity"></activity>
+
+        <activity android:name=".RegisterActivity" />
+        <activity android:name=".LobbyActivity" />
+        <activity android:name=".SelfUserPageFragment" />
+        <activity android:name=".OtherUserPageActivity" />
+        <activity android:name=".UserSearchFragment" />
+        <activity android:name=".FollowersActivity" />
+        <activity android:name=".FollowingActivity" />
 
     </application>
 
