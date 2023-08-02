@@ -83,8 +83,8 @@ public class OtherUserPageActivity extends AppCompatActivity {
         textViewFollowing = findViewById(R.id.textViewFollowing);
         imageViewProfilePic = findViewById(R.id.other_user_profile_picture);
         buttonFollowUnfollow = findViewById(R.id.buttonFollowUnfollow);
-        buttonFollowers = findViewById(R.id.buttonFollowing);
-        buttonFollowing = findViewById(R.id.buttonFollowers);
+        buttonFollowers = findViewById(R.id.buttonFollowers);
+        buttonFollowing = findViewById(R.id.buttonFollowing);
     }
 
     /**
@@ -223,7 +223,7 @@ public class OtherUserPageActivity extends AppCompatActivity {
     }
 
     private void navigateToSelfUserProfile() {
-        Intent intent = new Intent(this, SelfUserPageActivity.class);
+        Intent intent = new Intent(this, SelfUserPageFragment.class);
         startActivity(intent);
         finish();
     }
