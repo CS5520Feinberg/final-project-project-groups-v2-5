@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <item name="home" type="id" />
+    <item name="search" type="id" />
+    <item name="create_event" type="id" />
+    <item name="events" type="id" />
+    <item name="profile" type="id" />
+</resources>

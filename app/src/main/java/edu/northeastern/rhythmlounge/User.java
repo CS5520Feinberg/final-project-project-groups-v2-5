@@ -71,7 +71,7 @@ public class User {
     public String getProfilePictureUrl() {
         return profilePictureUrl;
     }
-    private void setProfilePictureUrl(String profilePictureUrl) {
+    public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
     }
 
@@ -107,6 +107,5 @@ public class User {
         // Removes the current user from the followers list of the current user to unfollow.
         db.collection("users").document(userIdToUnfollow).update("followers", FieldValue.arrayRemove(currentUserId));
     }
-
 
 }
