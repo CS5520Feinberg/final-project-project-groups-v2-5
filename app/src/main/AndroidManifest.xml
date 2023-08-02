@@ -28,6 +28,8 @@
         <activity android:name=".SelfUserPageActivity"></activity>
         <activity android:name=".OtherUserPageActivity"></activity>
         <activity android:name=".UserSearchActivity"></activity>
+        <activity android:name=".FollowersActivity"></activity>
+        <activity android:name=".FollowingActivity"></activity>
 
     </application>
 

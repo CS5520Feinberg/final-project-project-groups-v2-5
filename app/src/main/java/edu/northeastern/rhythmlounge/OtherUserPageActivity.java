@@ -2,6 +2,7 @@ package edu.northeastern.rhythmlounge;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -55,10 +56,12 @@ public class OtherUserPageActivity extends AppCompatActivity {
         // Get the other user's ID from the intent and retrieve their details
         Intent intent = getIntent();
         String otherUserId = intent.getStringExtra("USER_ID");
+        Log.d("OtherUserPageActivity", "Other User ID: " + otherUserId);
 
         // Handle the follow/unfollow button click
         retrieveOtherUser(otherUserId);
         handleFollowUnfollowButtonClick(otherUserId);
+
     }
 
     /**
@@ -191,6 +194,4 @@ public class OtherUserPageActivity extends AppCompatActivity {
             }
         });
     }
-
-
 }

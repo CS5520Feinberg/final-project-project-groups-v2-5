@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LobbyActivity extends AppCompatActivity {
-
+    /**
     private RecyclerView recyclerView;
     private UserAdapter userAdapter;
     private List<User> users = new ArrayList<>();
@@ -65,4 +65,5 @@ public class LobbyActivity extends AppCompatActivity {
                     }
                 });
     }
+    **/
 }

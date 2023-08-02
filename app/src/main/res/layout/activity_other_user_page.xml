@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:text="other user appears here..."
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/textViewEmail"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -18,27 +19,30 @@
         app:layout_constraintTop_toBottomOf="@+id/other_user_profile_picture" />
 
     <TextView
-        android:id="@+id/textViewEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="other user email appears here..."
-        app:layout_constraintBottom_toTopOf="@+id/textViewFollowers"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewUsername" />
-
-    <TextView
         android:id="@+id/textViewFollowers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:text="# of Followers appears here..."
-        app:layout_constraintBottom_toTopOf="@+id/textViewFollowing"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonFollowers"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewEmail" />
+
+    <TextView
+        android:id="@+id/textViewEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="other user email appears here..."
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/textViewFollowers"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewUsername" />
 
     <TextView
         android:id="@+id/textViewFollowing"
@@ -46,28 +50,28 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:text="# of Following appears here..."
-        app:layout_constraintBottom_toTopOf="@+id/buttonFollowUnfollow"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonFollowing"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewFollowers" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonFollowers" />
 
     <Button
         android:id="@+id/buttonFollowUnfollow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:text="Follow/Unfollow"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewFollowing" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/other_user_profile_picture"
         android:layout_width="128dp"
         android:layout_height="128dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@+id/textViewUsername"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -75,5 +79,28 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         app:srcCompat="@drawable/defaultprofilepicture" />
+
+    <Button
+        android:id="@+id/buttonFollowers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Followers"
+        app:layout_constraintBottom_toTopOf="@+id/textViewFollowing"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewFollowers" />
+
+    <Button
+        android:id="@+id/buttonFollowing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Following"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewFollowing" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

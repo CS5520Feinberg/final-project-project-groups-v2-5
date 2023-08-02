@@ -48,7 +48,7 @@ public class SelfUserPageActivity extends AppCompatActivity {
 
     private ActivityResultLauncher<String> pickMedia;
 
-    private Button buttonLogout;
+    private Button buttonLogout, buttonFollowers, buttonFollowing;
 
 
     /**
@@ -91,6 +91,19 @@ public class SelfUserPageActivity extends AppCompatActivity {
             }
         });
         imageViewProfilePic.setOnClickListener(v -> openImageDialog());
+
+        buttonFollowers.setOnClickListener(v -> {
+            Intent intent = new Intent(SelfUserPageActivity.this, FollowersActivity.class);
+            intent.putExtra("USER_ID", getCurrentUserId());
+            startActivity(intent);
+        });
+
+        buttonFollowing.setOnClickListener(v -> {
+            Intent intent = new Intent(SelfUserPageActivity.this, FollowingActivity.class);
+            intent.putExtra("USER_ID", getCurrentUserId());
+            startActivity(intent);
+        });
+
     }
 
     /**
@@ -103,6 +116,8 @@ public class SelfUserPageActivity extends AppCompatActivity {
         textViewOwnFollowing = findViewById(R.id.textViewOwnFollowing);
         imageViewProfilePic = findViewById(R.id.profile_pic);
         buttonLogout = findViewById(R.id.button_logout);
+        buttonFollowers = findViewById(R.id.button_followers);
+        buttonFollowing = findViewById(R.id.button_following);
     }
 
     /**
