@@ -23,12 +23,16 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.util.Locale;
 import java.util.Objects;
 
 public class SelfUserPageFragment extends Fragment {
@@ -80,16 +84,32 @@ public class SelfUserPageFragment extends Fragment {
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAuth.signOut();
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                requireActivity().finish();
+                GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken("YOUR_REQUEST_ID_TOKEN")
+                        .requestEmail()
+                        .build();
+                GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
 
-                // Use getActivity() as the context for the Toast
-                Toast.makeText(getActivity(), "Logout successful.", Toast.LENGTH_SHORT).show();
+                // Google sign out
+                googleSignInClient.signOut().addOnCompleteListener(getActivity(),
+                        new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                // Firebase sign out
+                                mAuth.signOut();
+
+                                Intent intent = new Intent(getActivity(), MainActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                                requireActivity().finish();
+
+                                // Use getActivity() as the context for the Toast
+                                Toast.makeText(getActivity(), "Logout successful.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
             }
         });
+
 
 
         pickMedia = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
