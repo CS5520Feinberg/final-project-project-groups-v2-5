@@ -42,6 +42,12 @@ public class HomeActivity extends AppCompatActivity {
             } else if (item.getItemId() == R.id.profile) {
                 viewPager.setCurrentItem(2);
                 return true;
+            } else if (item.getItemId() == R.id.create_event) {
+                viewPager.setCurrentItem(3);
+                return true;
+            } else if (item.getItemId() == R.id.events) {
+                viewPager.setCurrentItem(4);
+                return true;
             }
             return false;
         });
@@ -62,7 +68,8 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private static class ViewPagerAdapter extends FragmentPagerAdapter {
-        private static final int NUM_PAGES = 3;
+        private static final int NUM_PAGES = 5; // Update the count to include the new fragments
+
         public ViewPagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         }
@@ -77,6 +84,10 @@ public class HomeActivity extends AppCompatActivity {
                     return new UserSearchFragment();
                 case 2:
                     return new SelfUserPageFragment();
+                case 3:
+                    return new CreateEventFragment();
+                case 4:
+                    return new EventsFragment();
                 default:
                     throw new IllegalArgumentException("Invalid position: " + position);
             }

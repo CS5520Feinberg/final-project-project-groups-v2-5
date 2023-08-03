@@ -51,7 +51,7 @@ public class HomeFragment extends Fragment {
 
         return view;
     }
-    // Method to get the greeting based on the time of day
+
     private String getGreetingBasedOnTimeOfDay() {
         Calendar calendar = Calendar.getInstance();
         int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
