@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 
 /**
  * OtherUserPageActivity allows a user to view another user's profile, which includes:
@@ -40,6 +41,10 @@ public class OtherUserPageActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth; // Firebase authentication instance
     private FirebaseFirestore db; // Firebase Firestore instance
+    private ListenerRegistration currentUserListenerRegistration;
+    private ListenerRegistration otherUserListenerRegistration;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +76,22 @@ public class OtherUserPageActivity extends AppCompatActivity {
         handleFollowingButtonClick(otherUserId);
         handleFollowersButtonClick(otherUserId);
 
-
+        // Fetch the user data from Firestore
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users").document(otherUserId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    otherUser = documentSnapshot.toObject(User.class);
+                    // Call the method to populate the UI here, after the data fetch is completed
+                    populateUIWithOtherUserDetails(otherUserId);
+                })
+                .addOnFailureListener(e -> {
+                    // Handle any errors here
+                    Toast.makeText(this, "Failed to load the user information.", Toast.LENGTH_LONG).show();
+                    finish();
+                });
     }
+
 
     /**
      * Initializes all the view elements of this activity.
@@ -109,28 +128,27 @@ public class OtherUserPageActivity extends AppCompatActivity {
      * @param userId the user ID of the current user.
      */
     private void retrieveCurrentUser(String userId) {
-    db.collection("users").document(userId)
-            .addSnapshotListener((snapshot, e) -> {
-                if (e != null || snapshot == null) return;
-                currentUser = snapshot.toObject(User.class);
-                if (otherUser != null) {
-                    populateUIWithOtherUserDetails(userId);
-                }
-            });
-}
+        currentUserListenerRegistration = db.collection("users").document(userId)
+                .addSnapshotListener((snapshot, e) -> {
+                    if (e != null || snapshot == null) return;
+                    currentUser = snapshot.toObject(User.class);
+                    if (otherUser != null) {
+                        populateUIWithOtherUserDetails(userId);
+                    }
+                });
+    }
 
     /**
      * Retrieves the other user's data from Firebase and populates the UI.
      * @param otherUserId the user ID of the other user.
      */
     private void retrieveOtherUser(String otherUserId) {
-        db.collection("users").document(otherUserId)
-            .addSnapshotListener((snapshot, e) -> {
-                if (e != null || snapshot == null) return;
-
-                otherUser = snapshot.toObject(User.class);
-                populateUIWithOtherUserDetails(otherUserId);
-            });
+        otherUserListenerRegistration = db.collection("users").document(otherUserId)
+                .addSnapshotListener((snapshot, e) -> {
+                    if (e != null || snapshot == null) return;
+                    otherUser = snapshot.toObject(User.class);
+                    populateUIWithOtherUserDetails(otherUserId);
+                });
     }
 
     /**
@@ -146,50 +164,50 @@ public class OtherUserPageActivity extends AppCompatActivity {
      * @param otherUserId the userId of the other user.
      */
     private void populateUIWithOtherUserDetails(String otherUserId) {
+        if (!isFinishing() && otherUser != null) {  // Added isFinishing() check
 
-    if (otherUser != null) {
+            // Set the username
+            textViewUsername.setText(otherUser.getUsername());
 
-        // Set the username
-        textViewUsername.setText(otherUser.getUsername());
+            // Set the email
+            textViewEmail.setText(otherUser.getEmail());
 
-        // Set the email
-        textViewEmail.setText(otherUser.getEmail());
+            // Determine and set the follower count of the other user
+            int followerCount = (otherUser.getFollowers() != null) ? otherUser.getFollowers().size() : 0;
 
-        // Determine and set the follower count of the other user
-        int followerCount = (otherUser.getFollowers() != null) ? otherUser.getFollowers().size() : 0;
+            // Determine and set the following count of the other user
+            int followingCount = (otherUser.getFollowing() != null) ? otherUser.getFollowing().size() : 0;
 
-        // Determine and set the following count of the other user
-        int followingCount = (otherUser.getFollowing() != null) ? otherUser.getFollowing().size() : 0;
+            // Display the followers • following text
+            String followersFollowingText = followingCount + " Following • " + followerCount + " Followers";
+            textViewFollowers.setText(followersFollowingText);
 
-        // Display the followers • following text
-        String followersFollowingText = followingCount + " Following • " + followerCount + " Followers";
-        textViewFollowers.setText(followersFollowingText);
+            // Load the profile picture if one is available, otherwise use the built in default
+            if (otherUser.getProfilePictureUrl() != null && !otherUser.getProfilePictureUrl().isEmpty()) {
+                Glide.with(this).load(otherUser.getProfilePictureUrl()).into(imageViewProfilePic);
+            } else {
+                Glide.with(this).load(R.drawable.defaultprofilepicture).into(imageViewProfilePic);
+            }
 
-        // Load the profile picture if one is available, otherwise use the built in default
-        if (otherUser.getProfilePictureUrl() != null && !otherUser.getProfilePictureUrl().isEmpty()) {
-            Glide.with(this).load(otherUser.getProfilePictureUrl()).into(imageViewProfilePic);
         } else {
-            Glide.with(this).load(R.drawable.defaultprofilepicture).into(imageViewProfilePic);
+            // If something went wrong display an error message.
+            //Toast.makeText(this, "Failed to load the user information.", Toast.LENGTH_LONG).show();
+            finish();
         }
 
-    } else {
-        // If something went wrong display an error message.
-        Toast.makeText(this, "Failed to load the user information.", Toast.LENGTH_LONG).show();
-        finish();
-    }
-
-    if (currentUser != null && currentUser.getFollowing() != null) {
-        // Update follow/unfollow button based on current user's following status
-        if (currentUser.getFollowing().contains(otherUserId)) {
-            buttonFollowUnfollow.setText("Unfollow");
+        if (!isFinishing() && currentUser != null && currentUser.getFollowing() != null) {  // Added isFinishing() check
+            // Update follow/unfollow button based on current user's following status
+            if (currentUser.getFollowing().contains(otherUserId)) {
+                buttonFollowUnfollow.setText("Unfollow");
+            } else {
+                buttonFollowUnfollow.setText("Follow");
+            }
         } else {
+            // Set default text for follow/unfollow button
             buttonFollowUnfollow.setText("Follow");
         }
-    } else {
-        // Set default text for follow/unfollow button
-        buttonFollowUnfollow.setText("Follow");
     }
-}
+
 
     /**
      * Handles the click event for the follow/unfollow button.
@@ -198,7 +216,7 @@ public class OtherUserPageActivity extends AppCompatActivity {
      */
     private void handleFollowUnfollowButtonClick(String otherUserId) {
         buttonFollowUnfollow.setOnClickListener(v -> {
-            if (currentUser.getFollowing().contains(otherUserId)) {
+            if (currentUser.getFollowing() != null && currentUser.getFollowing().contains(otherUserId)) {
                 currentUser.unfollowUser(otherUserId);
                 buttonFollowUnfollow.setText("Follow");
             } else {
@@ -235,5 +253,17 @@ public class OtherUserPageActivity extends AppCompatActivity {
 
     public void onFollowingClicked(View view) {
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (currentUserListenerRegistration != null) {
+            currentUserListenerRegistration.remove();
+        }
+        if (otherUserListenerRegistration != null) {
+            otherUserListenerRegistration.remove();
+        }
+    }
+
 
 }
