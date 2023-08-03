@@ -68,7 +68,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private static class ViewPagerAdapter extends FragmentPagerAdapter {
-        private static final int NUM_PAGES = 5; // Update the count to include the new fragments
+        private static final int NUM_PAGES = 5;
 
         public ViewPagerAdapter(FragmentManager fragmentManager) {
             super(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);

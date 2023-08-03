@@ -5,7 +5,7 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Add your layout elements for the Create Event fragment here -->
+
 
 </LinearLayout>
 
