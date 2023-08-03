@@ -243,7 +243,7 @@ public class OtherUserPageActivity extends AppCompatActivity {
     }
 
     private void navigateToSelfUserProfile() {
-        Intent intent = new Intent(this, SelfUserPageFragment.class);
+        Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
         finish();
     }
