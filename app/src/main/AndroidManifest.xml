@@ -16,9 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RhythmLounge"
         tools:targetApi="31">
-        <activity
-            android:name=".EventsFragment"
-            android:exported="false" />
+
+
+
         <activity
             android:name=".HomeActivity"
             android:exported="false" />
@@ -38,6 +38,9 @@
         <activity android:name=".UserSearchFragment" />
         <activity android:name=".FollowersActivity" />
         <activity android:name=".FollowingActivity" />
+        <activity android:name=".SettingsFragment" />
+        <activity android:name=".EventsFragment" />
+        <activity android:name=".NotificationsFragment" />
     </application>
 
 </manifest>
