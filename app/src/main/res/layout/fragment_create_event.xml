@@ -20,6 +20,7 @@
             android:layout_marginBottom="16dp"
             android:text="Create Event"
             android:textSize="14dp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -59,6 +60,7 @@
             android:layout_marginEnd="66dp"
             android:text="Event Name"
             android:textSize="14dp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/imageViewUploadedImage"
             app:layout_constraintStart_toStartOf="parent"
@@ -96,7 +98,8 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"
                 android:text="Enter Location"
-                android:textSize="14dp" />
+                android:textSize="14dp"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/editTextState"
@@ -118,7 +121,8 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"
                 android:text="Enter Description"
-                android:textSize="14dp" />
+                android:textSize="14dp"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/editTextDescription"
@@ -136,7 +140,8 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"
                 android:text="Click to Select a Date"
-                android:textSize="14dp" />
+                android:textSize="14dp"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/editTextDate"
@@ -153,7 +158,8 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"
                 android:text="Click to Select a Time"
-                android:textSize="14dp" />
+                android:textSize="14dp"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/editTextTime"
@@ -171,6 +177,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:text="Create Event"
+                android:onClick="onClick"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
