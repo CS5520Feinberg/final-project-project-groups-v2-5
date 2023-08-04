@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="DarkGrayButton" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/button_edit_background</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="DropDownItemStyle" parent="Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:padding">16dp</item>
+        <item name="android:background">@android:color/white</item>
+    </style>
+
+
+</resources>

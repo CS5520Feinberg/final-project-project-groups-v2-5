@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#333333" /> <!-- Set your desired dark gray background color -->
+    <corners android:radius="20dp" /> <!-- Set half of the button's height (40dp) as the corner radius -->
+</shape>
+

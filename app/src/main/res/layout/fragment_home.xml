@@ -1,6 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/textViewGreeting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:textAppearance="@style/TextAppearance.Manrope"
+        android:textSize="16dp" />
+
+    <TextView
+        android:id="@+id/textViewStarred"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Starred Events/Artists"
+        android:textAppearance="@style/TextAppearance.Manrope"
+        android:textSize="16dp" />
+
+    <TextView
+        android:id="@+id/textViewMyArtists"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="My Artists"
+        android:textAppearance="@style/TextAppearance.Manrope"
+        android:textSize="16dp" />
+
+    <TextView
+        android:id="@+id/textViewMyEvents"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="150dp"
+        android:text="My Events"
+        android:textAppearance="@style/TextAppearance.Manrope"
+        android:textSize="16dp" />
+
+    <TextView
+        android:id="@+id/textViewDiscover"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="150dp"
+        android:text="Discover Artists/Events"
+        android:textAppearance="@style/TextAppearance.Manrope"
+        android:textSize="16dp" />
+
+</LinearLayout>
+

@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    #D92020
-    <color name="RhythmRed">#D92020</color>
-    <color name="RhythmOrange">#EB8F31</color>
-    <color name="RhythmYellow">#D5C079</color>
-    <color name="RhythmGreen">#417853</color>
-    <color name="RhythmDarkGreen">#295544</color>
-    <color name="tab_text_color">#808080</color>
-    <color name="tab_text_selected_color">#000000</color>
+
+    <color name="PrimaryAndLogoColor">#EF6C36</color>
+    <color name="Secondary">#F8A52D</color>
+    <color name="Option3">#D97627</color>
+    <color name="Option4">#D94227</color>
+    <color name="Option5">#F82E2D</color>
 
 </resources>

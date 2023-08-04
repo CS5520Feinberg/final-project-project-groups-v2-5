@@ -1,95 +1,27 @@
 package edu.northeastern.rhythmlounge;
 
-import android.location.Address;
-import android.location.Location;
-
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-/**
- * Represents an event with a eventID, eventName, eventDate,
- * description, eventPictureUrl, host, location, and a list of attendees.
- */
 public class Event {
-
     private String eventId;
     private String eventName;
-
-    private Date eventDate;
-
+    private String location;
     private String description;
-
-    private String eventPictureUrl;
-
-    private User host;
-
-    private Address location;
-
-    private List<User> attendees;
-
-    /**
-     * Resource ID for the default event picture. This is built into the app and used until a custom is uploaded.
-     */
-    private static final int DEFAULT_PICTURE_RES_ID = R.drawable.defaulteventpicture;
+    private String date;
+    private String time;
+    private String imageUrl;
 
     public Event() {
     }
 
-    /**
-     * Constructor to initialize an event with the specified details.
-     * @param eventId     Unique identifier for the event
-     * @param eventName   Name of the event
-     * @param eventDate   Date of the event
-     * @param description Description of the event
-     * @param host        Host of the event
-     * @param location    Location of the event.
-     */
-    public Event(String eventId, String eventName, Date eventDate, String description, User host, Address location) {
+    public Event(String eventId, String eventName, String location,
+                 String description, String date, String time, String imageUrl) {
         this.eventId = eventId;
         this.eventName = eventName;
-        this.eventDate = eventDate;
-        this.description = description;
-        this.host = host;
         this.location = location;
-        this.eventPictureUrl = null;
-        this.attendees = new ArrayList<>();
+        this.description = description;
+        this.date = date;
+        this.time = time;
+        this.imageUrl = imageUrl;
     }
-
-    /**
-     * Creates a new event in the Firestore database.
-     * @param event The event object to be created.
-     */
-    public void createEvent(Event event) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("events")
-                .add(event)
-                .addOnSuccessListener(documentReference -> event.setEventId(documentReference.getId()));
-    }
-
-    /**
-     * Adds an attendee to the event.
-     * @param userId the user ID of the attendee to add.
-     */
-    public void addAttendee(String userId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("events").document(eventId).update("attendees", FieldValue.arrayUnion(userId));
-    }
-
-    /**
-     * Removes an attendee from the event.
-     * @param userId the user ID of the attendee to remove.
-     */
-    public void removeAttendee(String userId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("events").document(eventId).update("attendees", FieldValue.arrayRemove(userId));
-    }
-
 
     public String getEventId() {
         return eventId;
@@ -99,7 +31,7 @@ public class Event {
         this.eventId = eventId;
     }
 
-    String getEventName() {
+    public String getEventName() {
         return eventName;
     }
 
@@ -107,12 +39,12 @@ public class Event {
         this.eventName = eventName;
     }
 
-    public Date getEventDate() {
-        return eventDate;
+    public String getLocation() {
+        return location;
     }
 
-    public void setEventDate(Date eventDate) {
-        this.eventDate = eventDate;
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getDescription() {
@@ -123,42 +55,29 @@ public class Event {
         this.description = description;
     }
 
-    public int getDefaultPictureResId() {
-        return DEFAULT_PICTURE_RES_ID;
+    public String getDate() {
+        return date;
     }
 
-    public String getEventPictureUrl() {
-        return eventPictureUrl;
+    public void setDate(String date) {
+        this.date = date;
     }
 
-    public void setEventPictureUrl(String eventPictureUrl) {
-        this.eventPictureUrl = eventPictureUrl;
+    public String getTime() {
+        return time;
     }
 
-    public User getHost() {
-        return host;
+    public void setTime(String time) {
+        this.time = time;
     }
 
-    public void setHost(User host) {
-        this.host = host;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public Address getLocation() {
-        return location;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
-
-    public void setLocation() {
-        this.location = location;
-    }
-
-    public List<User> getAttendees() {
-        return attendees;
-    }
-
-    public void setAttendees(List<User> attendees) {
-        this.attendees = attendees;
-    }
-
-
 
 }
+

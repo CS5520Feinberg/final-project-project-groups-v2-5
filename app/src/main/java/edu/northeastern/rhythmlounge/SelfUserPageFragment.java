@@ -23,6 +23,11 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -43,7 +48,7 @@ public class SelfUserPageFragment extends Fragment {
 
     private ActivityResultLauncher<String> pickMedia;
 
-    private Button buttonLogout, buttonFollowers, buttonFollowing;
+    private Button buttonLogout;
 
     public SelfUserPageFragment() {
     }
@@ -61,13 +66,51 @@ public class SelfUserPageFragment extends Fragment {
         retrieveCurrentUser(currentUserId);
 
         checkPermission();
-        buttonLogout.setOnClickListener(v -> {
-            mAuth.signOut();
-            Intent intent = new Intent(getActivity(), MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            requireActivity().finish();
+        textViewOwnFollowers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onFollowersClicked();
+            }
         });
+
+        // Set click listener for "Following" TextView
+        textViewOwnFollowing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onFollowingClicked();
+            }
+        });
+
+        buttonLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                        .requestIdToken("YOUR_REQUEST_ID_TOKEN")
+                        .requestEmail()
+                        .build();
+                GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
+
+                // Google sign out
+                googleSignInClient.signOut().addOnCompleteListener(getActivity(),
+                        new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                // Firebase sign out
+                                mAuth.signOut();
+
+                                Intent intent = new Intent(getActivity(), MainActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                                requireActivity().finish();
+
+                                // Use getActivity() as the context for the Toast
+                                Toast.makeText(getActivity(), "Logout successful.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+        });
+
+
 
         pickMedia = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
             if (uri != null) {
@@ -82,19 +125,21 @@ public class SelfUserPageFragment extends Fragment {
 
         imageViewProfilePic.setOnClickListener(v -> openImageDialog());
 
-        buttonFollowers.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), FollowersActivity.class);
-            intent.putExtra("USER_ID", getCurrentUserId());
-            startActivity(intent);
-        });
-
-        buttonFollowing.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), FollowingActivity.class);
-            intent.putExtra("USER_ID", getCurrentUserId());
-            startActivity(intent);
-        });
-
         return view;
+    }
+
+    public void onFollowersClicked() {
+        // Implement the behavior when "Followers" is clicked
+        Intent intent = new Intent(getActivity(), FollowersActivity.class);
+        intent.putExtra("USER_ID", getCurrentUserId());
+        startActivity(intent);
+    }
+
+    public void onFollowingClicked() {
+        // Implement the behavior when "Following" is clicked
+        Intent intent = new Intent(getActivity(), FollowingActivity.class);
+        intent.putExtra("USER_ID", getCurrentUserId());
+        startActivity(intent);
     }
 
     private void initializeViewElements(View view) {
@@ -104,8 +149,6 @@ public class SelfUserPageFragment extends Fragment {
         textViewOwnFollowing = view.findViewById(R.id.textViewOwnFollowing);
         imageViewProfilePic = view.findViewById(R.id.profile_pic);
         buttonLogout = view.findViewById(R.id.button_logout);
-        buttonFollowers = view.findViewById(R.id.button_followers);
-        buttonFollowing = view.findViewById(R.id.button_following);
     }
 
     private void initializeFirebaseElements() {
@@ -135,10 +178,12 @@ public class SelfUserPageFragment extends Fragment {
         textViewOwnEmail.setText(currentUser.getEmail());
 
         int followerCount = (currentUser.getFollowers() != null) ? currentUser.getFollowers().size() : 0;
-        textViewOwnFollowers.setText(String.valueOf(followerCount));
-
         int followingCount = (currentUser.getFollowing() != null) ? currentUser.getFollowing().size() : 0;
-        textViewOwnFollowing.setText(String.valueOf(followingCount));
+
+        String followingText = followingCount + " Following • " + followerCount + " Followers";
+
+        textViewOwnFollowers.setText(followingText);
+        textViewOwnFollowing.setText("");
 
         if (currentUser.getProfilePictureUrl() != null && !currentUser.getProfilePictureUrl().isEmpty()) {
             // Load the image from the URL if it exists
@@ -148,6 +193,7 @@ public class SelfUserPageFragment extends Fragment {
             Glide.with(this).load(R.drawable.defaultprofilepicture).into(imageViewProfilePic);
         }
     }
+
 
     private void checkPermission() {
         if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -204,4 +250,7 @@ public class SelfUserPageFragment extends Fragment {
         }
     }
 }
+
+
+
 

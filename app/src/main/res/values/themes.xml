@@ -1,8 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.RhythmLounge" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/PrimaryAndLogoColor</item>
+        <item name="colorSecondary">@color/Secondary</item>
+        <item name="android:textAppearance">@style/TextAppearance.Manrope</item>
+    </style>
+
+    <style name="TextAppearance.Manrope" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:fontFamily">@font/manrope</item>
     </style>
 
     <style name="Theme.RhythmLounge" parent="Base.Theme.RhythmLounge" />

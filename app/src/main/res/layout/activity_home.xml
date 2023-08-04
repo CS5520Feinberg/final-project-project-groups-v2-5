@@ -1,25 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
+    <TextView
+        android:id="@+id/textViewRhythmLounge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rhythm Lounge"
+        android:textSize="16sp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageViewSettings"
+        android:layout_width="60dp"
+        android:layout_height="45dp"
+        android:padding="4dp"
+        android:src="@drawable/gear"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageViewNotification"
+        android:layout_width="33dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:padding="4dp"
+        android:src="@drawable/notifications"
+        app:layout_constraintEnd_toStartOf="@+id/imageViewSettings"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/bottomNavigationView"
-        android:contentDescription="@string/app_name" />
+        android:layout_height="0dp"
+        android:contentDescription="@string/app_name"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintTop_toBottomOf="@+id/textViewRhythmLounge"
+        app:layout_constraintVertical_bias="0.578"
+        tools:layout_editor_absoluteX="-16dp" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_navigation_menu"
         app:labelVisibilityMode="labeled" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
 
 
 
