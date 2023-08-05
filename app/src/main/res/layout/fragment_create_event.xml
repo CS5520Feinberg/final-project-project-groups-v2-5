@@ -57,12 +57,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewCreateEvent" />
 
+
         <Button
             android:id="@+id/buttonUploadImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="222dp"
-            android:layout_marginTop="88dp"
+            android:layout_marginTop="136dp"
             android:layout_marginEnd="37dp"
             android:onClick="onUploadImageClick"
             android:text="Upload Image"
@@ -71,39 +72,6 @@
             app:layout_constraintStart_toEndOf="@+id/imageViewUploadedImage"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textViewEventName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="254dp"
-            android:layout_marginTop="152dp"
-            android:layout_marginEnd="66dp"
-            android:text="Event Name"
-            android:textSize="14dp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/imageViewUploadedImage"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/editTextEventName"
-            android:layout_width="173dp"
-            android:layout_height="56dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="204dp"
-            android:layout_marginTop="172dp"
-            android:layout_marginEnd="18dp"
-            android:hint="Enter Event Name"
-            android:inputType="text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imageViewUploadedImage"
@@ -124,6 +92,25 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageViewUploadedImage">
+
+            <TextView
+                android:id="@+id/textViewEventName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="Event Name"
+                android:textSize="14dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/editTextEventName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter Event Name"
+                android:inputType="text" />
+
 
             <TextView
                 android:id="@+id/textViewEnterLocation"
