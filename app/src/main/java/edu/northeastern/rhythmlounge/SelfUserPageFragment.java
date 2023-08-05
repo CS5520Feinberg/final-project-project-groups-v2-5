@@ -1,6 +1,7 @@
 package edu.northeastern.rhythmlounge;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -26,6 +27,8 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,10 +40,14 @@ import java.util.Objects;
 
 public class SelfUserPageFragment extends Fragment {
 
+    private static final String TAG = "SelfUserPageFragment";
+
     private static final int PERMISSION_REQUEST_CODE = 100;
+    private static final int ERROR_DIALOGUE_REQ = 9001;
+
 
     private TextView textViewOwnUsername, textViewOwnEmail, textViewOwnFollowers, textViewOwnFollowing;
-    private ImageView imageViewProfilePic;
+    private ImageView imageViewProfilePic, heatMap;
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -111,7 +118,6 @@ public class SelfUserPageFragment extends Fragment {
         });
 
 
-
         pickMedia = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
             if (uri != null) {
                 Log.d("PhotoPicker", "Selected URI: " + uri);
@@ -125,7 +131,15 @@ public class SelfUserPageFragment extends Fragment {
 
         imageViewProfilePic.setOnClickListener(v -> openImageDialog());
 
+        heatMap.setOnClickListener(v -> openHeatMap());
+
         return view;
+    }
+
+    private void openHeatMap() {
+        Intent intent = new Intent(getActivity(), HeatMapsActivity.class);
+        intent.putExtra("USER_ID", getCurrentUserId());
+        startActivity(intent);
     }
 
     public void onFollowersClicked() {
@@ -149,6 +163,7 @@ public class SelfUserPageFragment extends Fragment {
         textViewOwnFollowing = view.findViewById(R.id.textViewOwnFollowing);
         imageViewProfilePic = view.findViewById(R.id.profile_pic);
         buttonLogout = view.findViewById(R.id.button_logout);
+        heatMap = view.findViewById(R.id.map_icon);
     }
 
     private void initializeFirebaseElements() {
@@ -248,6 +263,35 @@ public class SelfUserPageFragment extends Fragment {
                 Toast.makeText(requireContext(), "Permission denied", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+
+    /**
+     * Function to check if the device has appropriate Google Services Version
+     *
+     * @return Boolean Value - True or False
+     */
+    public boolean isServicesOK() {
+        Log.d(TAG, "isServicesOK: Validating Google Services version");
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getActivity());
+        /**
+         * Everything is fine and User can make API calls
+         */
+        if (available == ConnectionResult.SUCCESS) {
+            Log.d(TAG, "isServicesOK: Google play services is working");
+            return true;
+        }
+        /**
+         * Error occurred but is resolvable
+         */
+        else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
+            Log.d(TAG, "isServicesOK: Error occurred but is resolvable");
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(getActivity(), available, ERROR_DIALOGUE_REQ);
+            dialog.show();
+        } else {
+            Toast.makeText(getActivity(), "Error not resolvable", Toast.LENGTH_SHORT).show();
+        }
+        return false;
     }
 }
 

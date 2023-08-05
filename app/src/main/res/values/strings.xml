@@ -7,6 +7,16 @@
     <string name="followers">Followers</string>
     <string name="email_should_appear_here">email should appear here...</string>
     <string name="following">Following</string>
+    <string name="MAPS_API_KEY">AIzaSyCxvRTXiwy3Kfo52itjYI-xRJ8Ju477Axc</string>
+    <string name="events">Events</string>
+    <string name="friends">Friends</string>
+    <string name="mycurrentlocation">My Location</string>
+    <string-array name="heatmaps_datasets_array">
+        <item>@string/mycurrentlocation</item>
+        <item>@string/events</item>
+        <item>@string/friends</item>
+    </string-array>
+
 
     <string-array name="states_array">
         <item>Alabama</item>
