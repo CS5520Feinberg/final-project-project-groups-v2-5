@@ -11,11 +11,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,8 +22,8 @@ public class EventsFragment extends Fragment {
     private RecyclerView recyclerView;
     private EventsAdapter eventsAdapter;
     private List<Event> eventList;
-
-    private DatabaseReference eventsRef;
+    private FirebaseFirestore db;
+    private CollectionReference eventsRef;
 
     @Nullable
     @Override
@@ -36,31 +34,39 @@ public class EventsFragment extends Fragment {
         eventList = new ArrayList<>();
         eventsAdapter = new EventsAdapter(eventList);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+
+
+        int spaceBetweenItemsInDp = 4;
+        int spaceBetweenItemsInPixels = (int) (spaceBetweenItemsInDp * getResources().getDisplayMetrics().density);
+        recyclerView.addItemDecoration(new RecyclerViewEventSpace(spaceBetweenItemsInPixels));
+
         recyclerView.setAdapter(eventsAdapter);
 
-        eventsRef = FirebaseDatabase.getInstance().getReference().child("events");
+        db = FirebaseFirestore.getInstance();
+        eventsRef = db.collection("events");
 
         fetchEvents();
+
 
         return rootView;
     }
 
-    private void fetchEvents() {
-        eventsRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                eventList.clear();
-                for (DataSnapshot eventSnapshot : dataSnapshot.getChildren()) {
-                    Event event = eventSnapshot.getValue(Event.class);
-                    eventList.add(event);
-                }
-                eventsAdapter.notifyDataSetChanged();
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
+    private void fetchEvents() {
+        eventsRef.get()
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    eventList.clear();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Event event = document.toObject(Event.class);
+                        eventList.add(event);
+                    }
+                    eventsAdapter.notifyDataSetChanged();
+                } else {
+                    // Handle failure
+                }
+            });
     }
 }
