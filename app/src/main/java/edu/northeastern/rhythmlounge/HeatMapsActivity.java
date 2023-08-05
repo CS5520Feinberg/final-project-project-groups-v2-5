@@ -185,9 +185,10 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
             public void onClick(View v) {
                 Log.d(TAG, "onClick: Clicked GPS ICON");
                 getDeviceLocation();
-                hideSoftKeyboard();
+
             }
         });
+        hideSoftKeyboard();
 
     }
 
@@ -199,7 +200,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         Log.d(TAG, "geoLocate: geoLocating");
         String searchString = mSearchText.getText().toString();
         Geocoder geocoder = new Geocoder(HeatMapsActivity.this);
-        List<Address> list;
+        List<Address> list = new ArrayList<>();
         try {
             list = geocoder.getFromLocationName(searchString, 1);
         } catch (IOException e) {
@@ -277,8 +278,6 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
      * Method to get Location Permission from the user
      */
     private void getLocationPermission() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentById(R.id.heatmap3);
         Log.d(TAG, "getLocationPermission: Get Location Permissions");
         String[] permissions = {
                 android.Manifest.permission.ACCESS_FINE_LOCATION,
@@ -291,13 +290,6 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                 mLocationPermissionGranted = true;
                 initMap();
                 Log.d("IsRefresh", "Yes");
-                if (fragment != null) {
-                    // Reload Fragment
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.detach(fragment);
-                    fragmentTransaction.attach(fragment);
-                    fragmentTransaction.commit();
-                }
             } else {
                 ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQ_CODE);
             }
@@ -425,6 +417,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                 }
                 // Friend's Location
                 else {
+
                     mOverlay.clearTileCache();
                     mOverlay.setVisible(false);
                     // Method to mark multiple points on screen
@@ -461,11 +454,9 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
     private static class DataSet {
         private final ArrayList<LatLng> mDataset;
-
         public DataSet(ArrayList<LatLng> dataSet) {
             this.mDataset = dataSet;
         }
-
         public ArrayList<LatLng> getData() {
             return mDataset;
         }
