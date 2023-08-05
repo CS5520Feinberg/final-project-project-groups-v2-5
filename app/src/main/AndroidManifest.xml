@@ -39,7 +39,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".LobbyActivity" />
+        <activity android:name=".PostActivity" />
         <activity android:name=".SelfUserPageFragment" />
         <activity android:name=".OtherUserPageActivity" />
         <activity android:name=".UserSearchFragment" />

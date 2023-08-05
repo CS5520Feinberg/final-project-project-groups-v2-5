@@ -1,6 +1,7 @@
 package edu.northeastern.rhythmlounge;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -19,6 +20,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -34,6 +36,9 @@ public class HomeActivity extends AppCompatActivity {
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
+
+        FloatingActionButton fab = findViewById(R.id.fab_create_post);
+        fab.setOnClickListener(v -> openPostCreationModal());
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int currentItem = viewPager.getCurrentItem();
@@ -133,4 +138,12 @@ public class HomeActivity extends AppCompatActivity {
             return NUM_PAGES;
         }
     }
+
+    private void openPostCreationModal() {
+        Intent intent = new Intent(this, PostActivity.class);
+        startActivity(intent);
+        // You can also add transitions here if you want
+    }
+
+
 }
