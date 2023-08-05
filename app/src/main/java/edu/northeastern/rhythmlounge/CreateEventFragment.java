@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -116,9 +117,24 @@ public class CreateEventFragment extends Fragment {
 
         buttonUploadImage.setOnClickListener(v -> pickImageFromGallery());
 
-        // Find and assign button for creating event
         Button buttonCreateEvent = rootView.findViewById(R.id.buttonCreateEvent);
         buttonCreateEvent.setOnClickListener(v -> saveEvent());
+
+        ToggleButton toggleButtonConcert = rootView.findViewById(R.id.toggleButtonConcert);
+        ToggleButton toggleButtonEvent = rootView.findViewById(R.id.toggleButtonEvent);
+
+        toggleButtonConcert.setOnClickListener(v -> {
+            if (toggleButtonConcert.isChecked()) {
+                toggleButtonEvent.setChecked(false);
+            }
+        });
+
+        // Set OnClickListener for Event button
+        toggleButtonEvent.setOnClickListener(v -> {
+            if (toggleButtonEvent.isChecked()) {
+                toggleButtonConcert.setChecked(false);
+            }
+        });
 
         return rootView;
     }
