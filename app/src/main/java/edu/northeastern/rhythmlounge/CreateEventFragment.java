@@ -25,13 +25,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -41,14 +42,18 @@ public class CreateEventFragment extends Fragment {
     private ActivityResultLauncher<Intent> imagePickerLauncher;
 
     private EditText editTextEventName, editTextCity, editTextState, editTextDescription, editTextDate, editTextTime;
-    private DatabaseReference eventsRef;
+
+    private FirebaseFirestore db;
+
+    private CollectionReference eventsRef;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_create_event, container, false);
 
-        eventsRef = FirebaseDatabase.getInstance().getReference().child("events");
+        db = FirebaseFirestore.getInstance();
+        eventsRef = db.collection("events");
 
         editTextEventName = rootView.findViewById(R.id.editTextEventName);
         editTextCity = rootView.findViewById(R.id.editTextCity);
@@ -155,9 +160,6 @@ public class CreateEventFragment extends Fragment {
             return;
         }
 
-        DatabaseReference newEventRef = eventsRef.push();
-        String eventId = newEventRef.getKey();
-
         HashMap<String, Object> eventMap = new HashMap<>();
         eventMap.put("eventName", eventName);
         eventMap.put("location", location);
@@ -166,11 +168,16 @@ public class CreateEventFragment extends Fragment {
         eventMap.put("time", time);
 
 
-        newEventRef.setValue(eventMap)
-                .addOnSuccessListener(aVoid -> {
+        Map<String, Object> event = new HashMap<>();
+        event.put("eventName", eventName);
+        event.put("location", location);
+        event.put("description", description);
+        event.put("date", date);
+        event.put("time", time);
 
+        eventsRef.add(event)
+                .addOnSuccessListener(documentReference -> {
                     Toast.makeText(requireContext(), "Event created successfully!", Toast.LENGTH_SHORT).show();
-
                     editTextEventName.setText("");
                     editTextCity.setText("");
                     editTextState.setText("");
