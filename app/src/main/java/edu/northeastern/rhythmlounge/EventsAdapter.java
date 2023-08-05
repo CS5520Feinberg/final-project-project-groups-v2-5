@@ -56,6 +56,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         holder.textViewDate.setText(event.getDate());
         holder.textViewTime.setText(event.getTime());
 
+
         String imageURL = event.getImageURL();
             // Load the image from URL with glide.
             if (imageURL != null && !imageURL.isEmpty()) {
@@ -97,6 +98,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
             super(itemView);
             // Initialize all the view elements
             textViewEventName = itemView.findViewById(R.id.textViewEventName);
+
             textViewLocation = itemView.findViewById(R.id.textViewLocation);
             textViewVenue = itemView.findViewById(R.id.textViewVenue);
             textViewDate = itemView.findViewById(R.id.textViewDate);

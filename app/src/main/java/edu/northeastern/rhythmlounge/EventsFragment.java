@@ -34,7 +34,14 @@ public class EventsFragment extends Fragment {
         eventList = new ArrayList<>();
         eventsAdapter = new EventsAdapter(eventList);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+
+
+        int spaceBetweenItemsInDp = 4;
+        int spaceBetweenItemsInPixels = (int) (spaceBetweenItemsInDp * getResources().getDisplayMetrics().density);
+        recyclerView.addItemDecoration(new RecyclerViewEventSpace(spaceBetweenItemsInPixels));
+
         recyclerView.setAdapter(eventsAdapter);
 
         db = FirebaseFirestore.getInstance();
@@ -42,8 +49,10 @@ public class EventsFragment extends Fragment {
 
         fetchEvents();
 
+
         return rootView;
     }
+
 
     private void fetchEvents() {
         eventsRef.get()
