@@ -15,10 +15,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -29,7 +30,9 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.ktx.Firebase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -53,8 +56,11 @@ public class CreateEventFragment extends Fragment {
 
     private Uri selectedImageUri;
 
+    private Switch switchIsConcert;
+
     private EditText editTextEventName, editTextCity, editTextState, editTextVenue, editTextDescription, editTextDate, editTextTime, editTextOutsideLink;
 
+    private CollectionReference userRef;
     private CollectionReference eventsRef;
 
     private StorageReference storageReference;
@@ -70,7 +76,6 @@ public class CreateEventFragment extends Fragment {
      * @param savedInstanceState If non-null, this fragment is being re-constructed
      * from a previous saved state as given here.
      *
-     * @return
      */
     @Nullable
     @Override
@@ -80,6 +85,7 @@ public class CreateEventFragment extends Fragment {
         // Initializes the Firebase FireStore Database and get a reference to the events collection
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         eventsRef = db.collection("events");
+        userRef = db.collection("users");
 
         // Initializes the Firebase Storage and gets a reference to event_pics in storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -87,6 +93,7 @@ public class CreateEventFragment extends Fragment {
 
         // Assign all the EditText Views.
         editTextEventName = rootView.findViewById(R.id.editTextEventName);
+        switchIsConcert = rootView.findViewById(R.id.switchIsConcert);
         editTextCity = rootView.findViewById(R.id.editTextCity);
         editTextState = rootView.findViewById(R.id.editTextState);
         editTextVenue = rootView.findViewById(R.id.editTextVenue);
@@ -117,31 +124,15 @@ public class CreateEventFragment extends Fragment {
 
         buttonUploadImage.setOnClickListener(v -> pickImageFromGallery());
 
+        // Find and assign button for creating event
         Button buttonCreateEvent = rootView.findViewById(R.id.buttonCreateEvent);
         buttonCreateEvent.setOnClickListener(v -> saveEvent());
-
-        ToggleButton toggleButtonConcert = rootView.findViewById(R.id.toggleButtonConcert);
-        ToggleButton toggleButtonEvent = rootView.findViewById(R.id.toggleButtonEvent);
-
-        toggleButtonConcert.setOnClickListener(v -> {
-            if (toggleButtonConcert.isChecked()) {
-                toggleButtonEvent.setChecked(false);
-            }
-        });
-
-        // Set OnClickListener for Event button
-        toggleButtonEvent.setOnClickListener(v -> {
-            if (toggleButtonEvent.isChecked()) {
-                toggleButtonConcert.setChecked(false);
-            }
-        });
 
         return rootView;
     }
 
-    /**
-     * Helper method to pick an image from gallery
-     */
+
+
     private void pickImageFromGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         imagePickerLauncher.launch(intent);
@@ -159,24 +150,46 @@ public class CreateEventFragment extends Fragment {
                 .addOnFailureListener(e -> Log.w(TAG, "Error updating image URL", e));
     }
 
+
+
     /**
      * Upload the selected image to Firebase storage.
      * @param documentId The id of the event document.
      */
     private void uploadImage(String documentId) {
-        if (selectedImageUri != null) {
-            final StorageReference imageRef = storageReference.child(documentId + ".jpg");
-            imageRef.putFile(selectedImageUri)
-                    .addOnSuccessListener(taskSnapshot -> imageRef.getDownloadUrl()
-                            .addOnSuccessListener(uri -> {
-                                String imageUrl = uri.toString();
-                                updateEventWithImageUrl(documentId, imageUrl);
-                                Log.d(TAG, "Event image uploaded succesfully.");
-                            })
-                            .addOnFailureListener(e -> Log.d(TAG, "Failed to get image URL.")))
-                    .addOnFailureListener(e -> Log.d(TAG, "Failed to upload image."));
-        }
+
+         Log.d(TAG, "Inside uploadImage()");
+         if (selectedImageUri != null) {
+             final StorageReference imageRef = storageReference.child(documentId + ".jpg");
+
+             // Upload file to Firebase Storage
+             imageRef.putFile(selectedImageUri)
+                     .addOnSuccessListener(taskSnapshot -> imageRef.getDownloadUrl()
+                             .addOnSuccessListener(uri -> {
+                                 String imageUrl = uri.toString();
+                                 updateEventWithImageUrl(documentId, imageUrl);
+                                 Log.d(TAG, "Event image uploaded successfully: " + imageUrl);
+                             })
+                             .addOnFailureListener(e -> {
+                                 Log.d(TAG, "Failed to get image URL: ", e);
+                                 e.printStackTrace();
+                             }))
+                     .addOnFailureListener(e -> {
+                         Log.d(TAG, "Failed to upload image: ", e);
+                         e.printStackTrace();
+                     })
+                     .addOnProgressListener(snapshot -> {
+                         double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
+                         Log.d(TAG, "Upload is " + progress + "% done");
+                     })
+                     .addOnPausedListener(snapshot -> {
+                         Log.d(TAG, "Upload is paused");
+                     });
+         } else {
+             Log.d(TAG, "SelectedImageUri is null.");
+         }
     }
+
 
     /**
      * Display date picker dialog
@@ -249,6 +262,7 @@ public class CreateEventFragment extends Fragment {
     private void saveEvent() {
 
         String eventName = editTextEventName.getText().toString().trim();
+        boolean isConcert = switchIsConcert.isChecked();
         String location = editTextCity.getText().toString().trim() + ", " + editTextState.getText().toString().trim();
         String venue = editTextVenue.getText().toString().trim();
         String description = editTextDescription.getText().toString().trim();
@@ -266,6 +280,7 @@ public class CreateEventFragment extends Fragment {
         // Assemble the event
         Map<String, Object> event = new HashMap<>();
         event.put("eventName", eventName);
+        event.put("isConcert", isConcert);
         event.put("location", location);
         event.put("venue", venue);
         event.put("description", description);
@@ -281,6 +296,12 @@ public class CreateEventFragment extends Fragment {
                     Toast.makeText(requireContext(), "Event created successfully!", Toast.LENGTH_SHORT).show();
                     clearFields();
                     uploadImage(documentReference.getId());
+
+                    String newEventId = documentReference.getId();
+                    userRef.document(eventCreator)
+                            .update("hosting", FieldValue.arrayUnion(newEventId))
+                            .addOnSuccessListener(void1 -> Log.d(TAG, "Event added to hosting array successfully"))
+                            .addOnFailureListener(e -> Log.e(TAG, "Error adding event to hosting array", e));
                 })
                 .addOnFailureListener(e -> Toast.makeText(requireContext(), "Failed to create event.", Toast.LENGTH_SHORT).show());
     }
@@ -317,6 +338,7 @@ public class CreateEventFragment extends Fragment {
      * */
     private void clearFields() {
         editTextEventName.setText("");
+        switchIsConcert.setChecked(false);
         editTextCity.setText("");
         editTextState.setText("");
         editTextVenue.setText("");
@@ -325,7 +347,6 @@ public class CreateEventFragment extends Fragment {
         editTextDate.setText("");
         editTextTime.setText("");
         imageViewUploadedImage.setImageResource(R.drawable.concert);
-        selectedImageUri = null;
     }
 
 }

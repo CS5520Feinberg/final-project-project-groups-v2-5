@@ -17,7 +17,13 @@ import java.util.List;
  * EventsAdapter is an Adapter used to populate a RecyclerView with Event items in the Events Fragment.
  */
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewHolder> {
-    private List<Event> eventList;
+    private final List<Event> eventList;
+
+    public interface OnItemClickListener {
+        void onItemClick(Event event);
+    }
+
+    private OnItemClickListener onItemClickListener;
 
     /**
      * Constructor for the EventsAdapter.
@@ -25,6 +31,10 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
      */
     public EventsAdapter(List<Event> eventList) {
         this.eventList = eventList;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
     }
 
     /**
@@ -38,6 +48,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_event, parent, false);
         return new EventViewHolder(itemView);
+
+
     }
 
     /**
@@ -48,26 +60,30 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         Event event = eventList.get(position);
-
-        // update the view holder with essential event details
         holder.textViewEventName.setText(event.getEventName());
         holder.textViewLocation.setText(event.getLocation());
         holder.textViewVenue.setText(event.getVenue());
         holder.textViewDate.setText(event.getDate());
         holder.textViewTime.setText(event.getTime());
 
-
         String imageURL = event.getImageURL();
-            // Load the image from URL with glide.
-            if (imageURL != null && !imageURL.isEmpty()) {
-                Glide.with(holder.imageViewEvent.getContext())
+        // Load the image from URL with Glide.
+        if (imageURL != null && !imageURL.isEmpty()) {
+            Glide.with(holder.imageViewEvent.getContext())
                     .load(imageURL)
                     .placeholder(R.drawable.concert)
                     .into(holder.imageViewEvent);
-            } else {
-                // Set default event image when imageUrl is empty.
-                holder.imageViewEvent.setImageResource(R.drawable.concert);
+        } else {
+            // Set default event image when imageUrl is empty.
+            holder.imageViewEvent.setImageResource(R.drawable.concert);
+        }
+
+        // Set click listener for the image view
+        holder.imageViewEvent.setOnClickListener(v -> {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(event);
             }
+        });
     }
 
     /**
@@ -96,9 +112,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
          */
         EventViewHolder(View itemView) {
             super(itemView);
-            // Initialize all the view elements
             textViewEventName = itemView.findViewById(R.id.textViewEventName);
-
             textViewLocation = itemView.findViewById(R.id.textViewLocation);
             textViewVenue = itemView.findViewById(R.id.textViewVenue);
             textViewDate = itemView.findViewById(R.id.textViewDate);

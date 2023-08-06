@@ -20,6 +20,8 @@ public class User {
 
     private String profilePictureUrl;
 
+    private List<String> hosting;
+
     public User() {
     }
 
@@ -33,7 +35,6 @@ public class User {
         this.email = email;
         this.followers = new ArrayList<>();
         this.following = new ArrayList<>();
-
     }
 
     public String getUsername() {
@@ -74,6 +75,10 @@ public class User {
     public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
     }
+
+    public List<String> getHosting() { return hosting; }
+
+    public void setHosting(List<String> hosting) { this.hosting = hosting; }
 
     /**
      * Method that allows a User A to add User B to their following list.

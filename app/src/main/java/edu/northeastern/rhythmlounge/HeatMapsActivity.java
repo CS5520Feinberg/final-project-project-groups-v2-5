@@ -279,7 +279,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
     /**
      * Method to get current Device Location
-     */
+    */
     private void getDeviceLocation() {
         Log.d(TAG, "getDeviceLocation: Getting the Device's Current Location");
         ArrayList<LatLng> currentLatLon = new ArrayList<>();
@@ -307,6 +307,32 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
             Log.e(TAG, "getDeviceLocation: SecurityException" + e.getMessage());
         }
     }
+
+    /**
+    private void getDeviceLocation() {
+        Log.d(TAG, "getDeviceLocation: Getting the Device's Current Location");
+        ArrayList<LatLng> currentLatLon = new ArrayList<>();
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        try {
+            if (mLocationPermissionGranted) {
+                Task<Location> locationTask = mFusedLocationProviderClient.getLastLocation();
+                locationTask.addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        Log.d(TAG, "onComplete: Found Location");
+                        Location currentLocation = task.getResult();
+                        currentLatLon.add(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
+                        moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, "My Location");
+                        mLists.put(getString(R.string.mycurrentlocation), new DataSet(currentLatLon));
+                    } else {
+                        Log.d(TAG, "onComplete: Unable to get Current Location");
+                    }
+                });
+            }
+        } catch (SecurityException e) {
+            Log.e(TAG, "getDeviceLocation: SecurityException" + e.getMessage());
+        }
+    }
+    */
 
     private void getLastKnownLocation() {
         Log.d(TAG, "getLastKnownLocation: called ");
