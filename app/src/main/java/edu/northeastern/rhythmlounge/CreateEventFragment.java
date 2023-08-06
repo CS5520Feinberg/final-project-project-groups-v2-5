@@ -70,7 +70,6 @@ public class CreateEventFragment extends Fragment {
      * @param savedInstanceState If non-null, this fragment is being re-constructed
      * from a previous saved state as given here.
      *
-     * @return
      */
     @Nullable
     @Override
@@ -171,7 +170,7 @@ public class CreateEventFragment extends Fragment {
                             .addOnSuccessListener(uri -> {
                                 String imageUrl = uri.toString();
                                 updateEventWithImageUrl(documentId, imageUrl);
-                                Log.d(TAG, "Event image uploaded succesfully.");
+                                Log.d(TAG, "Event image uploaded successfully.");
                             })
                             .addOnFailureListener(e -> Log.d(TAG, "Failed to get image URL.")))
                     .addOnFailureListener(e -> Log.d(TAG, "Failed to upload image."));

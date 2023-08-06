@@ -17,7 +17,7 @@ import java.util.List;
  * EventsAdapter is an Adapter used to populate a RecyclerView with Event items in the Events Fragment.
  */
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewHolder> {
-    private List<Event> eventList;
+    private final List<Event> eventList;
 
     /**
      * Constructor for the EventsAdapter.
