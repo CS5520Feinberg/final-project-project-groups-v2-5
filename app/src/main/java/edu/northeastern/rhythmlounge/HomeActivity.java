@@ -81,12 +81,7 @@ public class HomeActivity extends AppCompatActivity {
         textViewRhythmLounge.setText(spannableString);
 
         ImageView imageViewSettings = findViewById(R.id.imageViewSettings);
-        imageViewSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openFragment(new SettingsFragment());
-            }
-        });
+        imageViewSettings.setOnClickListener(v -> openActivity(SettingsActivity.class));
 
         ImageView imageViewNotification = findViewById(R.id.imageViewNotification);
         imageViewNotification.setOnClickListener(new View.OnClickListener() {
@@ -104,6 +99,11 @@ public class HomeActivity extends AppCompatActivity {
                 .replace(R.id.fragmentContainer, fragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    private void openActivity(Class<?> activityClass) {
+        Intent intent = new Intent(this, activityClass);
+        startActivity(intent);
     }
 
 
@@ -142,7 +142,6 @@ public class HomeActivity extends AppCompatActivity {
     private void openPostCreationModal() {
         Intent intent = new Intent(this, PostActivity.class);
         startActivity(intent);
-        // You can also add transitions here if you want
     }
 
 

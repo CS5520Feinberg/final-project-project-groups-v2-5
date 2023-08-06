@@ -1,6 +1,7 @@
 package edu.northeastern.rhythmlounge;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -9,11 +10,17 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +36,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
@@ -42,7 +51,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentId;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
@@ -53,8 +70,10 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -70,6 +89,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     private static final String COARSE_LOCATION = android.Manifest.permission.ACCESS_COARSE_LOCATION;
     private static final int ERROR_DIALOGUE_REQ = 9001;
     private static final int LOCATION_PERMISSION_REQ_CODE = 1234;
+    private static final int PERMISSIONS_REQUEST_ENABLE_GPS = 9002;
     private static final float DEFAULT_ZOOM = 15;
     private Boolean mLocationPermissionGranted = false;
     private GoogleMap mMap;
@@ -77,6 +97,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
     //Widgets
     private EditText mSearchText;
+    private FirebaseAuth mAuth;
     private ImageView mGps;
 
     private static final int ALT_HEATMAP_RADIUS = 10;
@@ -119,6 +140,11 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
      */
     private final HashMap<String, HeatMapsActivity.DataSet> mLists = new HashMap<>();
 
+    private FirebaseFirestore mDb;
+    private UserLocation mUserLocation;
+
+    private CollectionReference userLocationRef;
+
     //-------------------------------------------- Map Initialization -----------------------------------------------------
 
     @Override
@@ -152,6 +178,14 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
         mSearchText = findViewById(R.id.search_input3);
         mGps = findViewById(R.id.ic_gps_icon);
+
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        mDb = FirebaseFirestore.getInstance();
+        userLocationRef = mDb.collection("user_locations");
+
 
         getLocationPermission();
         initMap();
@@ -245,75 +279,83 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
     /**
      * Method to get current Device Location
-     */
+    */
+//    private void getDeviceLocation() {
+//        Log.d(TAG, "getDeviceLocation: Getting the Device's Current Location");
+//        ArrayList<LatLng> currentLatLon = new ArrayList<>();
+//        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+//        try {
+//            if (mLocationPermissionGranted) {
+//                Task location = mFusedLocationProviderClient.getLastLocation();
+//                location.addOnCompleteListener(task -> {
+//                    if (task.isSuccessful()) {
+//                        Log.d(TAG, "onComplete: Found Location");
+//                        Location currentLocation = (Location) task.getResult();
+//                        currentLatLon.add(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
+//                        moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, "My Location");
+//                        mLists.put(getString(R.string.mycurrentlocation), new DataSet(currentLatLon));
+//
+//
+//                        //new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()) );
+//                    } else {
+//                        Log.d(TAG, "onComplete: Unable to get Current Location");
+//                    }
+//                });
+//            }
+//
+//        } catch (SecurityException e) {
+//            Log.e(TAG, "getDeviceLocation: SecurityException" + e.getMessage());
+//        }
+//    }
+
+
     private void getDeviceLocation() {
         Log.d(TAG, "getDeviceLocation: Getting the Device's Current Location");
         ArrayList<LatLng> currentLatLon = new ArrayList<>();
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         try {
             if (mLocationPermissionGranted) {
-                Task location = mFusedLocationProviderClient.getLastLocation();
-                location.addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
+                Task<Location> locationTask = mFusedLocationProviderClient.getLastLocation();
+                locationTask.addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
                         Log.d(TAG, "onComplete: Found Location");
-                        Location currentLocation = (Location) task.getResult();
+                        Location currentLocation = task.getResult();
                         currentLatLon.add(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
                         moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, "My Location");
                         mLists.put(getString(R.string.mycurrentlocation), new DataSet(currentLatLon));
-
-
-                        //new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()) );
                     } else {
                         Log.d(TAG, "onComplete: Unable to get Current Location");
                     }
                 });
             }
-
         } catch (SecurityException e) {
             Log.e(TAG, "getDeviceLocation: SecurityException" + e.getMessage());
         }
     }
 
-    /**
-     * Method to get Location Permission from the user
-     */
-    private void getLocationPermission() {
-        Log.d(TAG, "getLocationPermission: Get Location Permissions");
-        String[] permissions = {
-                android.Manifest.permission.ACCESS_FINE_LOCATION,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION};
 
-        if (ContextCompat.checkSelfPermission
-                (this.getApplicationContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            if (ContextCompat.checkSelfPermission
-                    (this.getApplicationContext(), COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                mLocationPermissionGranted = true;
-                initMap();
-                Log.d("IsRefresh", "Yes");
-            } else {
-                ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQ_CODE);
-            }
-        } else {
-            ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQ_CODE);
+    private void getLastKnownLocation() {
+        Log.d(TAG, "getLastKnownLocation: called ");
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
         }
-    }
+        mFusedLocationProviderClient.getLastLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+                if(task.isSuccessful()){
+                    Location location = task.getResult();
+                    GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+                    Log.d(TAG, "onComplete: Latitude: " +geoPoint.getLatitude());
+                    Log.d(TAG, "onComplete: Longitude: " +geoPoint.getLongitude());
 
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == 44) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //permissionGranted = true;
-                if (ContextCompat.checkSelfPermission(HeatMapsActivity.this,
-                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
-                    initMap();
+                    mUserLocation.setGeoPoint(geoPoint);
+                    mUserLocation.setTimeStamp(null);
+                    saveUserLocation();
                 }
-            } else {
-                //permissionGranted = false;
-                Toast.makeText(this, "Location permission not granted. Please try again.", Toast.LENGTH_SHORT).show();
-                finish();
             }
-        }
+        });
     }
 
     private void hideSoftKeyboard() {
@@ -466,6 +508,179 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         return mMap;
     }
 
+    //-------------------------------------------- Google Services, Location and GPS Permissions -----------------------------------------------------
+
+    private boolean checkMapServices(){
+        if(isServicesOK()){
+            return isMapsEnabled();
+        }
+        return false;
+    }
+    public boolean isServicesOK(){
+        Log.d(TAG, "isServicesOK: checking google services version");
+
+        int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(HeatMapsActivity.this);
+
+        if(available == ConnectionResult.SUCCESS){
+            //everything is fine and the user can make map requests
+            Log.d(TAG, "isServicesOK: Google Play Services is working");
+            return true;
+        }
+        else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)){
+            //an error occured but we can resolve it
+            Log.d(TAG, "isServicesOK: an error occured but we can fix it");
+            Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(HeatMapsActivity.this, available, ERROR_DIALOGUE_REQ);
+            dialog.show();
+        }else{
+            Toast.makeText(this, "You can't make map requests", Toast.LENGTH_SHORT).show();
+        }
+        return false;
+    }
+
+    public boolean isMapsEnabled(){
+        final LocationManager manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+
+        if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+            buildAlertMessageNoGps();
+            return false;
+        }
+        return true;
+    }
+
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("This application requires GPS to work properly, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        Intent enableGpsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivityForResult(enableGpsIntent, PERMISSIONS_REQUEST_ENABLE_GPS);
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult: called.");
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_ENABLE_GPS: {
+                if(mLocationPermissionGranted){
+                    getDeviceLocation();
+                    //getLastKnownLocation();
+                    getUserDetails();
+                }
+                else{
+                    getLocationPermission();
+                }
+            }
+        }
+    }
+
+    /**
+     * Method to get Location Permission from the user
+     */
+    private void getLocationPermission() {
+        Log.d(TAG, "getLocationPermission: Get Location Permissions");
+        String[] permissions = {
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION};
+
+        if (ContextCompat.checkSelfPermission
+                (this.getApplicationContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission
+                    (this.getApplicationContext(), COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                mLocationPermissionGranted = true;
+                initMap();
+                //getLastKnownLocation();;
+                getUserDetails();
+                Log.d("IsRefresh", "Yes");
+            } else {
+                ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQ_CODE);
+            }
+        } else {
+            ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQ_CODE);
+        }
+    }
+
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 44) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //permissionGranted = true;
+                if (ContextCompat.checkSelfPermission(HeatMapsActivity.this,
+                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
+                    initMap();
+                    mLocationPermissionGranted = true;
+                }
+            } else {
+                //permissionGranted = false;
+                Toast.makeText(this, "Location permission not granted. Please try again.", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+    }
+
+
+
+    //-------------------------------------------- User Details and FireStore -----------------------------------------------------
+
+    private void getUserDetails(){
+        if(mUserLocation==null){
+            mUserLocation = new UserLocation();
+//            DocumentReference userRef = mDb.collection(getString(R.string.collection_users))
+//                    .document(FirebaseAuth.getInstance().getUid());
+            String currentUserId = getIntent().getStringExtra("USER_ID");
+
+            mDb.collection("users").document(currentUserId)
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful()){
+                                Log.d(TAG, "onComplete: Got the user details successfully." + currentUserId);
+                                User user = task.getResult().toObject(User.class);
+                                mUserLocation.setUser(user);
+                                getLastKnownLocation();
+                            }
+                        }
+                    });
+        }
+    }
+    private String getCurrentUserId() {
+        return Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
+    }
+    private void saveUserLocation(){
+        String currentUserId = getCurrentUserId();
+        Log.d(TAG, "saveUserLocation:currentUserId " + currentUserId);
+
+        if(mUserLocation != null){
+            Log.d(TAG, "saveUserLocation: Entering save method " );
+            userLocationRef.document(currentUserId).set(mUserLocation).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    Log.d(TAG, "onComplete: AM I HERE?");
+                    if(task.isSuccessful()){
+                        Log.d(TAG, "saveUserLocation: Inserted user location to DB:  "+
+                                "\n latitude:" + mUserLocation.getGeoPoint().getLatitude() +
+                                "\n longitude:" + mUserLocation.getGeoPoint().getLongitude());
+                    }
+                }
+            })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                                Log.d(TAG, "saveUserLocation: FAILED"+e);
+                            }
+                        }
+                    );
+        }
+    }
+
     protected void onPause() {
         Log.v(TAG, "onPause()");
         super.onPause();
@@ -483,6 +698,16 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     protected void onResume() {
         Log.v(TAG, "onResume()");
         super.onResume();
+        if(checkMapServices()){
+            if(mLocationPermissionGranted){
+                initMap();
+                init();
+                getUserDetails();
+            }
+            else {
+                getLocationPermission();
+            }
+        }
     }
 
     @Override

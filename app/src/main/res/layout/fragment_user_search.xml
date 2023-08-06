@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -10,14 +11,18 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        tools:ignore="UselessParent">
 
         <EditText
             android:id="@+id/userSearchEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Search for users"
-            android:minHeight="48dp" />
+            android:hint="@string/search_for_users"
+            android:importantForAutofill="no"
+            android:minHeight="48dp"
+            android:textColorHint="#8D6E63"
+            tools:ignore="TextFields,VisualLintTextFieldSize" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/userSuggestionsRecyclerView"

@@ -28,6 +28,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 9001; // Request code for Google sign in
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
 
     @Override
@@ -43,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -78,6 +84,8 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    checkAndUpdateEmail(user);
                                     // Sign in success, navigate to the lobby
                                     Toast.makeText(MainActivity.this, "Authentication successful.", Toast.LENGTH_SHORT).show();
                                     startActivity(new Intent(MainActivity.this, HomeActivity.class));
@@ -147,9 +155,10 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            checkAndUpdateEmail(user);
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithCredential:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
                             startActivity(new Intent(MainActivity.this, HomeActivity.class));
                         } else {
                             // If sign in fails, display a message to the user.
@@ -197,4 +206,17 @@ public class MainActivity extends AppCompatActivity {
                     });
         }
     }
+
+    private void checkAndUpdateEmail(FirebaseUser user) {
+        String authEmail = user.getEmail();
+        db.collection("users").document(user.getUid()).get().addOnSuccessListener(documentSnapshot -> {
+            Map<String, Object> currentUser = documentSnapshot.getData();
+            if (currentUser != null && currentUser.containsKey("email") && !currentUser.get("email").equals(authEmail)) {
+                documentSnapshot.getReference().update("email", authEmail)
+                        .addOnSuccessListener(aVoid -> Log.d("MainActivity", "Email updated in Firestore"))
+                        .addOnFailureListener(e -> Log.e("MainActivity", "Failed to update email in Firestore: " + e.getMessage()));
+            }
+        });
+    }
+
 }

@@ -9,7 +9,7 @@
         android:id="@+id/followingTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Following"
+        android:text="@string/following"
         android:textSize="18sp"
         android:textStyle="bold"
         android:paddingBottom="8dp" />

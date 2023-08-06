@@ -3,26 +3,26 @@
     <item
         android:id="@+id/home"
         android:icon="@drawable/home"
-        android:title="Home" />
+        android:title="@string/home" />
     <item
         android:id="@+id/search"
         android:icon="@drawable/search"
-        android:title="Search" />
+        android:title="@string/search" />
 
     <item
         android:id="@+id/create_event"
         android:icon="@drawable/create_event"
-        android:title="Create Event" />
+        android:title="@string/create_event" />
 
     <item
         android:id="@+id/events"
         android:icon="@drawable/calendar"
-        android:title="Events" />
+        android:title="@string/events" />
 
     <item
         android:id="@+id/profile"
         android:icon="@drawable/profile"
-        android:title="Profile" />
+        android:title="@string/profile" />
 
 </menu>
 

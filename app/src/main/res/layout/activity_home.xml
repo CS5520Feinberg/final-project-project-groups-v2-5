@@ -11,7 +11,7 @@
         android:id="@+id/textViewRhythmLounge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rhythm Lounge"
+        android:text="@string/rhythm_lounge"
         android:textSize="16sp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
@@ -25,7 +25,8 @@
         android:padding="4dp"
         android:src="@drawable/gear"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:importantForAccessibility="no" />
 
     <ImageView
         android:id="@+id/imageViewNotification"
@@ -36,7 +37,8 @@
         android:padding="4dp"
         android:src="@drawable/notifications"
         app:layout_constraintEnd_toStartOf="@+id/imageViewSettings"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/fragmentContainer"
@@ -70,5 +72,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/fragmentContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/fragmentContainer" />
+        app:menu="@menu/bottom_navigation_menu"
+        app:labelVisibilityMode="labeled"
+        tools:ignore="VisualLintBottomNav" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
