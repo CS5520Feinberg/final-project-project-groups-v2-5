@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<FrameLayout xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,7 +9,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        tools:ignore="UselessParent">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/edit_profile_pic"
@@ -26,9 +27,12 @@
             android:id="@+id/editTextUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Edit Username"
             android:layout_marginTop="16dp"
-            android:layout_toEndOf="@+id/edit_profile_pic" />
+            android:layout_toEndOf="@+id/edit_profile_pic"
+            android:hint="@string/edit_username"
+            android:minHeight="48dp"
+            android:importantForAutofill="no"
+            tools:ignore="TextFields,VisualLintTextFieldSize" />
 
         <EditText
             android:id="@+id/editTextEmail"
@@ -36,7 +40,10 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/editTextUsername"
             android:layout_toEndOf="@+id/edit_profile_pic"
-            android:hint="Edit Email" />
+            android:hint="@string/edit_email"
+            android:minHeight="48dp"
+            android:importantForAutofill="no"
+            tools:ignore="TextFields,VisualLintTextFieldSize" />
 
         <Button
             android:id="@+id/buttonSaveChanges"
@@ -45,17 +52,19 @@
             android:layout_below="@+id/edit_profile_pic"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp"
-            android:text="Save Changes" />
+            android:text="@string/save_changes"
+            android:textColor="#3E2723" />
 
         <Button
             android:id="@+id/buttonEdit"
             android:layout_width="78dp"
-            android:layout_height="40dp"
+            android:layout_height="48dp"
             android:layout_below="@+id/edit_profile_pic"
+            android:layout_marginStart="15dp"
             android:layout_marginTop="17dp"
-            android:layout_marginLeft="15dp"
             android:onClick="onEditClicked"
-            android:text="Edit" />
+            android:text="@string/edit"
+            android:textColor="#3E2723" />
     </RelativeLayout>
 </FrameLayout>
 

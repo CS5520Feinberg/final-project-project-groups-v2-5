@@ -47,6 +47,8 @@
         <activity android:name=".EventsFragment" />
         <activity android:name=".NotificationsFragment" />
         <activity android:name=".EditProfileFragment" />
+        <activity android:name=".EventDetailsFragment" />
+
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

@@ -9,7 +9,7 @@
         android:id="@+id/userProfileImage"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:contentDescription="User profile image"
+        android:contentDescription="@string/user_profile_image"
         android:scaleType="centerCrop" />
 
     <TextView
