@@ -26,35 +26,35 @@
         android:id="@+id/textViewLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
+        android:textSize="8dp"
         android:layout_marginTop="4dp" />
 
     <TextView
         android:id="@+id/textViewVenue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
+        android:textSize="8dp"
         android:layout_marginTop="4dp" />
 
     <TextView
         android:id="@+id/textViewDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
+        android:textSize="8dp"
         android:layout_marginTop="4dp" />
 
     <TextView
         android:id="@+id/textViewTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
+        android:textSize="8dp"
         android:layout_marginTop="4dp" />
 
     <TextView
         android:id="@+id/textViewDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
+        android:textSize="8dp"
         android:layout_marginTop="8dp" />
 
 </LinearLayout>
