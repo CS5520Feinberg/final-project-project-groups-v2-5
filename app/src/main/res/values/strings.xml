@@ -11,6 +11,8 @@
     <string name="events">Events</string>
     <string name="friends">Friends</string>
     <string name="mycurrentlocation">My Location</string>
+    <string name="collection_user_locations">User Locations</string>
+    <string name="collection_users">users</string>
     <string-array name="heatmaps_datasets_array">
         <item>@string/mycurrentlocation</item>
         <item>@string/events</item>
