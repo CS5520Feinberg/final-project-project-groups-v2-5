@@ -12,7 +12,6 @@
         android:orientation="horizontal"
         android:padding="16dp">
 
-
         <TextView
             android:id="@+id/textViewCreateEvent"
             android:layout_width="wrap_content"
@@ -26,67 +25,35 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ToggleButton
-            android:id="@+id/toggleButtonConcert"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Concert"
-            android:textOff="Concert"
-            android:textOn="Concert"
-            android:textSize="14dp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/toggleButtonEvent"
-            app:layout_constraintHorizontal_bias="0.83"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewCreateEvent" />
-
-        <ToggleButton
-            android:id="@+id/toggleButtonEvent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="192dp"
-            android:layout_marginTop="12dp"
-            android:text="Event"
-            android:textOff="Event"
-            android:textOn="Event"
-            android:textSize="14dp"
-            android:textStyle="bold"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewCreateEvent" />
-
-
         <Button
             android:id="@+id/buttonUploadImage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="222dp"
-            android:layout_marginTop="136dp"
-            android:layout_marginEnd="37dp"
             android:onClick="onUploadImageClick"
             android:text="Upload Image"
+            app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/imageViewUploadedImage"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/imageViewUploadedImage"
+            app:layout_constraintVertical_bias="0.5" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imageViewUploadedImage"
             android:layout_width="167dp"
             android:layout_height="139dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="68dp"
+            android:layout_marginTop="12dp"
             android:src="@drawable/concert"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewCreateEvent" />
 
         <LinearLayout
+            android:id="@+id/linearLayout2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="72dp"
             android:gravity="start"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
@@ -111,6 +78,14 @@
                 android:hint="Enter Event Name"
                 android:inputType="text" />
 
+            <Switch
+                android:id="@+id/switchIsConcert"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textOn="Yes"
+                android:textOff="No"
+                android:text="Is this a concert?"
+                android:layout_marginTop="12dp" />
 
             <TextView
                 android:id="@+id/textViewEnterLocation"
@@ -124,16 +99,18 @@
                 android:textStyle="bold" />
 
             <EditText
+                android:id="@+id/editTextCity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="City" />
+
+            <EditText
                 android:id="@+id/editTextState"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="State" />
 
-            <EditText
-                android:id="@+id/editTextCity"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="City" />
+
 
             <TextView
                 android:id="@+id/textViewEnterVenue"

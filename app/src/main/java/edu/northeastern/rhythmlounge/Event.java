@@ -9,6 +9,8 @@ import java.util.List;
  */
 public class Event {
     private String eventName;
+
+    private boolean isConcert;
     private String location;
 
     private String venue;
@@ -33,6 +35,7 @@ public class Event {
      * Creates an event with specified details.
      *
      * @param eventName    The name of the event.
+     * @param isConcert    If the event is a concert.
      * @param location     The location of the event.
      * @param venue        The venue of the event.
      * @param description  A description of the event.
@@ -42,10 +45,11 @@ public class Event {
      * @param eventCreator The creator of the event.
      * @param outsideLink  An external link related to the event.
      */
-    public Event(String eventName, String location, String venue,
+    public Event(String eventName, boolean isConcert, String location, String venue,
                  String description, String date, String time,
                  String imageURL, String eventCreator, String outsideLink) {
         this.eventName = eventName;
+        this.isConcert = isConcert;
         this.location = location;
         this.venue = venue;
         this.description = description;
@@ -57,7 +61,7 @@ public class Event {
         this.outsideLink = outsideLink;
     }
 
-/**
+    /**
      * @return The name of the event.
      */
     public String getEventName() { return eventName; }
@@ -68,6 +72,16 @@ public class Event {
      * @param eventName The new name of the event.
      */
     public void setEventName(String eventName) { this.eventName = eventName;}
+
+    /**
+     * @return If the event is a concert
+     */
+    public boolean getIsConcert() { return isConcert; }
+
+    /**
+     * @return If the event is a concert
+     */
+    public void setIsConcert() { this.isConcert = isConcert; }
 
     /**
      * @return The location of the event.
