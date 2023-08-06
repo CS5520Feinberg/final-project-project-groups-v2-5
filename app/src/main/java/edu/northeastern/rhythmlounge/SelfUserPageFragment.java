@@ -22,6 +22,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -41,20 +42,14 @@ import java.util.Objects;
 public class SelfUserPageFragment extends Fragment {
 
     private static final String TAG = "SelfUserPageFragment";
-
     private static final int PERMISSION_REQUEST_CODE = 100;
     private static final int ERROR_DIALOGUE_REQ = 9001;
-
-
     private TextView textViewOwnUsername, textViewOwnEmail, textViewOwnFollowers, textViewOwnFollowing;
     private ImageView imageViewProfilePic, heatMap;
-
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private StorageReference storageReference;
-
     private ActivityResultLauncher<String> pickMedia;
-
     private Button buttonLogout;
 
     public SelfUserPageFragment() {
@@ -80,13 +75,50 @@ public class SelfUserPageFragment extends Fragment {
             }
         });
 
-        // Set click listener for "Following" TextView
+
         textViewOwnFollowing.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onFollowingClicked();
             }
         });
+
+        Button buttonEdit = view.findViewById(R.id.button_edit);
+        buttonEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                EditProfileFragment editProfileFragment = new EditProfileFragment();
+
+                Bundle args = new Bundle();
+                args.putString("username", textViewOwnUsername.getText().toString());
+                args.putString("email", textViewOwnEmail.getText().toString());
+                editProfileFragment.setArguments(args);
+
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                        .replace(R.id.fragment_container, editProfileFragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
+
+        UserViewModel userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
+        userViewModel.getUsernameLiveData().observe(getViewLifecycleOwner(), username -> {
+            if (username != null) {
+                textViewOwnUsername.setText(username);
+            }
+        });
+
+        userViewModel.getEmailLiveData().observe(getViewLifecycleOwner(), email -> {
+            if (email != null) {
+                textViewOwnEmail.setText(email);
+            }
+        });
+
+
+
+
 
         buttonLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -97,12 +129,10 @@ public class SelfUserPageFragment extends Fragment {
                         .build();
                 GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
 
-                // Google sign out
                 googleSignInClient.signOut().addOnCompleteListener(getActivity(),
                         new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                // Firebase sign out
                                 mAuth.signOut();
 
                                 Intent intent = new Intent(getActivity(), MainActivity.class);
@@ -136,6 +166,15 @@ public class SelfUserPageFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        String currentUserId = getCurrentUserId();
+        retrieveCurrentUser(currentUserId);
+    }
+
+
+
     private void openHeatMap() {
         Intent intent = new Intent(getActivity(), HeatMapsActivity.class);
         intent.putExtra("USER_ID", getCurrentUserId());
@@ -143,14 +182,13 @@ public class SelfUserPageFragment extends Fragment {
     }
 
     public void onFollowersClicked() {
-        // Implement the behavior when "Followers" is clicked
         Intent intent = new Intent(getActivity(), FollowersActivity.class);
         intent.putExtra("USER_ID", getCurrentUserId());
         startActivity(intent);
     }
 
     public void onFollowingClicked() {
-        // Implement the behavior when "Following" is clicked
+
         Intent intent = new Intent(getActivity(), FollowingActivity.class);
         intent.putExtra("USER_ID", getCurrentUserId());
         startActivity(intent);
@@ -164,7 +202,25 @@ public class SelfUserPageFragment extends Fragment {
         imageViewProfilePic = view.findViewById(R.id.profile_pic);
         buttonLogout = view.findViewById(R.id.button_logout);
         heatMap = view.findViewById(R.id.map_icon);
+
+
     }
+
+    private void openEditProfileFragment() {
+        EditProfileFragment editProfileFragment = new EditProfileFragment();
+
+        Bundle args = new Bundle();
+        args.putString("username", textViewOwnUsername.getText().toString());
+        args.putString("email", textViewOwnEmail.getText().toString());
+
+        editProfileFragment.setArguments(args);
+
+        requireActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, editProfileFragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
 
     private void initializeFirebaseElements() {
         mAuth = FirebaseAuth.getInstance();
@@ -201,10 +257,8 @@ public class SelfUserPageFragment extends Fragment {
         textViewOwnFollowing.setText("");
 
         if (currentUser.getProfilePictureUrl() != null && !currentUser.getProfilePictureUrl().isEmpty()) {
-            // Load the image from the URL if it exists
             Glide.with(this).load(currentUser.getProfilePictureUrl()).into(imageViewProfilePic);
         } else {
-            // Load a default image if the user has not set their profile picture
             Glide.with(this).load(R.drawable.defaultprofilepicture).into(imageViewProfilePic);
         }
     }

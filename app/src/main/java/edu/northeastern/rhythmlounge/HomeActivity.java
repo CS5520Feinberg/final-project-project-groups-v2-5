@@ -35,6 +35,8 @@ public class HomeActivity extends AppCompatActivity {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
 
+
+
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int currentItem = viewPager.getCurrentItem();
             if (item.getItemId() == R.id.home) {

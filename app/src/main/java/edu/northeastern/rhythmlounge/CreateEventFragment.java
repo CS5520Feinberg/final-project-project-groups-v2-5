@@ -73,7 +73,6 @@ public class CreateEventFragment extends Fragment {
      * @param savedInstanceState If non-null, this fragment is being re-constructed
      * from a previous saved state as given here.
      *
-     * @return
      */
     @Nullable
     @Override
@@ -154,6 +153,7 @@ public class CreateEventFragment extends Fragment {
      * @param documentId The id of the event document.
      */
     private void uploadImage(String documentId) {
+
          Log.d(TAG, "Inside uploadImage()");
          if (selectedImageUri != null) {
              final StorageReference imageRef = storageReference.child(documentId + ".jpg");
