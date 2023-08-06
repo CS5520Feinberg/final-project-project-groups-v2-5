@@ -280,35 +280,35 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     /**
      * Method to get current Device Location
     */
-    private void getDeviceLocation() {
-        Log.d(TAG, "getDeviceLocation: Getting the Device's Current Location");
-        ArrayList<LatLng> currentLatLon = new ArrayList<>();
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        try {
-            if (mLocationPermissionGranted) {
-                Task location = mFusedLocationProviderClient.getLastLocation();
-                location.addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        Log.d(TAG, "onComplete: Found Location");
-                        Location currentLocation = (Location) task.getResult();
-                        currentLatLon.add(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
-                        moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, "My Location");
-                        mLists.put(getString(R.string.mycurrentlocation), new DataSet(currentLatLon));
+//    private void getDeviceLocation() {
+//        Log.d(TAG, "getDeviceLocation: Getting the Device's Current Location");
+//        ArrayList<LatLng> currentLatLon = new ArrayList<>();
+//        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+//        try {
+//            if (mLocationPermissionGranted) {
+//                Task location = mFusedLocationProviderClient.getLastLocation();
+//                location.addOnCompleteListener(task -> {
+//                    if (task.isSuccessful()) {
+//                        Log.d(TAG, "onComplete: Found Location");
+//                        Location currentLocation = (Location) task.getResult();
+//                        currentLatLon.add(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
+//                        moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, "My Location");
+//                        mLists.put(getString(R.string.mycurrentlocation), new DataSet(currentLatLon));
+//
+//
+//                        //new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()) );
+//                    } else {
+//                        Log.d(TAG, "onComplete: Unable to get Current Location");
+//                    }
+//                });
+//            }
+//
+//        } catch (SecurityException e) {
+//            Log.e(TAG, "getDeviceLocation: SecurityException" + e.getMessage());
+//        }
+//    }
 
 
-                        //new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()) );
-                    } else {
-                        Log.d(TAG, "onComplete: Unable to get Current Location");
-                    }
-                });
-            }
-
-        } catch (SecurityException e) {
-            Log.e(TAG, "getDeviceLocation: SecurityException" + e.getMessage());
-        }
-    }
-
-    /**
     private void getDeviceLocation() {
         Log.d(TAG, "getDeviceLocation: Getting the Device's Current Location");
         ArrayList<LatLng> currentLatLon = new ArrayList<>();
@@ -332,7 +332,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
             Log.e(TAG, "getDeviceLocation: SecurityException" + e.getMessage());
         }
     }
-    */
+
 
     private void getLastKnownLocation() {
         Log.d(TAG, "getLastKnownLocation: called ");
@@ -655,10 +655,14 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     }
     private void saveUserLocation(){
         String currentUserId = getCurrentUserId();
+        Log.d(TAG, "saveUserLocation:currentUserId " + currentUserId);
+
         if(mUserLocation != null){
+            Log.d(TAG, "saveUserLocation: Entering save method " );
             userLocationRef.document(currentUserId).set(mUserLocation).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
+                    Log.d(TAG, "onComplete: AM I HERE?");
                     if(task.isSuccessful()){
                         Log.d(TAG, "saveUserLocation: Inserted user location to DB:  "+
                                 "\n latitude:" + mUserLocation.getGeoPoint().getLatitude() +
@@ -669,7 +673,8 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                                Log.d(TAG, "saveUserLocation: FAILED");
+
+                                Log.d(TAG, "saveUserLocation: FAILED"+e);
                             }
                         }
                     );
