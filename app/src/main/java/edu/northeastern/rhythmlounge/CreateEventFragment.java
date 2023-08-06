@@ -30,7 +30,9 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.ktx.Firebase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -58,6 +60,7 @@ public class CreateEventFragment extends Fragment {
 
     private EditText editTextEventName, editTextCity, editTextState, editTextVenue, editTextDescription, editTextDate, editTextTime, editTextOutsideLink;
 
+    private CollectionReference userRef;
     private CollectionReference eventsRef;
 
     private StorageReference storageReference;
@@ -82,6 +85,7 @@ public class CreateEventFragment extends Fragment {
         // Initializes the Firebase FireStore Database and get a reference to the events collection
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         eventsRef = db.collection("events");
+        userRef = db.collection("users");
 
         // Initializes the Firebase Storage and gets a reference to event_pics in storage
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -292,6 +296,12 @@ public class CreateEventFragment extends Fragment {
                     Toast.makeText(requireContext(), "Event created successfully!", Toast.LENGTH_SHORT).show();
                     clearFields();
                     uploadImage(documentReference.getId());
+
+                    String newEventId = documentReference.getId();
+                    userRef.document(eventCreator)
+                            .update("hosting", FieldValue.arrayUnion(newEventId))
+                            .addOnSuccessListener(void1 -> Log.d(TAG, "Event added to hosting array successfully"))
+                            .addOnFailureListener(e -> Log.e(TAG, "Error adding event to hosting array", e));
                 })
                 .addOnFailureListener(e -> Toast.makeText(requireContext(), "Failed to create event.", Toast.LENGTH_SHORT).show());
     }

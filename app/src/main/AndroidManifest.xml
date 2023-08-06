@@ -43,7 +43,8 @@
         <activity android:name=".UserSearchFragment" />
         <activity android:name=".FollowersActivity" />
         <activity android:name=".FollowingActivity" />
-        <activity android:name=".SettingsFragment" />
+        <activity android:name=".SettingsActivity" />
+        <activity android:name=".ReAuthActivity"/>
         <activity android:name=".EventsFragment" />
         <activity android:name=".NotificationsFragment" />
         <activity android:name=".EditProfileFragment" />
