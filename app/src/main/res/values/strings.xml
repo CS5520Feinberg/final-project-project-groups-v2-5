@@ -45,6 +45,8 @@
     <string name="edit_username">Edit Username</string>
     <string name="edit_email">Edit Email</string>
     <string name="save_changes">Save Changes</string>
+    <string name="create_new_posts">Create New Posts</string>
+    <string name="thumbnail">Thumbnail</string>
     <string-array name="heatmaps_datasets_array">
         <item>@string/mycurrentlocation</item>
         <item>@string/events</item>

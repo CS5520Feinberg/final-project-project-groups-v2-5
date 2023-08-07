@@ -22,6 +22,8 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import edu.northeastern.rhythmlounge.Post.PostActivity;
+
 public class HomeActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
@@ -143,6 +145,4 @@ public class HomeActivity extends AppCompatActivity {
         Intent intent = new Intent(this, PostActivity.class);
         startActivity(intent);
     }
-
-
 }
