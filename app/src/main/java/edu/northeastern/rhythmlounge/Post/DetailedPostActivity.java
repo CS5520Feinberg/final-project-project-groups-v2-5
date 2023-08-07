@@ -16,6 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Objects;
 
 import edu.northeastern.rhythmlounge.R;
+import edu.northeastern.rhythmlounge.User;
 
 public class DetailedPostActivity extends AppCompatActivity {
 
@@ -26,6 +27,8 @@ public class DetailedPostActivity extends AppCompatActivity {
     private String postId;
     private ImageView postImageView;
     private TextView titleTextView;
+    private ImageView userProfileImageView;
+
 
 
     @Override
@@ -41,6 +44,8 @@ public class DetailedPostActivity extends AppCompatActivity {
         titleTextView = findViewById(R.id.tv_title);
         contentTextView = findViewById(R.id.tv_content);
         deleteButton = findViewById(R.id.btn_delete);
+        userProfileImageView = findViewById(R.id.iv_user_profile_image);
+
 
         // Get post ID from intent
         postId = getIntent().getStringExtra("POST_ID");
@@ -67,6 +72,23 @@ public class DetailedPostActivity extends AppCompatActivity {
                         usernameTextView.setText(post.getUsername());
                         contentTextView.setText(post.getContent());
                         titleTextView.setText(post.getTitle());
+
+                        // Fetch the profile picture for this post's user
+                        db.collection("users").document(post.getUserId()).get()
+                                .addOnSuccessListener(userDocument -> {
+                                    User user = userDocument.toObject(User.class);
+                                    String profilePicUrl = user.getProfilePictureUrl();
+                                    if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
+                                        Glide.with(this)
+                                                .load(profilePicUrl)
+                                                .into(userProfileImageView);
+                                    } else {
+                                        // Load a default placeholder image if the user hasn't uploaded a profile picture
+                                        userProfileImageView.setImageResource(R.drawable.avatar);
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                });
 
                         // Check if post has an image URL and set visibility
                         if (post.getImageUrl() != null && !post.getImageUrl().isEmpty()) {

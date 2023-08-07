@@ -10,6 +10,15 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- User Profile Image -->
+        <ImageView
+            android:id="@+id/iv_user_profile_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="12dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/circular_shape" />
+
         <!-- User Name -->
         <TextView
             android:id="@+id/tv_username"

@@ -11,6 +11,7 @@ public class Post {
     private String thumbnailUrl;
     private String imageUrl;
     private String postId;
+    private String profilePictureUrl;
 
 
     public Post() {
@@ -90,6 +91,14 @@ public class Post {
 
     public void setPostId(String postId) {
         this.postId = postId;
+    }
+
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
+    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
     }
 
 }

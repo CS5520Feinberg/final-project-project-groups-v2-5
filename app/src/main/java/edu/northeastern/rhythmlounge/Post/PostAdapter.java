@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -23,8 +22,10 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import edu.northeastern.rhythmlounge.R;
+import edu.northeastern.rhythmlounge.User;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
 
@@ -49,6 +50,25 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         holder.usernameTextView.setText(post.getUsername());
         holder.titleTextView.setText(post.getTitle());
 
+        // Fetch the profile picture URL for this post's user
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users").document(post.getUserId()).get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    User user = documentSnapshot.toObject(User.class);
+                    String profilePicUrl = user.getProfilePictureUrl();
+                    if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
+                        Glide.with(context)
+                                .load(profilePicUrl)
+                                .into(holder.userProfilePicImageView);
+                    } else {
+                        // Load a default placeholder image if the user hasn't uploaded a profile picture
+                        holder.userProfilePicImageView.setImageResource(R.drawable.avatar);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                });
+
+
         String imageUrlToShow = post.getThumbnailUrl();
         if (imageUrlToShow == null || imageUrlToShow.isEmpty()) {
             imageUrlToShow = post.getImageUrl(); // Use imageUrl as a fallback
@@ -66,13 +86,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                             Log.e("GlideError", "Load failed", e);
                             holder.thumbnailImageView.setBackground(null); // Clear the background on error
-                            return false; // let Glide handle the error
+                            return false;
                         }
 
                         @Override
                         public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                             holder.thumbnailImageView.setBackground(null); // Clear the background once image is loaded
-                            return false; // let Glide handle the setting of the image resource
+                            return false;
                         }
                     })
                     .into(holder.thumbnailImageView);
@@ -89,8 +109,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     }
 
     public class PostViewHolder extends RecyclerView.ViewHolder {
+        ImageView userProfilePicImageView;
         TextView usernameTextView;
-        //TextView contentTextView;
         ImageView thumbnailImageView;
         TextView titleTextView;
 
@@ -99,6 +119,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             usernameTextView = itemView.findViewById(R.id.tv_username);
             titleTextView = itemView.findViewById(R.id.tv_title);
             thumbnailImageView = itemView.findViewById(R.id.iv_thumbnail);
+            userProfilePicImageView = itemView.findViewById(R.id.iv_user_profile_picture);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
