@@ -21,8 +21,8 @@
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="12dp"
-        tools:layout_editor_absoluteY="-198dp" />
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
 
     <TextView
         android:id="@+id/textViewOwnUsername"
@@ -45,7 +45,7 @@
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
         android:minWidth="48dp"
-        android:minHeight="48dp"
+        android:minHeight="20dp"
         android:onClick="onFollowersClicked"
         android:text="@string/x"
         android:textSize="12sp"
@@ -62,7 +62,7 @@
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
         android:minWidth="48dp"
-        android:minHeight="48dp"
+        android:minHeight="20dp"
         android:onClick="onFollowingClicked"
         android:text="@string/x"
         android:textSize="12sp"
