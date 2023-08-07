@@ -19,7 +19,6 @@ import com.google.firebase.firestore.ListenerRegistration;
 /**
  * OtherUserPageActivity allows a user to view another user's profile, which includes:
  *      - username
- *      - email (WARNING: we might not want to display this later)
  *      - # of followers
  *      - # of following
  *      - profile picture
@@ -32,9 +31,9 @@ import com.google.firebase.firestore.ListenerRegistration;
 public class OtherUserPageActivity extends AppCompatActivity {
 
     // Current UI elements for displaying information
-    private TextView textViewUsername, textViewEmail, textViewFollowers, textViewFollowing;
+    private TextView textViewUsername, textViewFollowers, textViewFollowing;
     private ImageView imageViewProfilePic;
-    private Button buttonFollowUnfollow, buttonFollowers, buttonFollowing;
+    private Button buttonFollowUnfollow;
 
     // The current user using the application and the other user they are viewing
     private User currentUser, otherUser;
@@ -51,8 +50,6 @@ public class OtherUserPageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_other_user_page);
 
-        // Initializes the view and the Firebase elements
-        initializeViewElements();
         initializeFirebaseElements();
 
         // Get the current user's ID and retrieve their details
@@ -69,12 +66,12 @@ public class OtherUserPageActivity extends AppCompatActivity {
             return;
         }
 
+        initializeViewElements(otherUserId);
+
         // Handle the follow/unfollow button click
         retrieveCurrentUser(currentUserId);
         retrieveOtherUser(otherUserId);
         handleFollowUnfollowButtonClick(otherUserId);
-        handleFollowingButtonClick(otherUserId);
-        handleFollowersButtonClick(otherUserId);
 
         // Fetch the user data from Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -96,14 +93,15 @@ public class OtherUserPageActivity extends AppCompatActivity {
     /**
      * Initializes all the view elements of this activity.
      */
-    private void initializeViewElements() {
+    private void initializeViewElements(String otherUserId) {
         textViewUsername = findViewById(R.id.textViewUsername);
-        textViewEmail = findViewById(R.id.textViewEmail);
         textViewFollowers = findViewById(R.id.textViewFollowers);
+        textViewFollowing = findViewById(R.id.textViewFollowing);
         imageViewProfilePic = findViewById(R.id.other_user_profile_picture);
         buttonFollowUnfollow = findViewById(R.id.buttonFollowUnfollow);
-        buttonFollowers = findViewById(R.id.buttonFollowing);
-        buttonFollowing = findViewById(R.id.buttonFollowers);
+
+        textViewFollowing.setOnClickListener(v -> handleFollowingClick(otherUserId));
+        textViewFollowers.setOnClickListener(v -> handleFollowersClick(otherUserId));
     }
 
     /**
@@ -154,7 +152,6 @@ public class OtherUserPageActivity extends AppCompatActivity {
     /**
      * Populates the UI with the other user's details including:
      *      - username
-     *      - email (WARNING: we might not want to display this later)
      *      - # of followers
      *      - # of following
      *      - profile picture
@@ -169,18 +166,15 @@ public class OtherUserPageActivity extends AppCompatActivity {
             // Set the username
             textViewUsername.setText(otherUser.getUsername());
 
-            // Set the email
-            textViewEmail.setText(otherUser.getEmail());
-
             // Determine and set the follower count of the other user
             int followerCount = (otherUser.getFollowers() != null) ? otherUser.getFollowers().size() : 0;
 
             // Determine and set the following count of the other user
             int followingCount = (otherUser.getFollowing() != null) ? otherUser.getFollowing().size() : 0;
 
-            // Display the followers • following text
-            String followersFollowingText = followingCount + " Following • " + followerCount + " Followers";
-            textViewFollowers.setText(followersFollowingText);
+            // Set the follower count display.
+            textViewFollowers.setText("Followers: " + followerCount);
+            textViewFollowing.setText("Following: " + followingCount);
 
             // Load the profile picture if one is available, otherwise use the built in default
             if (otherUser.getProfilePictureUrl() != null && !otherUser.getProfilePictureUrl().isEmpty()) {
@@ -226,21 +220,18 @@ public class OtherUserPageActivity extends AppCompatActivity {
         });
     }
 
-    private void handleFollowersButtonClick(String otherUserId) {
-        buttonFollowers.setOnClickListener(v -> {
-            Intent intent = new Intent(OtherUserPageActivity.this, FollowersActivity.class);
-            intent.putExtra("USER_ID", otherUserId);
-            startActivity(intent);
-        });
+    private void handleFollowersClick(String otherUserId) {
+        Intent intent = new Intent(OtherUserPageActivity.this, FollowersActivity.class);
+        intent.putExtra("USER_ID", otherUserId);
+        startActivity(intent);
     }
 
-    private void handleFollowingButtonClick(String otherUserId) {
-        buttonFollowing.setOnClickListener(v -> {
-            Intent intent = new Intent(OtherUserPageActivity.this, FollowingActivity.class);
-            intent.putExtra("USER_ID", otherUserId);
-            startActivity(intent);
-        });
+    private void handleFollowingClick(String otherUserId) {
+        Intent intent = new Intent(OtherUserPageActivity.this, FollowingActivity.class);
+        intent.putExtra("USER_ID", otherUserId);
+        startActivity(intent);
     }
+
 
     private void navigateToSelfUserProfile() {
         Intent intent = new Intent(this, HomeActivity.class);
@@ -248,10 +239,11 @@ public class OtherUserPageActivity extends AppCompatActivity {
         finish();
     }
 
-    public void onFollowersClicked(View view) {
+    public void onFollowersClicked(View view, String otherUserId) {
+
     }
 
-    public void onFollowingClicked(View view) {
+    public void onFollowingClicked(View view, String otherUserId) {
     }
 
     @Override
@@ -264,6 +256,5 @@ public class OtherUserPageActivity extends AppCompatActivity {
             otherUserListenerRegistration.remove();
         }
     }
-
 
 }

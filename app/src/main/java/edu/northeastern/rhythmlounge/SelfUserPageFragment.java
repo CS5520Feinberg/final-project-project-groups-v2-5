@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,20 +28,15 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,13 +47,12 @@ public class SelfUserPageFragment extends Fragment {
     private static final String TAG = "SelfUserPageFragment";
     private static final int PERMISSION_REQUEST_CODE = 100;
     private static final int ERROR_DIALOGUE_REQ = 9001;
-    private TextView textViewOwnUsername, textViewOwnEmail, textViewOwnFollowers, textViewOwnFollowing;
+    private TextView textViewOwnUsername, textViewOwnBio, textViewOwnFollowers, textViewOwnFollowing;
     private ImageView imageViewProfilePic, heatMap;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private StorageReference storageReference;
     private ActivityResultLauncher<String> pickMedia;
-    private Button buttonLogout;
 
     public SelfUserPageFragment() {
     }
@@ -88,39 +84,10 @@ public class SelfUserPageFragment extends Fragment {
             }
         });
 
-        userViewModel.getEmailLiveData().observe(getViewLifecycleOwner(), email -> {
-            if (email != null) {
-                textViewOwnEmail.setText(email);
-            }
-        });
-
-
-        buttonLogout.setOnClickListener(v -> {
-            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken("YOUR_REQUEST_ID_TOKEN")
-                    .requestEmail()
-                    .build();
-            GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(getActivity(), gso);
-
-            googleSignInClient.signOut().addOnCompleteListener(getActivity(),
-                    task -> {
-                        mAuth.signOut();
-
-                        Intent intent = new Intent(getActivity(), MainActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        requireActivity().finish();
-
-                        // Use getActivity() as the context for the Toast
-                        Toast.makeText(getActivity(), "Logout successful.", Toast.LENGTH_SHORT).show();
-                    });
-        });
-
 
         pickMedia = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
             if (uri != null) {
                 Log.d("PhotoPicker", "Selected URI: " + uri);
-
                 Glide.with(this).load(uri).into(imageViewProfilePic);
                 uploadImageToFirebaseStorage(uri);
             } else {
@@ -163,13 +130,11 @@ public class SelfUserPageFragment extends Fragment {
 
     private void initializeViewElements(View view) {
         textViewOwnUsername = view.findViewById(R.id.textViewOwnUsername);
-        textViewOwnEmail = view.findViewById(R.id.textViewOwnEmail);
+        textViewOwnBio = view.findViewById(R.id.textViewOwnBio);
         textViewOwnFollowers = view.findViewById(R.id.textViewOwnFollowers);
         textViewOwnFollowing = view.findViewById(R.id.textViewOwnFollowing);
         imageViewProfilePic = view.findViewById(R.id.profile_pic);
-        buttonLogout = view.findViewById(R.id.button_logout);
         heatMap = view.findViewById(R.id.map_icon);
-
 
     }
 
@@ -179,17 +144,33 @@ public class SelfUserPageFragment extends Fragment {
 
         View dialogLayout = getLayoutInflater().inflate(R.layout.dialog_edit_profile, null);
         EditText editTextUsername = dialogLayout.findViewById(R.id.editTextUsername);
-        EditText editTextEmail = dialogLayout.findViewById(R.id.editTextEmail);
+        EditText editTextBio = dialogLayout.findViewById(R.id.editTextBio);
+        TextView textViewBioCounter = dialogLayout.findViewById(R.id.textViewBioCounter);
 
         editTextUsername.setText(textViewOwnUsername.getText());
-        editTextEmail.setText(textViewOwnEmail.getText());
+
+        editTextBio.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                int remaining = 150 - s.toString().length();
+                textViewBioCounter.setText("Remaining characters: " + remaining);
+            }
+        });
 
         builder.setView(dialogLayout);
 
         builder.setPositiveButton("Save", (dialog, which) -> {
             String newUsername = editTextUsername.getText().toString();
-            String newEmail = editTextEmail.getText().toString();
-            updateProfileData(newUsername, newEmail);
+            String newBio = editTextBio.getText().toString();
+            updateProfileData(newUsername, newBio);
         });
 
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
@@ -198,19 +179,18 @@ public class SelfUserPageFragment extends Fragment {
         dialog.show();
     }
 
-    private void updateProfileData(String newUsername, String newEmail) {
+    private void updateProfileData(String newUsername, String newBio) {
         String currentUserId = getCurrentUserId();
         DocumentReference userRef = db.collection("users").document(currentUserId);
 
         Map<String, Object> updates = new HashMap<>();
         updates.put("username", newUsername);
-        updates.put("email", newEmail);
+        updates.put("bio", newBio);
 
         userRef.update(updates)
                 .addOnSuccessListener(e -> {
                     textViewOwnUsername.setText(newUsername);
-                    textViewOwnEmail.setText(newEmail);
-                    updateFirebaseAuthEmail(newEmail);
+                    textViewOwnBio.setText(newBio);
                     Toast.makeText(requireContext(), "Profile updated successfully.", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
@@ -219,48 +199,6 @@ public class SelfUserPageFragment extends Fragment {
 
                 });
     }
-
-private void updateFirebaseAuthEmail(String newEmail) {
-    FirebaseUser user = mAuth.getCurrentUser();
-    if (user != null) {
-        user.updateEmail(newEmail)
-            .addOnSuccessListener(void0 -> {
-                Log.d(TAG, "Email updated in Firebase Auth.");
-
-                // After email is updated, send a verification link to the new email.
-                user.sendEmailVerification().addOnSuccessListener(void1 -> {
-                    Log.d(TAG, "Verification email sent to the new email.");
-                }).addOnFailureListener(e -> {
-                    Log.e(TAG, "Failed to send verification email: " + e.getMessage());
-                });
-            })
-            .addOnFailureListener(e -> {
-                if (e instanceof FirebaseAuthRecentLoginRequiredException) {
-                    // Prompt the user to re-provide their sign-in credentials
-                    Log.e(TAG, "Need to re-login before updating email");
-                } else {
-                    Log.e(TAG, "Failed to update email in Firebase Auth: " + e.getMessage());
-                }
-            });
-    }
-}
-
-    /**
-    private void openEditProfileFragment() {
-        EditProfileFragment editProfileFragment = new EditProfileFragment();
-
-        Bundle args = new Bundle();
-        args.putString("username", textViewOwnUsername.getText().toString());
-        args.putString("email", textViewOwnEmail.getText().toString());
-
-        editProfileFragment.setArguments(args);
-
-        requireActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, editProfileFragment)
-                .addToBackStack(null)
-                .commit();
-    }
-    */
 
     private void initializeFirebaseElements() {
         mAuth = FirebaseAuth.getInstance();
@@ -286,15 +224,16 @@ private void updateFirebaseAuthEmail(String newEmail) {
 
     private void populateUIWithCurrentUserDetails(User currentUser) {
         textViewOwnUsername.setText(currentUser.getUsername());
-        textViewOwnEmail.setText(currentUser.getEmail());
+
+        if (currentUser.getBio() != null) {
+            textViewOwnBio.setText(currentUser.getBio());
+        }
 
         int followerCount = (currentUser.getFollowers() != null) ? currentUser.getFollowers().size() : 0;
         int followingCount = (currentUser.getFollowing() != null) ? currentUser.getFollowing().size() : 0;
 
-        String followingText = followingCount + " Following • " + followerCount + " Followers";
-
-        textViewOwnFollowers.setText(followingText);
-        textViewOwnFollowing.setText("");
+        textViewOwnFollowers.setText("Followers: " + followerCount);
+        textViewOwnFollowing.setText("Following: " + followingCount);
 
         if (currentUser.getProfilePictureUrl() != null && !currentUser.getProfilePictureUrl().isEmpty()) {
             Glide.with(this).load(currentUser.getProfilePictureUrl()).into(imageViewProfilePic);
@@ -359,10 +298,8 @@ private void updateFirebaseAuthEmail(String newEmail) {
         }
     }
 
-
     /**
      * Function to check if the device has appropriate Google Services Version
-     *
      * @return Boolean Value - True or False
      */
     public boolean isServicesOK() {

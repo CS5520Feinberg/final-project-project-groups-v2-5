@@ -17,86 +17,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="4dp" />
-
-    <TextView
-        android:id="@+id/textViewPlaylist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
-        android:text="@string/playlists"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:textAppearance="@style/TextAppearance.Manrope"
-        app:layout_constraintEnd_toEndOf="@id/profile_pic"
-        app:layout_constraintHorizontal_bias="0.266"
-        app:layout_constraintStart_toStartOf="@id/profile_pic"
-        app:layout_constraintTop_toBottomOf="@id/profile_pic" />
-
-    <TextView
-        android:id="@+id/textViewAttendingEvents"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="344dp"
-        android:text="@string/attending_events"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:textAppearance="@style/TextAppearance.Manrope"
-        app:layout_constraintEnd_toEndOf="@id/profile_pic"
-        app:layout_constraintHorizontal_bias="0.266"
-        app:layout_constraintStart_toStartOf="@id/profile_pic"
-        app:layout_constraintTop_toBottomOf="@id/profile_pic" />
-
-    <TextView
-        android:id="@+id/textViewHostingEvents"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="204dp"
-        android:text="@string/hosting_events"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:textAppearance="@style/TextAppearance.Manrope"
-        app:layout_constraintEnd_toEndOf="@id/profile_pic"
-        app:layout_constraintHorizontal_bias="0.266"
-        app:layout_constraintStart_toStartOf="@id/profile_pic"
-        app:layout_constraintTop_toBottomOf="@id/profile_pic" />
-
-    <Button
-        android:id="@+id/button_edit"
-        android:layout_width="78dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/button_edit_background"
-        android:text="@string/edit"
-        android:textColor="#3E2723"
-
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/profile_pic" />
-
-    <TextView
-        android:id="@+id/textViewOwnFollowers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:layout_marginTop="8dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:minWidth="48dp"
-        android:minHeight="48dp"
-        android:onClick="onFollowersClicked"
-        android:text="@string/x"
-        android:textSize="12sp"
-        android:textAppearance="@style/TextAppearance.Manrope"
-        app:layout_constraintStart_toEndOf="@+id/profile_pic"
-        app:layout_constraintTop_toBottomOf="@+id/textViewOwnEmail"
-        tools:ignore="DuplicateSpeakableTextCheck" />
+        tools:layout_editor_absoluteX="12dp"
+        tools:layout_editor_absoluteY="-198dp" />
 
     <TextView
         android:id="@+id/textViewOwnUsername"
@@ -111,12 +37,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textViewOwnEmail"
+        android:id="@+id/textViewOwnFollowers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
-        android:text="@string/email_should_appear_here"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:minWidth="48dp"
+        android:minHeight="48dp"
+        android:onClick="onFollowersClicked"
+        android:text="@string/x"
         android:textSize="12sp"
         android:textAppearance="@style/TextAppearance.Manrope"
         app:layout_constraintStart_toEndOf="@+id/profile_pic"
@@ -139,16 +70,73 @@
         app:layout_constraintStart_toEndOf="@+id/profile_pic"
         app:layout_constraintTop_toBottomOf="@+id/textViewOwnFollowers" />
 
-    <Button
-        android:id="@+id/button_logout"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/textViewOwnBio"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="12dp"
-        android:text="@string/logout"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="32dp"
+        android:text=""
+        android:textAppearance="@style/TextAppearance.Manrope"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/profile_pic"
+        app:layout_constraintTop_toBottomOf="@+id/textViewOwnFollowing" />
+
+    <Button
+        android:id="@+id/button_edit"
+        android:layout_width="78dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/button_edit_background"
+        android:text="@string/edit"
         android:textColor="#3E2723"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewPlaylist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/playlists"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textAppearance="@style/TextAppearance.Manrope"
+        app:layout_constraintEnd_toEndOf="@id/profile_pic"
+        app:layout_constraintHorizontal_bias="0.266"
+        app:layout_constraintStart_toStartOf="@id/profile_pic"
+        app:layout_constraintTop_toBottomOf="@+id/textViewOwnBio" />
+
+    <TextView
+        android:id="@+id/textViewHostingEvents"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="204dp"
+        android:text="@string/hosting_events"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textAppearance="@style/TextAppearance.Manrope"
+        app:layout_constraintEnd_toEndOf="@id/profile_pic"
+        app:layout_constraintHorizontal_bias="0.266"
+        app:layout_constraintStart_toStartOf="@id/profile_pic"
+        app:layout_constraintTop_toBottomOf="@id/textViewPlaylist" />
+
+    <TextView
+        android:id="@+id/textViewAttendingEvents"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/attending_events"
+        android:textAppearance="@style/TextAppearance.Manrope"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/profile_pic"
+        app:layout_constraintHorizontal_bias="0.266"
+        app:layout_constraintStart_toStartOf="@id/profile_pic"
+        app:layout_constraintTop_toBottomOf="@id/textViewHostingEvents" />
 
     <ImageView
         android:id="@+id/map_icon"

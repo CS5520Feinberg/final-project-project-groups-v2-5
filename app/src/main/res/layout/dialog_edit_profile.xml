@@ -13,9 +13,17 @@
         android:hint="Username" />
 
     <EditText
-        android:id="@+id/editTextEmail"
+        android:id="@+id/editTextBio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email" />
+        android:maxLength="150"
+        android:inputType="textMultiLine"
+        android:hint="Bio " />
+
+    <TextView
+        android:id="@+id/textViewBioCounter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Remaining characters 150" />
 
 </LinearLayout>

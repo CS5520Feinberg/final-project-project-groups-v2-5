@@ -4,17 +4,21 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class SettingsActivity extends AppCompatActivity {
 
     FirebaseAuth mAuth;
-    private Button deleteAccountButton;
+    private Button logoutButton, deleteAccountButton;
 
     /**
      * Initializes the UI and Firebase instance when the activity is created.
@@ -32,10 +36,15 @@ public class SettingsActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         // Map ui elements
-        deleteAccountButton = findViewById(R.id.buttonDeleteAccount);
+        logoutButton = findViewById(R.id.buttonLogoutInSettings);
+        deleteAccountButton = findViewById(R.id.buttonDeleteAccountInSettings);
+
+        // Set logout on click
+        logoutButton.setOnClickListener(v -> logout());
 
         // Set deletion dialog on click
         deleteAccountButton.setOnClickListener(v -> showReauthDialog());
+
     }
 
     /**
@@ -58,5 +67,32 @@ public class SettingsActivity extends AppCompatActivity {
 
         AlertDialog alert = builder.create();
         alert.show();
+    }
+
+
+    /**
+     * Helper method to log the user out.
+     * This was taken out of self-user page and fit into the settings activity. 
+     */
+    private void logout() {
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken("YOUR_REQUEST_ID_TOKEN")
+                    .requestEmail()
+                    .build();
+            GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, gso);
+
+            googleSignInClient.signOut().addOnCompleteListener(this,
+                    task -> {
+                        mAuth.signOut();
+
+                        Intent intent = new Intent(this, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        this.finish();
+
+                        // Use getActivity() as the context for the Toast
+                        Toast.makeText(this, "Logout successful.", Toast.LENGTH_SHORT).show();
+                    });
+
     }
 }
