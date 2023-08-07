@@ -1,11 +1,9 @@
 package edu.northeastern.rhythmlounge.Post;
 
-import android.content.ClipData;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -41,8 +39,6 @@ public class PostActivity extends AppCompatActivity {
 
     private List<Post> posts = new ArrayList<>();
     private PostAdapter postAdapter;
-    private RecyclerView recyclerViewPosts;
-    private ImageView ivPreview;
     RecyclerView rvPosts;
     private EditText etTitle;
     private ImageView ivDialogPreview;
@@ -55,7 +51,7 @@ public class PostActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     public static final int REQUEST_CODE_DETAILED_POST_ACTIVITY = 100;  // Defining the request code
     private Uri imageUri;
-    private StorageReference storageRef = FirebaseStorage.getInstance().getReference("uploads");
+    private final StorageReference storageRef = FirebaseStorage.getInstance().getReference("uploads");
 
 
     @Override
@@ -67,7 +63,6 @@ public class PostActivity extends AppCompatActivity {
         fabCreatePost = findViewById(R.id.fab_create_post);
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         tvEmptyState = findViewById(R.id.tv_empty_state);
-        ivPreview = findViewById(R.id.ivPreview);
 
         posts = new ArrayList<>();
         postAdapter = new PostAdapter(posts, this);
@@ -93,6 +88,7 @@ public class PostActivity extends AppCompatActivity {
         fetchPosts();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void fetchPosts() {
         posts.clear(); // Clear the existing list first.
         latestTimestamp = null; // Reset the timestamp.
@@ -144,8 +140,10 @@ public class PostActivity extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void createPost(String title, String content, String imageUrl) {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        assert currentUser != null;
         db.collection("users").document(currentUser.getUid())
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -161,15 +159,12 @@ public class PostActivity extends AppCompatActivity {
                                 posts.add(0, newPost);
                                 postAdapter.notifyDataSetChanged();
                             })
-                            .addOnFailureListener(e -> {
-                                Toast.makeText(PostActivity.this, "Error creating post.", Toast.LENGTH_SHORT).show();
-                            });
+                            .addOnFailureListener(e -> Toast.makeText(PostActivity.this, "Error creating post.", Toast.LENGTH_SHORT).show());
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(PostActivity.this, "Error fetching username.", Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e -> Toast.makeText(PostActivity.this, "Error fetching username.", Toast.LENGTH_SHORT).show());
     }
 
+    @SuppressLint("SetTextI18n")
     private void showCreatePostDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("New Post");
@@ -236,9 +231,7 @@ public class PostActivity extends AppCompatActivity {
                             createPost(title, content, imageUrl);
                         });
                     })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(PostActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    });
+                    .addOnFailureListener(e -> Toast.makeText(PostActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
         } else {
             createPost(title, content, null); // If there's no image, create the post without an image
         }

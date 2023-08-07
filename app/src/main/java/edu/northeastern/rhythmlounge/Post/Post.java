@@ -1,7 +1,6 @@
 package edu.northeastern.rhythmlounge.Post;
 
 import java.util.Date;
-import java.util.List;
 
 public class Post {
     private String userId;

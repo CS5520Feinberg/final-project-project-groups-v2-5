@@ -3,22 +3,17 @@ package edu.northeastern.rhythmlounge.Post;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.List;
+import java.util.Objects;
 
 import edu.northeastern.rhythmlounge.R;
 
@@ -66,9 +61,7 @@ public class DetailedPostActivity extends AppCompatActivity {
                     Post post = documentSnapshot.toObject(Post.class);
 
                     if (post != null) {
-                        postImageView.setOnClickListener(v -> {
-                            showFullScreenImage(post.getImageUrl());
-                        });
+                        postImageView.setOnClickListener(v -> showFullScreenImage(post.getImageUrl()));
                         Glide.with(this).load(post.getImageUrl()).into(postImageView);
 
                         usernameTextView.setText(post.getUsername());
@@ -84,11 +77,9 @@ public class DetailedPostActivity extends AppCompatActivity {
                         }
 
                         // Allow post creators to delete their posts
-                        if (post.getUserId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        if (post.getUserId().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
                             deleteButton.setVisibility(View.VISIBLE);
-                            deleteButton.setOnClickListener(v -> {
-                                deletePost(postId);
-                            });
+                            deleteButton.setOnClickListener(v -> deletePost(postId));
                         }
                     } else {
                         Toast.makeText(this, "Error loading post details", Toast.LENGTH_SHORT).show();
@@ -109,9 +100,7 @@ public class DetailedPostActivity extends AppCompatActivity {
                     setResult(RESULT_OK); // Indicate that the deletion was successful
                     finish();
                 })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(DetailedPostActivity.this, "Error deleting post", Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e -> Toast.makeText(DetailedPostActivity.this, "Error deleting post", Toast.LENGTH_SHORT).show());
     }
 
     private void showFullScreenImage(String imageUrl) {

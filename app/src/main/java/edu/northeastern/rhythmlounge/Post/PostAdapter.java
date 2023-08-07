@@ -22,16 +22,14 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.CustomViewTarget;
 import com.bumptech.glide.request.target.Target;
-import com.bumptech.glide.request.transition.Transition;
 
 import edu.northeastern.rhythmlounge.R;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
 
-    private List<Post> posts;
-    private Context context;
+    private final List<Post> posts;
+    private final Context context;
 
     public PostAdapter(List<Post> posts, Context context) {
         this.posts = posts;
@@ -84,7 +82,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             holder.thumbnailImageView.setVisibility(View.GONE);
         }
     }
-
 
     @Override
     public int getItemCount() {
