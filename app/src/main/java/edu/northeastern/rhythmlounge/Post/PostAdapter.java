@@ -3,6 +3,7 @@ package edu.northeastern.rhythmlounge.Post;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,24 +51,30 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         holder.usernameTextView.setText(post.getUsername());
         holder.titleTextView.setText(post.getTitle());
 
-        if (post.getThumbnailUrl() != null && !post.getThumbnailUrl().isEmpty()) {
+        String imageUrlToShow = post.getThumbnailUrl();
+        if (imageUrlToShow == null || imageUrlToShow.isEmpty()) {
+            imageUrlToShow = post.getImageUrl(); // Use imageUrl as a fallback
+        }
+
+        if (imageUrlToShow != null && !imageUrlToShow.isEmpty()) {
             // Set gray background when the image is loading
-            holder.thumbnailImageView.setBackgroundColor(ContextCompat.getColor(context, R.color.Background)); // Assuming you've defined grayBackground in colors.xml
+            holder.thumbnailImageView.setBackgroundColor(ContextCompat.getColor(context, R.color.Background));
 
             Glide.with(context)
-                    .load(post.getThumbnailUrl())
+                    .load(imageUrlToShow) // Use the determined URL
                     .placeholder(R.drawable.logo)
                     .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                            Log.e("GlideError", "Load failed", e);
                             holder.thumbnailImageView.setBackground(null); // Clear the background on error
-                            return false; // return false so Glide will handle it
+                            return false; // let Glide handle the error
                         }
 
                         @Override
                         public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                             holder.thumbnailImageView.setBackground(null); // Clear the background once image is loaded
-                            return false; // return false so Glide will handle the setting of the image resource
+                            return false; // let Glide handle the setting of the image resource
                         }
                     })
                     .into(holder.thumbnailImageView);
@@ -77,6 +84,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             holder.thumbnailImageView.setVisibility(View.GONE);
         }
     }
+
 
     @Override
     public int getItemCount() {

@@ -108,6 +108,8 @@ public class PostActivity extends AppCompatActivity {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     Post post = document.toObject(Post.class);
                     post.setPostId(document.getId());
+                    post.setThumbnailUrl(document.getString("thumbnailUrl"));
+
                     // Check if this post is not already in the list
                     boolean isDuplicate = false;
                     for (Post existingPost : posts) {
@@ -149,6 +151,7 @@ public class PostActivity extends AppCompatActivity {
                 .addOnSuccessListener(documentSnapshot -> {
                     String username = documentSnapshot.getString("username");
                     Post newPost = new Post(currentUser.getUid(), username, title, content, imageUrl);
+                    newPost.setThumbnailUrl(imageUrl);
 
                     db.collection("posts")
                             .add(newPost)
