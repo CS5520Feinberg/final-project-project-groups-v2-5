@@ -49,6 +49,9 @@
     <string name="thumbnail">Thumbnail</string>
     <string name="user_profile_picture">Uer profile picture</string>
     <string name="thumbnail_image">Thumbnail image</string>
+    <string name="delete_post">Delete Post</string>
+    <string name="post_image">Post image</string>
+    <string name="profile_picture">Profile picture</string>
     <string-array name="heatmaps_datasets_array">
         <item>@string/mycurrentlocation</item>
         <item>@string/events</item>
