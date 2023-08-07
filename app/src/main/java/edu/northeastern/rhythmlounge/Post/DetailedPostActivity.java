@@ -30,6 +30,8 @@ public class DetailedPostActivity extends AppCompatActivity {
     private Button deleteButton;
     private String postId;
     private ImageView postImageView;
+    private TextView titleTextView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,7 @@ public class DetailedPostActivity extends AppCompatActivity {
 
         // Initialize views
         usernameTextView = findViewById(R.id.tv_username);
+        titleTextView = findViewById(R.id.tv_title);
         contentTextView = findViewById(R.id.tv_content);
         deleteButton = findViewById(R.id.btn_delete);
 
@@ -70,6 +73,7 @@ public class DetailedPostActivity extends AppCompatActivity {
 
                         usernameTextView.setText(post.getUsername());
                         contentTextView.setText(post.getContent());
+                        titleTextView.setText(post.getTitle());
 
                         // Check if post has an image URL and set visibility
                         if (post.getImageUrl() != null && !post.getImageUrl().isEmpty()) {
