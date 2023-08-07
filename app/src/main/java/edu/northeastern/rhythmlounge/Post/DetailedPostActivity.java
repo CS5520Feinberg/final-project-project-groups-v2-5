@@ -1,9 +1,11 @@
 package edu.northeastern.rhythmlounge.Post;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,7 +49,6 @@ public class DetailedPostActivity extends AppCompatActivity {
         //preview image
         postImageView = findViewById(R.id.iv_post_image);
 
-
         if (postId != null) {
             fetchPostDetails();
         } else {
@@ -62,6 +63,11 @@ public class DetailedPostActivity extends AppCompatActivity {
                     Post post = documentSnapshot.toObject(Post.class);
 
                     if (post != null) {
+                        postImageView.setOnClickListener(v -> {
+                            showFullScreenImage(post.getImageUrl());
+                        });
+                        Glide.with(this).load(post.getImageUrl()).into(postImageView);
+
                         usernameTextView.setText(post.getUsername());
                         contentTextView.setText(post.getContent());
 
@@ -103,4 +109,21 @@ public class DetailedPostActivity extends AppCompatActivity {
                     Toast.makeText(DetailedPostActivity.this, "Error deleting post", Toast.LENGTH_SHORT).show();
                 });
     }
+
+    private void showFullScreenImage(String imageUrl) {
+        Dialog fullScreenDialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        fullScreenDialog.setContentView(R.layout.dialog_fullscreen_image);
+
+        ImageView fullscreenImageView = fullScreenDialog.findViewById(R.id.fullscreen_image);
+        ImageButton closeButton = fullScreenDialog.findViewById(R.id.close_button);
+
+        Glide.with(this)
+                .load(imageUrl)
+                .into(fullscreenImageView);
+
+        closeButton.setOnClickListener(v -> fullScreenDialog.dismiss());
+
+        fullScreenDialog.show();
+    }
+
 }
