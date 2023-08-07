@@ -9,6 +9,7 @@
         android:id="@+id/textViewSettings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
         android:text="Settings"
         android:textSize="14sp"
         android:textStyle="bold"
@@ -16,7 +17,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
 
     <Button
@@ -28,17 +30,42 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonLogoutInSettings" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonChangePasswordInSettings" />
 
     <Button
         android:id="@+id/buttonLogoutInSettings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:text="Logout"
-        app:layout_constraintBottom_toTopOf="@+id/buttonDeleteAccountInSettings"
+        app:layout_constraintBottom_toTopOf="@+id/buttonChangeEmailInSettings"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewSettings" />
+
+    <Button
+        android:id="@+id/buttonChangeEmailInSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Change Account Email"
+        app:layout_constraintBottom_toTopOf="@+id/buttonChangePasswordInSettings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonLogoutInSettings" />
+
+    <Button
+        android:id="@+id/buttonChangePasswordInSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="Change Account Password"
+        app:layout_constraintBottom_toTopOf="@+id/buttonDeleteAccountInSettings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonChangeEmailInSettings" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

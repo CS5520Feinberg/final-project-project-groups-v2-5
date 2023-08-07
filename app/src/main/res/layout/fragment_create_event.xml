@@ -57,6 +57,8 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:text="Event Name"
                 android:textSize="14dp"
                 android:textStyle="bold" />
@@ -66,13 +68,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Enter Event Name"
-                android:inputType="text" />
+                android:inputType="text"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
 
             <Switch
                 android:id="@+id/switchIsConcert"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:text="Is this a concert?"
                 android:textOff="No"
                 android:textOn="Yes" />
@@ -84,6 +90,8 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:text="Location"
                 android:textSize="14dp"
                 android:textStyle="bold" />
@@ -92,13 +100,17 @@
                 android:id="@+id/editTextCity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="City" />
+                android:hint="City"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
 
             <EditText
                 android:id="@+id/editTextState"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="State" />
+                android:hint="State"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
 
 
             <TextView
@@ -108,6 +120,8 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:text="Venue"
                 android:textSize="14dp"
                 android:textStyle="bold" />
@@ -116,7 +130,9 @@
                 android:id="@+id/editTextVenue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter Venue" />
+                android:hint="Enter Venue"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
 
 
             <TextView
@@ -126,6 +142,8 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:text="Description"
                 android:textSize="14dp"
                 android:textStyle="bold" />
@@ -136,7 +154,9 @@
                 android:layout_height="wrap_content"
                 android:hint="Enter Event Description"
                 android:inputType="textMultiLine"
-                android:minLines="3" />
+                android:minLines="3"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
 
             <TextView
                 android:id="@+id/textViewEnterOutsideLink"
@@ -145,6 +165,8 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:text="Outside Event Link"
                 android:textSize="14dp"
                 android:textStyle="bold" />
@@ -154,7 +176,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Enter Outside Link"
-                android:inputType="textUri" />
+                android:inputType="textUri"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
 
             <TextView
                 android:id="@+id/textViewEnterDate"
@@ -163,6 +187,8 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:text="Click to Select a Date"
                 android:textSize="14dp"
                 android:textStyle="bold" />
@@ -171,7 +197,9 @@
                 android:id="@+id/editTextDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Select Date" />
+                android:hint="Select Date"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
 
 
             <TextView
@@ -181,6 +209,8 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:text="Click to Select a Time"
                 android:textSize="14dp"
                 android:textStyle="bold" />
@@ -190,17 +220,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Time"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textViewEnterTime" />
 
             <Button
                 android:id="@+id/buttonCreateEvent"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:onClick="onClick"
+                android:gravity="center_horizontal"
                 android:text="Create Event"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
