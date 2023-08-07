@@ -4,7 +4,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +18,8 @@ public class User {
     private List<String> following;
 
     private String profilePictureUrl;
+
+    private String bio;
 
     private List<String> hosting;
 
@@ -35,6 +36,8 @@ public class User {
         this.email = email;
         this.followers = new ArrayList<>();
         this.following = new ArrayList<>();
+        this.bio = "";
+        this.hosting = new ArrayList<>();
     }
 
     public String getUsername() {
@@ -75,6 +78,10 @@ public class User {
     public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
     }
+
+    public String getBio() { return bio; }
+
+    public void setBio(String bio) { this.bio = bio; }
 
     public List<String> getHosting() { return hosting; }
 

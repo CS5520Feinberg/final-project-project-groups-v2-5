@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+/**
 public class EditProfileFragment extends Fragment {
 
     private EditText editTextUsername, editTextEmail;
@@ -105,5 +106,5 @@ public class EditProfileFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
     }
 }
-
+*/
 
