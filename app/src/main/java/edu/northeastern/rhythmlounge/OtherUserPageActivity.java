@@ -10,11 +10,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import edu.northeastern.rhythmlounge.Playlist.OtherUserPlaylistAdapter;
+
 
 /**
  * OtherUserPageActivity allows a user to view another user's profile, which includes:
@@ -35,11 +44,15 @@ public class OtherUserPageActivity extends AppCompatActivity {
     private ImageView imageViewProfilePic;
     private Button buttonFollowUnfollow;
 
+    private RecyclerView otherUserRecyclerView;
+
+    private OtherUserPlaylistAdapter playlistAdapter;
+
     // The current user using the application and the other user they are viewing
     private User currentUser, otherUser;
 
-    private FirebaseAuth mAuth; // Firebase authentication instance
-    private FirebaseFirestore db; // Firebase Firestore instance
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
     private ListenerRegistration currentUserListenerRegistration;
     private ListenerRegistration otherUserListenerRegistration;
 
@@ -102,6 +115,11 @@ public class OtherUserPageActivity extends AppCompatActivity {
 
         textViewFollowing.setOnClickListener(v -> handleFollowingClick(otherUserId));
         textViewFollowers.setOnClickListener(v -> handleFollowersClick(otherUserId));
+
+        otherUserRecyclerView = findViewById(R.id.recyclerViewPlaylists);
+        playlistAdapter = new OtherUserPlaylistAdapter(this, new ArrayList<>(), otherUserId);
+        otherUserRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        otherUserRecyclerView.setAdapter(playlistAdapter);
     }
 
     /**
@@ -145,7 +163,24 @@ public class OtherUserPageActivity extends AppCompatActivity {
                 .addSnapshotListener((snapshot, e) -> {
                     if (e != null || snapshot == null) return;
                     otherUser = snapshot.toObject(User.class);
+                    getOtherUserPlaylists(otherUserId);
                     populateUIWithOtherUserDetails(otherUserId);
+                });
+    }
+
+    private void getOtherUserPlaylists(String otherUserId) {
+        db.collection("users")
+                .document(otherUserId)
+                .collection("playlists")
+                .get()
+                .addOnCompleteListener(task -> {
+                   if (task.isSuccessful()) {
+                       List<DocumentSnapshot> playlistSnapshots = task.getResult().getDocuments();
+                       playlistAdapter.refreshData(playlistSnapshots);
+                       Log.d("OtherUserPageActivity", "Successfully retrieved playlists: " + playlistSnapshots.size());
+                   } else {
+                       Log.d("OtherUserPageActivity", "Error getting documents: ", task.getException());
+                   }
                 });
     }
 

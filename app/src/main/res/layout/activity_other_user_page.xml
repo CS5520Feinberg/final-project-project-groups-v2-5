@@ -83,7 +83,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewFollowers"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="50dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPlaylists"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewPlaylist"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp" />
 
     <TextView
         android:id="@+id/textViewHostingEvents"
@@ -93,7 +102,7 @@
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewPlaylist"
+        app:layout_constraintTop_toBottomOf="@id/recyclerViewPlaylists"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"/>
 
