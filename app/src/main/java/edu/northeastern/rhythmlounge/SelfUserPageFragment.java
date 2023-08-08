@@ -26,21 +26,26 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import org.w3c.dom.Text;
-
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import edu.northeastern.rhythmlounge.Playlist.SelfUserPlaylistAdapter;
 
 public class SelfUserPageFragment extends Fragment {
 
@@ -49,6 +54,9 @@ public class SelfUserPageFragment extends Fragment {
     private static final int ERROR_DIALOGUE_REQ = 9001;
     private TextView textViewOwnUsername, textViewOwnBio, textViewOwnFollowers, textViewOwnFollowing;
     private ImageView imageViewProfilePic, heatMap;
+
+    private RecyclerView recyclerView;
+    private SelfUserPlaylistAdapter selfUserPlaylistAdapter;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private StorageReference storageReference;
@@ -94,6 +102,8 @@ public class SelfUserPageFragment extends Fragment {
                 Log.d("PhotoPicker", "No media selected");
             }
         });
+
+        initializePlaylistRecyclerView(view);
 
         imageViewProfilePic.setOnClickListener(v -> openImageDialog());
 
@@ -283,6 +293,32 @@ public class SelfUserPageFragment extends Fragment {
             Toast.makeText(requireContext(), "Failed to upload profile picture", Toast.LENGTH_SHORT).show();
             Log.d("FirebaseError", "Firebase Storage upload failure: " + e.getMessage());
         });
+    }
+
+
+    private void initializePlaylistRecyclerView(View view) {
+        recyclerView = view.findViewById(R.id.playlisRecyclerView);
+        selfUserPlaylistAdapter = new SelfUserPlaylistAdapter(getActivity(), new ArrayList<>());
+        recyclerView.setAdapter(selfUserPlaylistAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        getCurrentUserPlaylists();
+    }
+
+     private void getCurrentUserPlaylists() {
+        String currentUserId = getCurrentUserId();
+
+        db.collection("users")
+            .document(currentUserId)
+            .collection("playlists")
+            .get()
+            .addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    List<DocumentSnapshot> playlistSnapshots = task.getResult().getDocuments(); // Get snapshots
+                    selfUserPlaylistAdapter.refreshData(playlistSnapshots);
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            });
     }
 
     @Override
