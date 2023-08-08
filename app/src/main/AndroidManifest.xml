@@ -50,6 +50,8 @@
         <activity android:name=".EditProfileFragment" />
         <activity android:name=".EventDetailsFragment" />
         <activity android:name=".Post.DetailedPostActivity"/>
+        <activity android:name=".Post.WriteCommentActivity"/>
+
 
 
         <meta-data
