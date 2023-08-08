@@ -1,6 +1,8 @@
 package edu.northeastern.rhythmlounge.Post;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Post {
     private String userId;
@@ -12,6 +14,8 @@ public class Post {
     private String imageUrl;
     private String postId;
     private String profilePictureUrl;
+    private int likeCount = 0;
+    private List<String> likedByUsers = new ArrayList<>();
 
 
     public Post() {
@@ -26,9 +30,7 @@ public class Post {
         this.imageUrl = imageUrl;
     }
 
-
     // Getters and Setters
-
     public String getUserId() {
         return userId;
     }
@@ -99,6 +101,36 @@ public class Post {
 
     public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
+    }
+
+    public int getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public List<String> getLikedByUsers() {
+        return likedByUsers;
+    }
+
+    public void setLikedByUsers(List<String> likedByUsers) {
+        this.likedByUsers = likedByUsers;
+    }
+
+    public void addLike(String userId) {
+        // Increment like count
+        this.likeCount++;
+        // Add user ID to the list
+        this.likedByUsers.add(userId);
+    }
+
+    public void removeLike(String userId) {
+        // Decrement like count
+        this.likeCount--;
+        // Remove user ID from the list
+        this.likedByUsers.remove(userId);
     }
 
 }

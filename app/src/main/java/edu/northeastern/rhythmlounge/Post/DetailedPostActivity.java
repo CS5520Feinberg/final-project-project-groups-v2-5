@@ -28,8 +28,8 @@ public class DetailedPostActivity extends AppCompatActivity {
     private ImageView postImageView;
     private TextView titleTextView;
     private ImageView userProfileImageView;
-
-
+    private ImageButton likeButton;
+    private TextView likeCountTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,8 @@ public class DetailedPostActivity extends AppCompatActivity {
         contentTextView = findViewById(R.id.tv_content);
         deleteButton = findViewById(R.id.btn_delete);
         userProfileImageView = findViewById(R.id.iv_user_profile_image);
-
+        likeButton = findViewById(R.id.btn_like);
+        likeCountTextView = findViewById(R.id.tv_like_count);
 
         // Get post ID from intent
         postId = getIntent().getStringExtra("POST_ID");
@@ -66,6 +67,7 @@ public class DetailedPostActivity extends AppCompatActivity {
                     Post post = documentSnapshot.toObject(Post.class);
 
                     if (post != null) {
+                        post.setPostId(documentSnapshot.getId());
                         postImageView.setOnClickListener(v -> showFullScreenImage(post.getImageUrl()));
                         Glide.with(this).load(post.getImageUrl()).into(postImageView);
 
@@ -77,6 +79,7 @@ public class DetailedPostActivity extends AppCompatActivity {
                         db.collection("users").document(post.getUserId()).get()
                                 .addOnSuccessListener(userDocument -> {
                                     User user = userDocument.toObject(User.class);
+                                    assert user != null;
                                     String profilePicUrl = user.getProfilePictureUrl();
                                     if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
                                         Glide.with(this)
@@ -89,6 +92,28 @@ public class DetailedPostActivity extends AppCompatActivity {
                                 })
                                 .addOnFailureListener(e -> {
                                 });
+
+                        // Setting the initial state of the like button and like count
+                        if(post.getLikedByUsers() != null && post.getLikedByUsers().contains(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
+                            likeButton.setImageResource(R.drawable.ic_liked);
+                        } else {
+                            likeButton.setImageResource(R.drawable.ic_like);
+                        }
+                        likeCountTextView.setText(String.valueOf(post.getLikeCount()));
+
+                        likeButton.setOnClickListener(v -> {
+                            if(post.getLikedByUsers().contains(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
+                                post.removeLike(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                likeButton.setImageResource(R.drawable.ic_like);
+                            } else {
+                                post.addLike(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                likeButton.setImageResource(R.drawable.ic_liked);
+                            }
+                            likeCountTextView.setText(String.valueOf(post.getLikeCount()));
+                            // Update post in Firestore
+                            updatePostInFirestore(post);
+                        });
+
 
                         // Check if post has an image URL and set visibility
                         if (post.getImageUrl() != null && !post.getImageUrl().isEmpty()) {
@@ -113,7 +138,6 @@ public class DetailedPostActivity extends AppCompatActivity {
                     finish();
                 });
     }
-
 
     private void deletePost(String postId) {
         db.collection("posts").document(postId).delete()
@@ -141,4 +165,21 @@ public class DetailedPostActivity extends AppCompatActivity {
         fullScreenDialog.show();
     }
 
+    private void updatePostInFirestore(Post post) {
+        if (post.getPostId() == null) {
+            Toast.makeText(this, "Error: Post ID is missing.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        db.collection("posts").document(post.getPostId())
+                .update(
+                        "likeCount", post.getLikeCount(),
+                        "likedByUsers", post.getLikedByUsers()
+                )
+                .addOnSuccessListener(aVoid -> {
+                    // Post was successfully updated in Firestore
+                    Toast.makeText(this, "Liked the post!", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Error liking the post", Toast.LENGTH_SHORT).show());
+    }
 }

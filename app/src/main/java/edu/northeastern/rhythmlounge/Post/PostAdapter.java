@@ -14,7 +14,10 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
+
 import android.content.Context;
 
 import com.bumptech.glide.Glide;
@@ -49,6 +52,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         Post post = posts.get(position);
         holder.usernameTextView.setText(post.getUsername());
         holder.titleTextView.setText(post.getTitle());
+        holder.likeCountTextView.setText(String.valueOf(post.getLikeCount()));
+
+        // Format the date
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
+        holder.dateTextView.setText(sdf.format(post.getTimestamp()));
+        holder.likeCountTextView.setText(String.valueOf(post.getLikeCount()));
 
         // Fetch the profile picture URL for this post's user
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -113,6 +122,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         TextView usernameTextView;
         ImageView thumbnailImageView;
         TextView titleTextView;
+        ImageView likeIconImageView;
+        TextView likeCountTextView;
+        TextView dateTextView;
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -120,6 +132,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             titleTextView = itemView.findViewById(R.id.tv_title);
             thumbnailImageView = itemView.findViewById(R.id.iv_thumbnail);
             userProfilePicImageView = itemView.findViewById(R.id.iv_user_profile_picture);
+            likeIconImageView = itemView.findViewById(R.id.iv_liked_icon);
+            likeCountTextView = itemView.findViewById(R.id.tv_liked_count);
+            dateTextView = itemView.findViewById(R.id.tv_date);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();

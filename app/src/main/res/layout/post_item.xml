@@ -17,14 +17,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            tools:ignore="UselessParent">
+            tools:ignore="UselessParent"
+            android:baselineAligned="false">
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:layout_marginEnd="8dp">
+                android:orientation="vertical">
 
                 <ImageView
                     android:id="@+id/iv_user_profile_picture"
@@ -38,26 +40,61 @@
                     android:id="@+id/tv_username"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="4dp" />
+                    android:layout_marginBottom="4dp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tv_title"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tv_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/date"
+                    android:textColor="#757575"
+                    android:textSize="12sp" />
 
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/iv_thumbnail"
+            <FrameLayout
                 android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:scaleType="centerCrop"
-                android:contentDescription="@string/thumbnail_image" />
+                android:layout_height="100dp">
+
+                <ImageView
+                    android:id="@+id/iv_thumbnail"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:contentDescription="@string/thumbnail_image"
+                    android:scaleType="centerCrop" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:orientation="horizontal"
+                    tools:ignore="UseCompoundDrawables">
+
+                    <ImageView
+                        android:id="@+id/iv_liked_icon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginEnd="4dp"
+                        android:contentDescription="@string/like_button"
+                        android:src="@drawable/ic_liked" />
+
+                    <TextView
+                        android:id="@+id/tv_liked_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="4dp"
+                        android:text="@string/_0" />
+                </LinearLayout>
+
+            </FrameLayout>
 
         </LinearLayout>
-
-        <!-- Add more views here for post details (like post image, date, etc.) -->
 
     </LinearLayout>
 

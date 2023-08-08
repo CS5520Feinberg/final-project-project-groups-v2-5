@@ -52,6 +52,9 @@
     <string name="delete_post">Delete Post</string>
     <string name="post_image">Post image</string>
     <string name="profile_picture">Profile picture</string>
+    <string name="like_button">like button</string>
+    <string name="date">Date</string>
+    <string name="_0">0</string>
     <string-array name="heatmaps_datasets_array">
         <item>@string/mycurrentlocation</item>
         <item>@string/events</item>
