@@ -96,7 +96,7 @@ public class PostActivity extends AppCompatActivity {
 
         Query query = db.collection("posts")
                 .orderBy("timestamp", Query.Direction.DESCENDING) // Order by most recent
-                .limit(10);
+                .limit(50);
 
         query.get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
