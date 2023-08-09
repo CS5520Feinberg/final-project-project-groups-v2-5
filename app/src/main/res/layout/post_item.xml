@@ -104,6 +104,22 @@
                         android:layout_marginStart="0dp"
                         android:layout_marginEnd="4dp"
                         android:text="@string/_0" />
+
+                    <ImageView
+                        android:id="@+id/iv_comment_icon"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginEnd="4dp"
+                        android:src="@drawable/ic_commented"
+                        android:contentDescription="@string/post_comment" />
+
+                    <TextView
+                        android:id="@+id/tv_comment_count"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="4dp"
+                        android:text="@string/_0"/>
                 </LinearLayout>
 
             </FrameLayout>

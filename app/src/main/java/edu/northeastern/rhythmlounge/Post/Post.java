@@ -15,6 +15,7 @@ public class Post {
     private String postId;
     private String profilePictureUrl;
     private int likeCount = 0;
+    private int commentCount = 0;
     private List<String> likedByUsers = new ArrayList<>();
 
     public Post() {
@@ -110,6 +111,14 @@ public class Post {
         this.likeCount = likeCount;
     }
 
+    public int getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
+    }
+
     public List<String> getLikedByUsers() {
         return likedByUsers;
     }
@@ -130,6 +139,16 @@ public class Post {
         this.likeCount--;
         // Remove user ID from the list
         this.likedByUsers.remove(userId);
+    }
+
+    public void addComment() {
+        this.commentCount++;
+    }
+
+    public void removeComment() {
+        if (this.commentCount > 0) {
+            this.commentCount--;
+        }
     }
 
 }

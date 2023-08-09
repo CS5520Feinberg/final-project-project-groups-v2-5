@@ -9,6 +9,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Date;
 import java.util.Objects;
@@ -54,8 +56,17 @@ public class WriteCommentActivity extends AppCompatActivity {
                 .addOnSuccessListener(documentReference -> {
                     comment.setCommentId(documentReference.getId());
                     Toast.makeText(this, "Comment posted", Toast.LENGTH_SHORT).show();
+                    updatePostCommentCount();
                     finish();
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, "Error posting comment", Toast.LENGTH_SHORT).show());
     }
+
+    private void updatePostCommentCount() {
+        DocumentReference postRef = db.collection("posts").document(postId);
+        postRef.update("commentCount", FieldValue.increment(1))
+                .addOnSuccessListener(aVoid -> Log.d("DEBUG", "Comment count updated!"))
+                .addOnFailureListener(e -> Log.e("DEBUG", "Error updating comment count", e));
+    }
+
 }

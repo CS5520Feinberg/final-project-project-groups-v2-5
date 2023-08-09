@@ -11,11 +11,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Transaction;
 
 import java.util.Date;
 import java.util.List;
@@ -33,7 +39,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         this.comments = comments;
         this.context = context;
     }
-
 
     @NonNull
     @Override
@@ -154,10 +159,33 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                         notifyItemRemoved(indexToRemove);
                     }
                     Toast.makeText(context, "Comment deleted", Toast.LENGTH_SHORT).show();
+                    decrementPostCommentCount(postId);
                 })
                 .addOnFailureListener(e -> {
                     // Handle the error
                     Toast.makeText(context, "Error deleting comment: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
+    private void decrementPostCommentCount(String postId) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference postRef = db.collection("posts").document(postId);
+
+        db.runTransaction(new Transaction.Function<Void>() {
+                    @Nullable
+                    @Override
+                    public Void apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                        DocumentSnapshot snapshot = transaction.get(postRef);
+
+                        // Get the current comment count
+                        long currentCount = snapshot.getLong("commentCount");
+                        if (currentCount > 0) {
+                            transaction.update(postRef, "commentCount", currentCount - 1);
+                        }
+                        return null;
+                    }
+                })
+                .addOnSuccessListener(aVoid -> Log.d("CommentAdapter", "Comment count decremented!"))
+                .addOnFailureListener(e -> Log.e("CommentAdapter", "Error decrementing comment count", e));
+    }
+
 }

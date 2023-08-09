@@ -53,6 +53,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         holder.usernameTextView.setText(post.getUsername());
         holder.titleTextView.setText(post.getTitle());
         holder.likeCountTextView.setText(String.valueOf(post.getLikeCount()));
+        holder.commentCountTextView.setText(String.valueOf(post.getCommentCount()));
 
         // Format the date
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
@@ -64,6 +65,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         db.collection("users").document(post.getUserId()).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     User user = documentSnapshot.toObject(User.class);
+                    assert user != null;
                     String profilePicUrl = user.getProfilePictureUrl();
                     if (profilePicUrl != null && !profilePicUrl.isEmpty()) {
                         Glide.with(context)
@@ -124,6 +126,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         TextView titleTextView;
         ImageView likeIconImageView;
         TextView likeCountTextView;
+        ImageView commentIconImageView;
+        TextView commentCountTextView;
         TextView dateTextView;
 
         public PostViewHolder(@NonNull View itemView) {
@@ -134,6 +138,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             userProfilePicImageView = itemView.findViewById(R.id.iv_user_profile_picture);
             likeIconImageView = itemView.findViewById(R.id.iv_liked_icon);
             likeCountTextView = itemView.findViewById(R.id.tv_liked_count);
+            commentIconImageView = itemView.findViewById(R.id.iv_comment_icon);
+            commentCountTextView = itemView.findViewById(R.id.tv_comment_count);
             dateTextView = itemView.findViewById(R.id.tv_date);
 
             itemView.setOnClickListener(v -> {
