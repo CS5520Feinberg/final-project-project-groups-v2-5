@@ -23,7 +23,7 @@
                 android:id="@+id/iv_user_profile_image"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
-                android:layout_marginRight="12dp"
+                android:layout_marginEnd="12dp"
                 android:scaleType="centerCrop"
                 android:background="@drawable/circular_shape"
                 android:contentDescription="@string/profile_picture" />
@@ -91,7 +91,7 @@
             android:background="#e0e0e0"
             android:contentDescription="@string/post_image" />
 
-        <!-- Like Layout -->
+        <!-- Action Bar (Like and Comment) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -104,6 +104,7 @@
                 android:id="@+id/btn_like"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:layout_marginEnd="4dp"
                 android:background="?android:selectableItemBackground"
                 android:src="@drawable/ic_like"
                 android:contentDescription="@string/like_button" />
@@ -113,11 +114,40 @@
                 android:id="@+id/tv_like_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginEnd="16dp"
                 android:textColor="#888"
-                android:text="0"
+                android:text="@string/_0"
                 android:fontFamily="sans-serif-medium" />
+
+            <!-- Comment Button -->
+            <ImageButton
+                android:id="@+id/btn_comment"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="4dp"
+                android:background="?android:selectableItemBackground"
+                android:src="@drawable/ic_commented"
+                android:contentDescription="@string/post_comment" />
+
+            <!-- Comment Count -->
+            <TextView
+                android:id="@+id/tv_comment_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#888"
+                android:layout_marginEnd="4dp"
+                android:text="@string/_0"
+                android:fontFamily="sans-serif-medium" />
+
         </LinearLayout>
+
+        <!-- Comments List -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/comments_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="8dp"/>
 
     </LinearLayout>
 

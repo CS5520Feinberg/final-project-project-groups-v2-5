@@ -17,7 +17,6 @@ public class Post {
     private int likeCount = 0;
     private List<String> likedByUsers = new ArrayList<>();
 
-
     public Post() {
     }
 

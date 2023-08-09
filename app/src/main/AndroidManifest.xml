@@ -51,6 +51,8 @@
         <activity android:name=".Post.DetailedPostActivity"/>
         <activity android:name=".Playlist.SelfUserSongListActivity" />
         <activity android:name=".Playlist.OtherUserSongListActivity"/>
+        <activity android:name=".Post.WriteCommentActivity"/>
+
 
 
         <meta-data

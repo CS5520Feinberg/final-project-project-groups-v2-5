@@ -1,6 +1,8 @@
 package edu.northeastern.rhythmlounge.Post;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -9,10 +11,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 import edu.northeastern.rhythmlounge.R;
@@ -30,6 +41,10 @@ public class DetailedPostActivity extends AppCompatActivity {
     private ImageView userProfileImageView;
     private ImageButton likeButton;
     private TextView likeCountTextView;
+    private RecyclerView commentsList;
+    private Post currentPost;
+    private TextView commentCountTextView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +62,24 @@ public class DetailedPostActivity extends AppCompatActivity {
         userProfileImageView = findViewById(R.id.iv_user_profile_image);
         likeButton = findViewById(R.id.btn_like);
         likeCountTextView = findViewById(R.id.tv_like_count);
+        ImageButton commentButton = findViewById(R.id.btn_comment);
+        commentCountTextView = findViewById(R.id.tv_comment_count);
+        commentsList = findViewById(R.id.comments_list);
+        commentsList.setLayoutManager(new LinearLayoutManager(this));
+
+        // Initialize the CommentAdapter
+        CommentAdapter commentAdapter = new CommentAdapter(new ArrayList<>(), this);
+        commentsList.setAdapter(commentAdapter);
+        commentButton.setOnClickListener(v -> {
+            Intent intent = new Intent(DetailedPostActivity.this, WriteCommentActivity.class);
+            intent.putExtra("POST_ID", postId);  // Pass the postId to WriteCommentActivity
+            startActivity(intent);
+        });
+
 
         // Get post ID from intent
         postId = getIntent().getStringExtra("POST_ID");
-        //preview image
+        // preview image
         postImageView = findViewById(R.id.iv_post_image);
 
         if (postId != null) {
@@ -67,6 +96,7 @@ public class DetailedPostActivity extends AppCompatActivity {
                     Post post = documentSnapshot.toObject(Post.class);
 
                     if (post != null) {
+                        currentPost = post;
                         post.setPostId(documentSnapshot.getId());
                         postImageView.setOnClickListener(v -> showFullScreenImage(post.getImageUrl()));
                         Glide.with(this).load(post.getImageUrl()).into(postImageView);
@@ -102,18 +132,17 @@ public class DetailedPostActivity extends AppCompatActivity {
                         likeCountTextView.setText(String.valueOf(post.getLikeCount()));
 
                         likeButton.setOnClickListener(v -> {
-                            if(post.getLikedByUsers().contains(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
-                                post.removeLike(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            if(currentPost.getLikedByUsers().contains(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
+                                currentPost.removeLike(FirebaseAuth.getInstance().getCurrentUser().getUid());
                                 likeButton.setImageResource(R.drawable.ic_like);
                             } else {
-                                post.addLike(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                                currentPost.addLike(FirebaseAuth.getInstance().getCurrentUser().getUid());
                                 likeButton.setImageResource(R.drawable.ic_liked);
                             }
-                            likeCountTextView.setText(String.valueOf(post.getLikeCount()));
+                            likeCountTextView.setText(String.valueOf(currentPost.getLikeCount()));
                             // Update post in Firestore
-                            updatePostInFirestore(post);
+                            updatePostInFirestore(currentPost);
                         });
-
 
                         // Check if post has an image URL and set visibility
                         if (post.getImageUrl() != null && !post.getImageUrl().isEmpty()) {
@@ -128,6 +157,9 @@ public class DetailedPostActivity extends AppCompatActivity {
                             deleteButton.setVisibility(View.VISIBLE);
                             deleteButton.setOnClickListener(v -> deletePost(postId));
                         }
+
+                        fetchComments();
+
                     } else {
                         Toast.makeText(this, "Error loading post details", Toast.LENGTH_SHORT).show();
                         finish();
@@ -137,6 +169,12 @@ public class DetailedPostActivity extends AppCompatActivity {
                     Toast.makeText(this, "Error loading post details", Toast.LENGTH_SHORT).show();
                     finish();
                 });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchComments();
     }
 
     private void deletePost(String postId) {
@@ -182,4 +220,37 @@ public class DetailedPostActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, "Error liking the post", Toast.LENGTH_SHORT).show());
     }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private void fetchComments() {
+        List<Comment> commentList = new ArrayList<>();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        db.collection("posts").document(postId).collection("comments")
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (DocumentSnapshot document : queryDocumentSnapshots) {
+                        Comment comment = document.toObject(Comment.class);
+                        if (comment != null) {
+                            comment.setCommentId(document.getId());
+                            comment.setPostId(postId);
+                            commentList.add(comment);
+                        }
+                    }
+                    CommentAdapter commentAdapter = (CommentAdapter) commentsList.getAdapter();
+                    if (commentAdapter != null) {
+                        commentAdapter.setComments(commentList);
+                        commentAdapter.notifyDataSetChanged();
+                    }
+
+                    commentCountTextView.setText(String.valueOf(commentList.size()));
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Error fetching comments", Toast.LENGTH_SHORT).show());
+    }
+
 }
