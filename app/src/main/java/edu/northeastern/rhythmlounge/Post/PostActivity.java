@@ -40,8 +40,6 @@ public class PostActivity extends AppCompatActivity {
     private List<Post> posts = new ArrayList<>();
     private PostAdapter postAdapter;
     RecyclerView rvPosts;
-    private EditText etTitle;
-    private ImageView ivDialogPreview;
     FloatingActionButton fabCreatePost;
     SwipeRefreshLayout swipeRefreshLayout;
     TextView tvEmptyState;
@@ -81,8 +79,10 @@ public class PostActivity extends AppCompatActivity {
             swipeRefreshLayout.setRefreshing(false);
         });
 
-
-        fabCreatePost.setOnClickListener(v -> showCreatePostDialog());
+        fabCreatePost.setOnClickListener(v -> {
+            Intent intent = new Intent(PostActivity.this, CreatePostActivity.class);
+            startActivity(intent);
+        });
 
         db = FirebaseFirestore.getInstance();
         fetchPosts();
@@ -139,104 +139,6 @@ public class PostActivity extends AppCompatActivity {
             }
         });
     }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private void createPost(String title, String content, String imageUrl) {
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        assert currentUser != null;
-        db.collection("users").document(currentUser.getUid())
-                .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    String username = documentSnapshot.getString("username");
-                    Post newPost = new Post(currentUser.getUid(), username, title, content, imageUrl);
-                    newPost.setThumbnailUrl(imageUrl);
-
-                    db.collection("posts")
-                            .add(newPost)
-                            .addOnSuccessListener(documentReference -> {
-                                Toast.makeText(PostActivity.this, "Post created!", Toast.LENGTH_SHORT).show();
-                                newPost.setPostId(documentReference.getId());  // Set the post ID here
-                                posts.add(0, newPost);
-                                postAdapter.notifyDataSetChanged();
-                            })
-                            .addOnFailureListener(e -> Toast.makeText(PostActivity.this, "Error creating post.", Toast.LENGTH_SHORT).show());
-                })
-                .addOnFailureListener(e -> Toast.makeText(PostActivity.this, "Error fetching username.", Toast.LENGTH_SHORT).show());
-    }
-
-    @SuppressLint("SetTextI18n")
-    private void showCreatePostDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("New Post");
-
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(10, 10, 10, 10); // Padding for aesthetic appeal
-
-        etTitle = new EditText(this);  // Use the class level etTitle
-        etTitle.setHint("Post Title");
-        layout.addView(etTitle);
-
-        EditText etContent = new EditText(this);
-        etContent.setHint("Write your post here...");
-        layout.addView(etContent);
-
-        Button btnUploadImage = new Button(this);
-        btnUploadImage.setText("Upload Image");
-        layout.addView(btnUploadImage);
-
-        ivDialogPreview = new ImageView(this); // Use the class level ivDialogPreview
-        ivDialogPreview.setVisibility(View.GONE); // Initially, it should be hidden
-        layout.addView(ivDialogPreview);
-
-        builder.setView(layout);
-
-        btnUploadImage.setOnClickListener(v -> {
-            Intent intent = new Intent();
-            intent.setType("image/*");
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(intent, PICK_IMAGE_REQUEST);
-        });
-
-        builder.setPositiveButton("Post", (dialog, which) -> {
-            String title = etTitle.getText().toString().trim();
-            String content = etContent.getText().toString().trim();
-            if (!title.isEmpty() && !content.isEmpty()) {
-                uploadImageAndCreatePost(title, content);
-            } else {
-                Toast.makeText(PostActivity.this, "Post title and content cannot be empty.", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-
-        AlertDialog dialog = builder.create();
-        dialog.setOnDismissListener(d -> {
-            imageUri = null;
-            ivDialogPreview.setVisibility(View.GONE);
-        });
-        dialog.show();
-    }
-
-
-    private void uploadImageAndCreatePost(String title, String content) {
-        if (imageUri != null) {
-            StorageReference fileReference = storageRef.child(System.currentTimeMillis() + ".jpg");
-
-            fileReference.putFile(imageUri)
-                    .addOnSuccessListener(taskSnapshot -> {
-                        // Once the image is uploaded, retrieve its download URL
-                        fileReference.getDownloadUrl().addOnSuccessListener(uri -> {
-                            String imageUrl = uri.toString();
-                            createPost(title, content, imageUrl);
-                        });
-                    })
-                    .addOnFailureListener(e -> Toast.makeText(PostActivity.this, "Upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-        } else {
-            createPost(title, content, null); // If there's no image, create the post without an image
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -244,15 +146,6 @@ public class PostActivity extends AppCompatActivity {
         // Check if the result comes from DetailedPostActivity and indicates a successful deletion
         if (requestCode == REQUEST_CODE_DETAILED_POST_ACTIVITY && resultCode == RESULT_OK) {
             fetchPosts();
-        }
-
-        // Check if the result comes from picking an image
-        else if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            imageUri = data.getData();
-            if (etTitle != null && etTitle.isShown()) {
-                Glide.with(this).load(imageUri).into(ivDialogPreview);
-                ivDialogPreview.setVisibility(View.VISIBLE);
-            }
         }
     }
 }

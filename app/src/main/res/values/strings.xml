@@ -64,6 +64,10 @@
     <string name="add_a_comment">Add a comment...</string>
     <string name="write_your_comment_here">Write your comment here...</string>
     <string name="delete_comment">Delete comment</string>
+    <string name="write_your_post_here">Write your post here...</string>
+    <string name="post_title">Post Title</string>
+    <string name="upload_image">Upload Image</string>
+    <string name="post">Post</string>
 
     <string-array name="heatmaps_datasets_array">
         <item>@string/mycurrentlocation</item>
