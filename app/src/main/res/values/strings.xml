@@ -56,10 +56,15 @@
     <string name="date">Date</string>
     <string name="_0">0</string>
     <string name="like_icon">like icon</string>
+    <string name="enter_email">TODO</string>
+    <string name="enter_email1">Enter Email</string>
+    <string name="confirm_account_deletion">Confirm Account Deletion</string>
+    <string name="enter_password">Enter Password</string>
     <string name="post_comment">Comment</string>
     <string name="add_a_comment">Add a comment...</string>
     <string name="write_your_comment_here">Write your comment here...</string>
     <string name="delete_comment">Delete comment</string>
+
     <string-array name="heatmaps_datasets_array">
         <item>@string/mycurrentlocation</item>
         <item>@string/events</item>

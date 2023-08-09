@@ -5,8 +5,11 @@ import static android.content.ContentValues.TAG;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -18,9 +21,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.List;
 
 import edu.northeastern.rhythmlounge.R;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Activity to display and manage songs for the current user's playlist
@@ -79,7 +90,7 @@ public class SelfUserSongListActivity extends AppCompatActivity {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // To do
+                showAddSongDialog();
             }
         });
     }
@@ -163,5 +174,77 @@ public class SelfUserSongListActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> Log.w(TAG, "Error deleting song", e));
 
+    }
+
+    private void showAddSongDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add Song");
+
+        View dialogLayout = getLayoutInflater().inflate(R.layout.dialog_add_song, null);
+        EditText editTextSongTitle = dialogLayout.findViewById(R.id.editTextSongTitle);
+        EditText editTextArtist = dialogLayout.findViewById(R.id.editTextArtist);
+
+        builder.setView(dialogLayout);
+
+        builder.setPositiveButton("Search", (dialog, which) -> {
+            String songTitle = editTextSongTitle.getText().toString().trim();
+            String artist = editTextArtist.getText().toString().trim();
+            searchYouTubeForSong(songTitle, artist);
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void searchYouTubeForSong(String songTitle, String artist) {
+        String myApiKey = "AIzaSyC6LZAxWYKscXYvUsLep2dZ_FEzB1jMceI";
+        String query = songTitle + " " + artist;
+        String url = "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&q=" + query + "&key=" + myApiKey;
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder().url(url).build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                //....
+            }
+
+            @Override
+            public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String responseData = response.body().string();
+                    try {
+                        JSONObject jsonObject = new JSONObject(responseData);
+                        String videoId = jsonObject.getJSONArray("items").getJSONObject(0).getJSONObject("id").getString("videoId");
+                        // save song details along with videoId
+                        saveSongToFirestore(songTitle, artist, videoId);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    private void saveSongToFirestore(String songTitle, String artistName, String videoId) {
+        Song newSong = new Song(songTitle, artistName, "https://www.youtube.com/watch?v=" + videoId);
+
+        db.collection("users")
+                .document(currentUserId)
+                .collection("playlists")
+                .document(playlistId)
+                .collection("songs")
+                .add(newSong)
+                .addOnSuccessListener(documentReference -> {
+                    Log.d(TAG, "Song was added successfully.");
+                    Toast.makeText(SelfUserSongListActivity.this, "Song was added successfully", Toast.LENGTH_SHORT).show();
+                    getSongsFromPlaylist(playlistId);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to add song: " + e.getMessage());
+                    Toast.makeText(SelfUserSongListActivity.this, "Failed to add song.", Toast.LENGTH_SHORT).show();
+                });
     }
 }

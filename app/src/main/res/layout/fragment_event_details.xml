@@ -13,6 +13,7 @@
             android:id="@+id/textViewEventName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/manrope_bold"
             android:text="Event Name"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -21,10 +22,11 @@
             android:id="@+id/textViewLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/manrope_bold"
             android:text="Location"
             android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginTop="8dp"/>
+            android:textStyle="bold" />
 
     </LinearLayout>
 </ScrollView>

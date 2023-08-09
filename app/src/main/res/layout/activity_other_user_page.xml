@@ -21,12 +21,13 @@
         android:id="@+id/textViewUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:fontFamily="@font/manrope_bold"
         android:text="@string/username_should_appear_here"
-        android:textColor="@color/Black"
+        android:textColor="#000000"
         android:textSize="12sp"
         app:layout_constraintStart_toEndOf="@id/other_user_profile_picture"
-        app:layout_constraintTop_toTopOf="@id/other_user_profile_picture"
-        android:layout_marginStart="8dp" />
+        app:layout_constraintTop_toTopOf="@id/other_user_profile_picture" />
 
     <TextView
         android:id="@+id/textViewBio"
@@ -42,48 +43,52 @@
         android:id="@+id/buttonFollowUnfollow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/manrope_bold"
         android:text="@string/follow_unfollow"
         android:textColor="#3E2723"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textViewFollowers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:clickable="true"
         android:focusable="true"
+        android:fontFamily="@font/manrope_semibold"
         android:text="Followers"
         app:layout_constraintStart_toEndOf="@id/other_user_profile_picture"
-        app:layout_constraintTop_toBottomOf="@id/textViewBio"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp" />
+        app:layout_constraintTop_toBottomOf="@id/textViewBio" />
 
     <TextView
         android:id="@+id/textViewFollowing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:clickable="true"
         android:focusable="true"
+        android:fontFamily="@font/manrope_semibold"
         android:text="Following"
         app:layout_constraintStart_toEndOf="@id/textViewFollowers"
-        app:layout_constraintTop_toBottomOf="@id/textViewBio"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp" />
+        app:layout_constraintTop_toBottomOf="@id/textViewBio" />
 
     <TextView
         android:id="@+id/textViewPlaylist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="50dp"
+        android:fontFamily="@font/manrope_bold"
         android:text="@string/playlists"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewFollowers"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="50dp"/>
+        app:layout_constraintTop_toBottomOf="@id/textViewFollowers" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPlaylists"
@@ -98,24 +103,26 @@
         android:id="@+id/textViewHostingEvents"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/manrope_bold"
         android:text="@string/hosting_events"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recyclerViewPlaylists"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"/>
+        app:layout_constraintTop_toBottomOf="@id/recyclerViewPlaylists" />
 
     <TextView
         android:id="@+id/textViewAttendingEvents"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/manrope_bold"
         android:text="@string/attending_events"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewHostingEvents"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"/>
+        app:layout_constraintTop_toBottomOf="@id/textViewHostingEvents" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
