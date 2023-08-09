@@ -18,6 +18,7 @@
             android:id="@+id/userSearchEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/manrope_light"
             android:hint="@string/search_for_users"
             android:importantForAutofill="no"
             android:minHeight="48dp"

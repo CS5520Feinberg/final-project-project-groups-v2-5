@@ -11,6 +11,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:fontFamily="@font/manrope_bold"
             android:text="@string/events"
             android:textAppearance="@style/TextAppearance.Manrope"
             android:textSize="14sp" />
@@ -21,6 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginStart="8dp"
+            android:fontFamily="@font/manrope_semibold"
             android:text="@string/upcoming_events"
             android:textAppearance="@style/TextAppearance.Manrope"
             android:textSize="14sp" />
@@ -37,6 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginStart="8dp"
+            android:fontFamily="@font/manrope_semibold"
             android:text="@string/events"
             android:textSize="14sp" />
 
@@ -52,6 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginStart="8dp"
+            android:fontFamily="@font/manrope_semibold"
             android:text="@string/upcoming_concerts"
             android:textAppearance="@style/TextAppearance.Manrope"
             android:textSize="14sp" />
@@ -68,6 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginStart="8dp"
+            android:fontFamily="@font/manrope_semibold"
             android:text="@string/concerts"
             android:textAppearance="@style/TextAppearance.Manrope"
             android:textSize="14sp" />

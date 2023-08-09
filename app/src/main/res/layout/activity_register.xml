@@ -9,7 +9,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:padding="16dp">
 
         <ImageView
@@ -28,13 +28,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
+            android:fontFamily="@font/manrope_light"
             android:hint="@string/email"
+            android:importantForAutofill="no"
             android:inputType="textEmailAddress"
             android:minHeight="48dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextRegisterUsername"
-            android:importantForAutofill="no"
             tools:ignore="VisualLintTextFieldSize" />
 
         <EditText
@@ -42,13 +43,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:autofillHints=""
+            android:fontFamily="@font/manrope_light"
             android:hint="@string/password"
             android:inputType="textPassword"
             android:minHeight="48dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editTextRegisterEmail"
-            android:autofillHints=""
             tools:ignore="VisualLintTextFieldSize" />
 
         <EditText
@@ -56,13 +58,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:fontFamily="@font/manrope_light"
             android:hint="@string/username"
+            android:importantForAutofill="no"
             android:inputType="text"
             android:minHeight="48dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageViewAvatar"
-            android:importantForAutofill="no"
             tools:ignore="VisualLintTextFieldSize" />
 
         <Button
@@ -70,6 +73,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="36dp"
+            android:fontFamily="@font/manrope_bold"
             android:text="@string/register"
             android:textColor="#3E2723"
             app:layout_constraintEnd_toEndOf="parent"
@@ -82,6 +86,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:fontFamily="@font/manrope_bold"
             android:text="@string/go_to_login"
             android:textColor="#3E2723"
             app:layout_constraintEnd_toEndOf="parent"
@@ -94,6 +99,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="64dp"
+            android:fontFamily="@font/manrope_medium"
             android:text="@string/already_have_an_account_login_here"
             android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"

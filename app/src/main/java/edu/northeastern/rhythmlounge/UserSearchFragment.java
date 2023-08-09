@@ -86,7 +86,7 @@ public class UserSearchFragment extends Fragment {
         db.collection("users")
                 .whereGreaterThanOrEqualTo("username", query)
                 .whereLessThanOrEqualTo("username", query + "\uf8ff")
-                .limit(5)
+                .limit(10)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     userSuggestions.clear();

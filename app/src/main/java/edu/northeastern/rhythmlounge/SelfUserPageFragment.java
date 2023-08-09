@@ -85,6 +85,9 @@ public class SelfUserPageFragment extends Fragment {
         Button buttonEdit = view.findViewById(R.id.button_edit);
         buttonEdit.setOnClickListener(v -> showEditProfileDialog());
 
+        Button buttonAddPlaylist = view.findViewById(R.id.addPlaylistButton);
+        buttonAddPlaylist.setOnClickListener(v -> addNewPlaylist());
+
         UserViewModel userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
         userViewModel.getUsernameLiveData().observe(getViewLifecycleOwner(), username -> {
             if (username != null) {
@@ -319,6 +322,47 @@ public class SelfUserPageFragment extends Fragment {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
             });
+    }
+
+    private void addNewPlaylist() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        builder.setTitle("Add Playlist");
+
+        View dialogLayout = getLayoutInflater().inflate(R.layout.dialog_add_playlist, null);
+        EditText editTextPlaylistName = dialogLayout.findViewById(R.id.editTextPlaylistName);
+        builder.setView(dialogLayout);
+
+        builder.setPositiveButton("Save", (dialog, which) -> {
+            String playlistName = editTextPlaylistName.getText().toString();
+            if (!playlistName.isEmpty()) {
+                savePlaylistToFirebase(playlistName);
+            } else {
+                Toast.makeText(requireContext(), "Playlist name cannot be blank.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private void savePlaylistToFirebase(String playlistName) {
+        String currentUserId = getCurrentUserId();
+        Map<String, Object> playlist = new HashMap<>();
+        playlist.put("name", playlistName);
+
+        db.collection("users")
+                .document(currentUserId)
+                .collection("playlists")
+                .add(playlist)
+                .addOnSuccessListener(documentReference -> {
+                    Toast.makeText(requireContext(), "Playlist added successfully.", Toast.LENGTH_SHORT).show();
+                    getCurrentUserPlaylists();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(requireContext(), "Failed to add playlist.", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Failed to add playlist: " + e.getMessage());
+                });
     }
 
     @Override
