@@ -87,14 +87,6 @@ public class HomeActivity extends AppCompatActivity {
 
         ImageView imageViewSettings = findViewById(R.id.imageViewSettings);
         imageViewSettings.setOnClickListener(v -> openActivity(SettingsActivity.class));
-
-        ImageView imageViewNotification = findViewById(R.id.imageViewNotification);
-        imageViewNotification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openFragment(new NotificationsFragment());
-            }
-        });
     }
 
 

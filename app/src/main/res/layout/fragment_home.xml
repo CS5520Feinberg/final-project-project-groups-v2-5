@@ -8,27 +8,31 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:ignore="ExtraText">
 
         <TextView
             android:id="@+id/textViewGreeting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="16sp"
             android:textAppearance="@style/TextAppearance.Manrope"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/textViewMyConcerts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:text="@string/my_concerts"
             android:textAppearance="@style/TextAppearance.Manrope"
-            android:textSize="24sp"
-            tools:ignore="TextSizeCheck" />
+            android:textSize="16sp"
+            tools:ignore="TextSizeCheck"
+            android:textStyle="bold"/>
+
 
         <ProgressBar
             android:id="@+id/progressBarMyConcerts"
@@ -41,7 +45,7 @@
             android:id="@+id/recyclerViewMyConcerts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="16sp"
             android:layout_marginTop="4dp" />
 
 
@@ -50,11 +54,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:text="@string/my_events"
             android:textAppearance="@style/TextAppearance.Manrope"
-            android:textSize="24sp"
-            tools:ignore="TextSizeCheck" />
+            android:textSize="16sp"
+            tools:ignore="TextSizeCheck"
+            android:textStyle="bold"/>
 
         <ProgressBar
             android:id="@+id/progressBarMyEvents"
@@ -75,11 +80,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:text="@string/discover_events_concerts"
             android:textAppearance="@style/TextAppearance.Manrope"
-            android:textSize="24sp"
-            tools:ignore="TextSizeCheck" />
+            android:textSize="16sp"
+            tools:ignore="TextSizeCheck"
+            android:textStyle="bold" />
 
         <ProgressBar
             android:id="@+id/progressBarDiscoverEventsConcerts"

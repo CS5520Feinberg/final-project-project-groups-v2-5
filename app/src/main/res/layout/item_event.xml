@@ -9,8 +9,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageViewEvent"
-        android:layout_width="128dp"
-        android:layout_height="128dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:scaleType="centerCrop"
         android:src="@drawable/concert" />
 
@@ -19,8 +19,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:textSize="20sp"
+        android:textSize="14sp"
         android:textStyle="bold"
+        android:textAppearance="@style/TextAppearance.Manrope"
         tools:ignore="SmallSp" />
 
 
@@ -29,7 +30,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:textSize="14sp"
+        android:textSize="12sp"
+        android:textAppearance="@style/TextAppearance.Manrope"
         tools:ignore="SmallSp" />
 
     <TextView
@@ -37,7 +39,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:textSize="14sp"
+        android:textSize="12sp"
+        android:textAppearance="@style/TextAppearance.Manrope"
         tools:ignore="SmallSp" />
 
     <LinearLayout
@@ -52,6 +55,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="4dp"
             android:textSize="12sp"
+            android:textAppearance="@style/TextAppearance.Manrope"
             tools:ignore="SmallSp" />
 
         <TextView
@@ -60,7 +64,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:textSize="12sp"
+            android:textAppearance="@style/TextAppearance.Manrope"
             tools:ignore="SmallSp" />
+
     </LinearLayout>
 
 </LinearLayout>
