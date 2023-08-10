@@ -36,7 +36,7 @@
     <string name="already_have_an_account_login_here">Already have an account? Login here.</string>
     <string name="x">x</string>
     <string name="edit">Edit</string>
-    <string name="search_for_users">Search for users</string>
+    <string name="search_for_users">Search for Users</string>
     <string name="user_profile_image">User profile image</string>
     <string name="home">Home</string>
     <string name="search">Search</string>
@@ -68,6 +68,25 @@
     <string name="post_title">Post Title</string>
     <string name="upload_image">Upload Image</string>
     <string name="post">Post</string>
+    <string name="search_for_events">Search for Events</string>
+    <string name="venue">Venue</string>
+    <string name="enter_venue">Enter Venue</string>
+    <string name="description">Description</string>
+    <string name="event_name">Event Name</string>
+    <string name="enter_event_name">Enter Event Name</string>
+    <string name="is_this_a_concert">Is this a concert?</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="location">Location</string>
+    <string name="city">City</string>
+    <string name="state_territory">State/Territory</string>
+    <string name="enter_event_description">Enter Event Description</string>
+    <string name="outside_event_link">Outside Event Link</string>
+    <string name="enter_outside_link">Enter Outside Link</string>
+    <string name="click_to_select_a_date">Click to Select a Date</string>
+    <string name="select_date">Select Date</string>
+    <string name="click_to_select_a_time">Click to Select a Time</string>
+    <string name="time">Time</string>
 
     <string-array name="heatmaps_datasets_array">
         <item>@string/mycurrentlocation</item>

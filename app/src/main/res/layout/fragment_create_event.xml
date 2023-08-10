@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
@@ -17,7 +18,8 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:onClick="onUploadImageClick"
-            android:text="Upload Image"
+            android:text="@string/upload_image"
+            android:textColor="#3E2723"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -26,8 +28,8 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imageViewUploadedImage"
-            android:layout_width="167dp"
-            android:layout_height="139dp"
+            android:layout_width="165dp"
+            android:layout_height="140dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:src="@drawable/concert"
@@ -58,29 +60,37 @@
                 android:layout_marginBottom="8dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:text="Event Name"
-                android:textSize="14dp"
+                android:textAppearance="@style/TextAppearance.Manrope"
+                android:text="@string/event_name"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/editTextEventName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter Event Name"
+                android:hint="@string/enter_event_name"
                 android:inputType="text"
+                android:minHeight="48dp"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                android:textAppearance="@style/TextAppearance.Manrope"
+                android:textColorHint="#8D6E63"
+                tools:ignore="Autofill" />
 
             <Switch
                 android:id="@+id/switchIsConcert"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
+                android:minHeight="48dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:text="Is this a concert?"
-                android:textOff="No"
-                android:textOn="Yes" />
+                android:text="@string/is_this_a_concert"
+                android:textAppearance="@style/TextAppearance.Manrope"
+                android:textOff="@string/no"
+                android:textOn="@string/yes"
+                tools:ignore="UseSwitchCompatOrMaterialXml" />
 
             <TextView
                 android:id="@+id/textViewEnterLocation"
@@ -91,26 +101,34 @@
                 android:layout_marginBottom="8dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:text="Location"
-                android:textSize="14dp"
+                android:textAppearance="@style/TextAppearance.Manrope"
+                android:text="@string/location"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/editTextCity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="City"
+                android:hint="@string/city"
+                android:minHeight="48dp"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                android:textColorHint="#8D6E63"
+                android:textAppearance="@style/TextAppearance.Manrope"
+                tools:ignore="Autofill,TextFields" />
 
             <AutoCompleteTextView
                 android:id="@+id/editTextState"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="State/Territory"
+                android:completionThreshold="1"
+                android:hint="@string/state_territory"
+                android:minHeight="48dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:completionThreshold="1"/>
+                android:textColorHint="#8D6E63"
+                android:textAppearance="@style/TextAppearance.Manrope" />
 
 
             <TextView
@@ -122,17 +140,23 @@
                 android:layout_marginBottom="8dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:text="Venue"
-                android:textSize="14dp"
+                android:text="@string/venue"
+                android:textSize="14sp"
+                android:textAppearance="@style/TextAppearance.Manrope"
                 android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/editTextVenue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter Venue"
+                android:hint="@string/enter_venue"
+                android:importantForAutofill="no"
+                android:minHeight="48dp"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                android:textColorHint="#8D6E63"
+                android:textAppearance="@style/TextAppearance.Manrope"
+                tools:ignore="TextFields" />
 
 
             <TextView
@@ -144,18 +168,23 @@
                 android:layout_marginBottom="8dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:text="Description"
-                android:textSize="14dp"
+                android:text="@string/description"
+                android:textAppearance="@style/TextAppearance.Manrope"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/editTextDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter Event Description"
+                android:hint="@string/enter_event_description"
                 android:inputType="textMultiLine"
+                android:minHeight="48dp"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                android:textAppearance="@style/TextAppearance.Manrope"
+                android:textColorHint="#8D6E63"
+                tools:ignore="Autofill" />
 
             <TextView
                 android:id="@+id/textViewEnterOutsideLink"
@@ -166,18 +195,23 @@
                 android:layout_marginBottom="8dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:text="Outside Event Link"
-                android:textSize="14dp"
+                android:text="@string/outside_event_link"
+                android:textAppearance="@style/TextAppearance.Manrope"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/editTextOutsideLink"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter Outside Link"
+                android:hint="@string/enter_outside_link"
                 android:inputType="textUri"
+                android:minHeight="48dp"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                android:textAppearance="@style/TextAppearance.Manrope"
+                android:textColorHint="#8D6E63"
+                tools:ignore="Autofill" />
 
             <TextView
                 android:id="@+id/textViewEnterDate"
@@ -188,17 +222,21 @@
                 android:layout_marginBottom="8dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:text="Click to Select a Date"
-                android:textSize="14dp"
+                android:text="@string/click_to_select_a_date"
+                android:textAppearance="@style/TextAppearance.Manrope"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/editTextDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Select Date"
+                android:hint="@string/select_date"
+                android:textAppearance="@style/TextAppearance.Manrope"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                android:textColorHint="#8D6E63"
+                tools:ignore="Autofill,TextFields" />
 
 
             <TextView
@@ -210,20 +248,24 @@
                 android:layout_marginBottom="8dp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:text="Click to Select a Time"
-                android:textSize="14dp"
+                android:textAppearance="@style/TextAppearance.Manrope"
+                android:text="@string/click_to_select_a_time"
+                android:textSize="14sp"
                 android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/editTextTime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Time"
+                android:textAppearance="@style/TextAppearance.Manrope"
+                android:hint="@string/time"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
+                android:textColorHint="#8D6E63"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewEnterTime" />
+                app:layout_constraintTop_toBottomOf="@+id/textViewEnterTime"
+                tools:ignore="Autofill,TextFields" />
 
             <Button
                 android:id="@+id/buttonCreateEvent"
@@ -233,17 +275,16 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
+                android:textAppearance="@style/TextAppearance.Manrope"
                 android:onClick="onClick"
                 android:gravity="center_horizontal"
-                android:text="Create Event"
+                android:text="@string/create_event"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editTextTime" />
-
-
+                app:layout_constraintTop_toBottomOf="@+id/editTextTime"
+                tools:ignore="VisualLintButtonSize" />
         </LinearLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
 

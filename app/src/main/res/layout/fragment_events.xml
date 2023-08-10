@@ -1,4 +1,5 @@
-<ScrollView android:layout_width="match_parent"
+<ScrollView xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <LinearLayout
@@ -11,26 +12,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:fontFamily="@font/manrope_bold"
             android:text="@string/events"
+            android:textStyle="bold"
             android:textAppearance="@style/TextAppearance.Manrope"
-            android:textSize="14sp" />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/textViewUpcomingEvents"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginStart="8dp"
-            android:fontFamily="@font/manrope_semibold"
+            android:layout_marginStart="16sp"
             android:text="@string/upcoming_events"
             android:textAppearance="@style/TextAppearance.Manrope"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:ignore="TextSizeCheck" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewEventsHappening"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16sp"
+            android:layout_marginTop="8dp"
+            android:textAppearance="@style/TextAppearance.Manrope"
             android:orientation="horizontal" />
 
         <TextView
@@ -38,15 +43,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginStart="8dp"
-            android:fontFamily="@font/manrope_semibold"
+            android:layout_marginStart="16sp"
+            android:textAppearance="@style/TextAppearance.Manrope"
             android:text="@string/events"
-            android:textSize="14sp" />
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewNewEvents"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16sp"
+            android:textAppearance="@style/TextAppearance.Manrope"
             android:orientation="horizontal" />
 
         <TextView
@@ -54,16 +63,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginStart="8dp"
-            android:fontFamily="@font/manrope_semibold"
+            android:layout_marginStart="16sp"
             android:text="@string/upcoming_concerts"
             android:textAppearance="@style/TextAppearance.Manrope"
-            android:textSize="14sp" />
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewConcertsHappening"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16sp"
+            android:textAppearance="@style/TextAppearance.Manrope"
             android:orientation="horizontal" />
 
         <TextView
@@ -71,16 +83,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginStart="8dp"
-            android:fontFamily="@font/manrope_semibold"
+            android:layout_marginStart="16sp"
             android:text="@string/concerts"
             android:textAppearance="@style/TextAppearance.Manrope"
-            android:textSize="14sp" />
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewNewConcerts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16sp"
+            android:textAppearance="@style/TextAppearance.Manrope"
             android:orientation="horizontal" />
 
     </LinearLayout>
