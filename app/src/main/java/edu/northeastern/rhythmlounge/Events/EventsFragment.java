@@ -36,22 +36,6 @@ public class EventsFragment extends Fragment implements EventsAdapter.OnItemClic
         rootView = inflater.inflate(R.layout.fragment_events, container, false);
         Log.d("EventsFragment", "onCreateView: Called");
 
-        RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewConcertsHappening);
-
-        List<Event> eventList = new ArrayList<>();
-        EventsAdapter eventsAdapter = new EventsAdapter(eventList);
-
-        eventsAdapter.setOnItemClickListener(this);
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
-        recyclerView.setLayoutManager(layoutManager);
-
-        int spaceBetweenItemsInDp = 4;
-        int spaceBetweenItemsInPixels = (int) (spaceBetweenItemsInDp * getResources().getDisplayMetrics().density);
-        recyclerView.addItemDecoration(new RecyclerViewEventSpace(spaceBetweenItemsInPixels));
-
-        recyclerView.setAdapter(eventsAdapter);
-
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         eventsRef = db.collection("events");
 
@@ -86,7 +70,6 @@ public class EventsFragment extends Fragment implements EventsAdapter.OnItemClic
                         List<Event> otherConcerts = new ArrayList<>();
                         List<Event> otherEvents = new ArrayList<>();
 
-
                         String currentMonth = new SimpleDateFormat("MM", Locale.getDefault()).format(Calendar.getInstance().getTime());
 
                         for (QueryDocumentSnapshot document : task.getResult()) {
@@ -110,31 +93,34 @@ public class EventsFragment extends Fragment implements EventsAdapter.OnItemClic
                         }
 
                         RecyclerView recyclerViewConcerts = rootView.findViewById(R.id.recyclerViewConcertsHappening);
-                        EventsAdapter concertsAdapter = new EventsAdapter(upcomingConcerts);
                         LinearLayoutManager concertsLayoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
                         recyclerViewConcerts.setLayoutManager(concertsLayoutManager);
-                        recyclerViewConcerts.setAdapter(concertsAdapter);
+                        recyclerViewConcerts.setAdapter(initializeAdapter(upcomingConcerts));
 
                         RecyclerView recyclerViewOtherConcerts = rootView.findViewById(R.id.recyclerViewNewConcerts);
-                        EventsAdapter otherConcertsAdapter = new EventsAdapter(otherConcerts);
                         LinearLayoutManager otherConcertsLayoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
                         recyclerViewOtherConcerts.setLayoutManager(otherConcertsLayoutManager);
-                        recyclerViewOtherConcerts.setAdapter(otherConcertsAdapter);
+                        recyclerViewOtherConcerts.setAdapter(initializeAdapter(otherConcerts));
 
                         RecyclerView recyclerViewEvents = rootView.findViewById(R.id.recyclerViewEventsHappening);
-                        EventsAdapter eventsAdapter = new EventsAdapter(upcomingEvents);
                         LinearLayoutManager eventsLayoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
                         recyclerViewEvents.setLayoutManager(eventsLayoutManager);
-                        recyclerViewEvents.setAdapter(eventsAdapter);
+                        recyclerViewEvents.setAdapter(initializeAdapter(upcomingEvents));
 
                         RecyclerView recyclerViewOtherEvents = rootView.findViewById(R.id.recyclerViewNewEvents);
-                        EventsAdapter otherEventsAdapter = new EventsAdapter(otherEvents);
                         LinearLayoutManager otherEventsLayoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
                         recyclerViewOtherEvents.setLayoutManager(otherEventsLayoutManager);
-                        recyclerViewOtherEvents.setAdapter(otherEventsAdapter);
-
+                        recyclerViewOtherEvents.setAdapter(initializeAdapter(otherEvents));
                     }
                 });
+
+
+    }
+
+    private EventsAdapter initializeAdapter(List<Event> eventsList) {
+        EventsAdapter adapter = new EventsAdapter(eventsList);
+        adapter.setOnItemClickListener(this);
+        return adapter;
     }
 
 }
