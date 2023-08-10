@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
@@ -104,13 +103,14 @@
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp" />
 
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/editTextState"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="State"
+                android:hint="State/Territory"
                 android:paddingStart="16dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                android:completionThreshold="1"/>
 
 
             <TextView
@@ -154,7 +154,6 @@
                 android:layout_height="wrap_content"
                 android:hint="Enter Event Description"
                 android:inputType="textMultiLine"
-                android:minLines="3"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp" />
 

@@ -11,11 +11,10 @@
 
         <ImageView
             android:id="@+id/imageViewEvent"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginEnd="8dp"
-            android:src="@drawable/concert"
+            android:layout_width="192dp"
+            android:layout_height="192dp"
             android:scaleType="centerCrop"
+            android:src="@drawable/concert"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

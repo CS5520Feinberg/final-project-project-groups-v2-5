@@ -10,10 +10,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.renderscript.ScriptGroup;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -58,7 +62,27 @@ public class CreateEventFragment extends Fragment {
 
     private Switch switchIsConcert;
 
-    private EditText editTextEventName, editTextCity, editTextState, editTextVenue, editTextDescription, editTextDate, editTextTime, editTextOutsideLink;
+    private EditText editTextEventName, editTextCity, editTextVenue, editTextDescription, editTextDate, editTextTime, editTextOutsideLink;
+
+    private AutoCompleteTextView editTextState;
+
+    private String[] stateAndTerritoryAbbreviations = new String[]{
+            // States
+            "AL", "AK", "AZ", "AR", "CA",
+            "CO", "CT", "DE", "FL", "GA",
+            "HI", "ID", "IL", "IN", "IA",
+            "KS", "KY", "LA", "ME", "MD",
+            "MA", "MI", "MN", "MS", "MO",
+            "MT", "NE", "NV", "NH", "NJ",
+            "NM", "NY", "NC", "ND", "OH",
+            "OK", "OR", "PA", "RI", "SC",
+            "SD", "TN", "TX", "UT", "VT",
+            "VA", "WA", "WV", "WI", "WY",
+            // Territories
+            "AS", "DC", "FM", "GU", "MH",
+            "MP", "PW", "PR", "VI"
+};
+
 
     private CollectionReference userRef;
     private CollectionReference eventsRef;
@@ -96,6 +120,15 @@ public class CreateEventFragment extends Fragment {
         switchIsConcert = rootView.findViewById(R.id.switchIsConcert);
         editTextCity = rootView.findViewById(R.id.editTextCity);
         editTextState = rootView.findViewById(R.id.editTextState);
+
+        ArrayAdapter<String> statesAdapter = new ArrayAdapter<>(
+               requireContext(),
+               android.R.layout.simple_spinner_dropdown_item,
+               stateAndTerritoryAbbreviations
+        );
+        editTextState.setAdapter(statesAdapter);
+        editTextState.setThreshold(1);
+
         editTextVenue = rootView.findViewById(R.id.editTextVenue);
         editTextDescription = rootView.findViewById(R.id.editTextDescription);
         editTextOutsideLink = rootView.findViewById(R.id.editTextOutsideLink);
@@ -204,6 +237,9 @@ public class CreateEventFragment extends Fragment {
                 requireContext(),
                 dateSetListener,
                 year, month, day);
+
+        datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+
         datePickerDialog.show();
     }
 
