@@ -31,7 +31,7 @@
             tools:ignore="TextSizeCheck" />
 
         <TextView
-            android:id="@+id/textViewMyArtists"
+            android:id="@+id/textViewMyConcerts"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -40,6 +40,13 @@
             android:textAppearance="@style/TextAppearance.Manrope"
             android:textSize="16sp"
             tools:ignore="TextSizeCheck" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewMyConcerts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp" />
 
         <TextView
             android:id="@+id/textViewMyEvents"
@@ -51,6 +58,13 @@
             android:textAppearance="@style/TextAppearance.Manrope"
             android:textSize="16sp"
             tools:ignore="TextSizeCheck" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewMyEvents"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp" />
 
         <TextView
             android:id="@+id/textViewDiscover"
@@ -64,7 +78,7 @@
             tools:ignore="TextSizeCheck" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewDiscoverEventsConcerts"
+            android:id="@+id/recyclerViewDiscoverEvents"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"

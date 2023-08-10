@@ -47,7 +47,7 @@
         <activity android:name=".ReAuthActivity"/>
         <activity android:name=".EventsFragment" />
         <activity android:name=".NotificationsFragment" />
-        <activity android:name=".EventDetailsFragment" />
+        <activity android:name=".EventDetailsActivity" />
         <activity android:name=".Post.DetailedPostActivity"/>
         <activity android:name=".Playlist.SelfUserSongListActivity" />
         <activity android:name=".Playlist.OtherUserSongListActivity"/>

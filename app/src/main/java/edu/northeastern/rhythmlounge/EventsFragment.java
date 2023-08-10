@@ -1,5 +1,6 @@
 package edu.northeastern.rhythmlounge;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,25 +59,20 @@ public class EventsFragment extends Fragment implements EventsAdapter.OnItemClic
 
     @Override
     public void onItemClick(Event event) {
+        Log.d("EventsFragment", "Item clicked: " + event.getEventName());
+        Intent intent  = new Intent(getActivity(), EventDetailsActivity.class);
+        intent.putExtra("event_name", event.getEventName());
+        intent.putExtra("location", event.getLocation());
+        intent.putExtra("venue", event.getVenue());
+        intent.putExtra("description", event.getDescription());
+        intent.putExtra("outside_link", event.getOutsideLink());
+        intent.putExtra("date", event.getDate());
+        intent.putExtra("time", event.getTime());
+        intent.putExtra("imageURL", event.getImageURL());
+        intent.putExtra("eventId", event.getDocId());
+        Log.d("EventsFragment", "Passing eventId: " + event.getDocId());
 
-        EventDetailsFragment eventDetailsFragment = new EventDetailsFragment();
-
-        Bundle args = new Bundle();
-        args.putString("event_name", event.getEventName());
-        args.putString("location", event.getLocation());
-        args.putString("venue", event.getVenue());
-        args.putString("description", event.getDescription());
-        args.putString("outside_link", event.getOutsideLink());
-        args.putString("date", event.getDate());
-        args.putString("time", event.getTime());
-
-        eventDetailsFragment.setArguments(args);
-
-        getParentFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, eventDetailsFragment)
-                .addToBackStack(null)
-                .commit();
+        startActivity(intent);
     }
     private void fetchEvents() {
         eventsRef.get()
@@ -92,6 +88,7 @@ public class EventsFragment extends Fragment implements EventsAdapter.OnItemClic
 
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Event event = document.toObject(Event.class);
+                            event.setDocId(document.getId());
                             String eventMonth = event.getDate().substring(0, 2);
 
                             if (event.getIsConcert()) {

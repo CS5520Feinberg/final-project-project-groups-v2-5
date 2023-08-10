@@ -17,13 +17,13 @@ import java.util.List;
  * EventsAdapter is an Adapter used to populate a RecyclerView with Event items in the Events Fragment.
  */
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewHolder> {
-    private final List<Event> eventList;
+    private static List<Event> eventList = null;
 
     public interface OnItemClickListener {
         void onItemClick(Event event);
     }
 
-    private OnItemClickListener onItemClickListener;
+    private static OnItemClickListener onItemClickListener;
 
     /**
      * Constructor for the EventsAdapter.
@@ -78,12 +78,6 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
             holder.imageViewEvent.setImageResource(R.drawable.concert);
         }
 
-        // Set click listener for the image view
-        holder.imageViewEvent.setOnClickListener(v -> {
-            if (onItemClickListener != null) {
-                onItemClickListener.onItemClick(event);
-            }
-        });
     }
 
     /**
@@ -118,6 +112,16 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
             textViewDate = itemView.findViewById(R.id.textViewDate);
             textViewTime = itemView.findViewById(R.id.textViewTime);
             imageViewEvent = itemView.findViewById(R.id.imageViewEvent);
+
+            itemView.setOnClickListener(v -> {
+                if (onItemClickListener != null) {
+                    // Use getAdapterPosition() to get current item's position
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) { // Check if position is valid
+                        onItemClickListener.onItemClick(eventList.get(position));
+                    }
+                }
+            });
         }
     }
 }

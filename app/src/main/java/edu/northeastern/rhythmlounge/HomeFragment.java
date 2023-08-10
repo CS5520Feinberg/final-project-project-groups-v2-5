@@ -1,7 +1,9 @@
 package edu.northeastern.rhythmlounge;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,22 +33,26 @@ public class HomeFragment extends Fragment {
     private EventsAdapter eventsAdapter;
     private List<Event> discoverEventsConcertsList;
     private CollectionReference eventsRef;
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
     public HomeFragment() {
+        Log.d("HomeFragment", "Initializing HomeFragment...");
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        eventsRef = db.collection("events");
     }
 
-    @SuppressLint("SetTextI18n")
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.d("HomeFragment", "onCreateView called");
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
         textViewGreeting = view.findViewById(R.id.textViewGreeting);
-        RecyclerView recyclerViewDiscoverEventsConcerts = view.findViewById(R.id.recyclerViewDiscoverEventsConcerts);
+        RecyclerView recyclerViewDiscoverEventsConcerts = view.findViewById(R.id.recyclerViewDiscoverEvents);
+
         discoverEventsConcertsList = new ArrayList<>();
         eventsAdapter = new EventsAdapter(discoverEventsConcertsList);
 
@@ -54,6 +60,14 @@ public class HomeFragment extends Fragment {
         recyclerViewDiscoverEventsConcerts.setLayoutManager(layoutManager);
         recyclerViewDiscoverEventsConcerts.setAdapter(eventsAdapter);
 
+        setupGreeting();
+        setupEventClickListeners();
+        fetchDiscoverEventsConcerts();
+
+        return view;
+    }
+
+    private void setupGreeting() {
         String greeting = getGreetingBasedOnTimeOfDay();
         String userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
         db.collection("users").document(userId)
@@ -69,13 +83,28 @@ public class HomeFragment extends Fragment {
                 })
                 .addOnFailureListener(e -> textViewGreeting.setText("Good Afternoon Guest!"));
 
-        db = FirebaseFirestore.getInstance();
-        eventsRef = db.collection("events");
-
-        fetchDiscoverEventsConcerts();
-
-        return view;
     }
+
+    private void setupEventClickListeners() {
+        Log.d("HomeFragment", "Setting up event click listener");
+        eventsAdapter.setOnItemClickListener(event -> {
+            Log.d("HomeFragment", "Event clicked with ID: " + event.getDocId());
+            Intent intent = new Intent(getContext(), EventDetailsActivity.class);
+            intent.putExtra("eventId", event.getDocId());
+            intent.putExtra("event_name", event.getEventName());
+            intent.putExtra("location", event.getLocation());
+            intent.putExtra("venue", event.getVenue());
+            intent.putExtra("description", event.getDescription());
+            intent.putExtra("outside_link", event.getOutsideLink());
+            intent.putExtra("date", event.getDate());
+            intent.putExtra("time", event.getTime());
+            intent.putExtra("imageURL", event.getImageURL());
+            Log.d("EventsFragment", "Passing eventId: " + event.getDocId());
+            startActivity(intent);
+        });
+    }
+
+
 
     @SuppressLint("NotifyDataSetChanged")
     private void fetchDiscoverEventsConcerts() {
@@ -85,6 +114,7 @@ public class HomeFragment extends Fragment {
                         discoverEventsConcertsList.clear();
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Event event = document.toObject(Event.class);
+                            event.setDocId(document.getId());
                             discoverEventsConcertsList.add(event);
                         }
                         eventsAdapter.notifyDataSetChanged();

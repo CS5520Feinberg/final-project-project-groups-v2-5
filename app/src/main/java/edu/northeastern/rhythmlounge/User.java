@@ -16,12 +16,11 @@ public class User {
     private String email;
     private List<String> followers;
     private List<String> following;
-
     private String profilePictureUrl;
-
     private String bio;
-
     private List<String> hosting;
+
+    private List<String> rsvpd;
 
     public User() {
     }
@@ -38,6 +37,7 @@ public class User {
         this.following = new ArrayList<>();
         this.bio = "";
         this.hosting = new ArrayList<>();
+        this.rsvpd = new ArrayList<>();
     }
 
     public String getUsername() {
@@ -75,9 +75,8 @@ public class User {
     public String getProfilePictureUrl() {
         return profilePictureUrl;
     }
-    public void setProfilePictureUrl(String profilePictureUrl) {
-        this.profilePictureUrl = profilePictureUrl;
-    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
 
     public String getBio() { return bio; }
 
@@ -86,6 +85,10 @@ public class User {
     public List<String> getHosting() { return hosting; }
 
     public void setHosting(List<String> hosting) { this.hosting = hosting; }
+
+    public List<String> getRsvpd() { return rsvpd; }
+
+    public void setRsvpd(List<String> rsvpd) { this.rsvpd = rsvpd; }
 
     /**
      * Method that allows a User A to add User B to their following list.

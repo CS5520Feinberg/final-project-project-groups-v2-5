@@ -25,6 +25,8 @@ public class Event {
 
     private String outsideLink;
 
+    private String docId;
+
     /**
      * Default Constructor
      */
@@ -81,7 +83,7 @@ public class Event {
     /**
      * @return If the event is a concert
      */
-    public void setIsConcert() { this.isConcert = isConcert; }
+    public void setIsConcert(boolean isConcert) { this.isConcert = isConcert; }
 
     /**
      * @return The location of the event.
@@ -190,6 +192,14 @@ public class Event {
      * @param outsideLink The new outside link related to the event.
      */
     public void setOutsideLink(String outsideLink) { this.outsideLink = outsideLink; }
+
+    public String getDocId() {
+        return docId;
+    }
+
+    public void setDocId(String docId) {
+        this.docId = docId;
+    }
 
 }
 
