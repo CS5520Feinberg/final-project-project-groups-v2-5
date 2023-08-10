@@ -27,6 +27,9 @@ import edu.northeastern.rhythmlounge.Events.EventsFragment;
 import edu.northeastern.rhythmlounge.LoginRegisterAndAccount.SettingsActivity;
 import edu.northeastern.rhythmlounge.Posts.PostActivity;
 
+/**
+ * The home activity for the home screen 
+ */
 public class HomeActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
@@ -118,7 +121,7 @@ public class HomeActivity extends AppCompatActivity {
                 case 0:
                     return new HomeFragment();
                 case 1:
-                    return new UserSearchFragment();
+                    return new SearchFragment();
                 case 2:
                     return new CreateEventFragment();
                 case 3:

@@ -40,7 +40,7 @@
         <activity android:name=".Posts.PostActivity" />
         <activity android:name=".SelfUserPageFragment" />
         <activity android:name=".OtherUserPageActivity" />
-        <activity android:name=".UserSearchFragment" />
+        <activity android:name=".SearchFragment" />
         <activity android:name=".FollowersActivity" />
         <activity android:name=".FollowingActivity" />
         <activity android:name=".LoginRegisterAndAccount.SettingsActivity" />

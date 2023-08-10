@@ -27,6 +27,26 @@
             android:id="@+id/userSuggestionsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/eventSearchEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/manrope_light"
+            android:hint="Search for events"
+            android:importantForAutofill="no"
+            android:minHeight="48dp"
+            android:textColorHint="#8D6E63"
+            android:layout_marginTop="20dp"
+            tools:ignore="TextFields,VisualLintTextFieldSize" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/eventSuggestionsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:visibility="gone" />
 
     </LinearLayout>
