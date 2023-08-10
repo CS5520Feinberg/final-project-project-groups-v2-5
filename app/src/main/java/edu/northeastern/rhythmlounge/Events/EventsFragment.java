@@ -26,10 +26,26 @@ import java.util.Locale;
 import edu.northeastern.rhythmlounge.R;
 import edu.northeastern.rhythmlounge.RecyclerViewEventSpace;
 
+/**
+ * EventsFragment displays a list of events from a Firestore database in multiple RecyclerViews.
+ * Upon clicking an event, the user is navigating to a EventDetailsScreen.
+ */
 public class EventsFragment extends Fragment implements EventsAdapter.OnItemClickListener {
     private CollectionReference eventsRef;
     private View rootView;
 
+    /**
+     * Inflates the fragment view, initializes the Firestore database.
+     * @param inflater The LayoutInflater object that can be used to inflate
+     * any views in the fragment,
+     * @param container If non-null, this is the parent view that the fragment's
+     * UI should be attached to.  The fragment should not add the view itself,
+     * but this can be used to generate the LayoutParams of the view.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed
+     * from a previous saved state as given here.
+     *
+     * @return
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -44,6 +60,11 @@ public class EventsFragment extends Fragment implements EventsAdapter.OnItemClic
         return rootView;
     }
 
+    /**
+     * Handles the click event on an event item.
+     * Navigates the user to EventDetailsActivity, passing relevant event data.
+     * @param event the clicked event.
+     */
     @Override
     public void onItemClick(Event event) {
         Log.d("EventsFragment", "Item clicked: " + event.getEventName());
@@ -61,6 +82,11 @@ public class EventsFragment extends Fragment implements EventsAdapter.OnItemClic
 
         startActivity(intent);
     }
+
+    /**
+     * Handles the click event on an event item.
+     * Navigates the user to the EventDetailsActivity.
+     */
     private void fetchEvents() {
         eventsRef.get()
                 .addOnCompleteListener(task -> {
@@ -92,21 +118,25 @@ public class EventsFragment extends Fragment implements EventsAdapter.OnItemClic
                             }
                         }
 
+                        // Concerts happenening RecyclerView
                         RecyclerView recyclerViewConcerts = rootView.findViewById(R.id.recyclerViewConcertsHappening);
                         LinearLayoutManager concertsLayoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
                         recyclerViewConcerts.setLayoutManager(concertsLayoutManager);
                         recyclerViewConcerts.setAdapter(initializeAdapter(upcomingConcerts));
 
+                        // Concerts new concerts.
                         RecyclerView recyclerViewOtherConcerts = rootView.findViewById(R.id.recyclerViewNewConcerts);
                         LinearLayoutManager otherConcertsLayoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
                         recyclerViewOtherConcerts.setLayoutManager(otherConcertsLayoutManager);
                         recyclerViewOtherConcerts.setAdapter(initializeAdapter(otherConcerts));
 
+                        // Events happening
                         RecyclerView recyclerViewEvents = rootView.findViewById(R.id.recyclerViewEventsHappening);
                         LinearLayoutManager eventsLayoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
                         recyclerViewEvents.setLayoutManager(eventsLayoutManager);
                         recyclerViewEvents.setAdapter(initializeAdapter(upcomingEvents));
 
+                        // New Events.
                         RecyclerView recyclerViewOtherEvents = rootView.findViewById(R.id.recyclerViewNewEvents);
                         LinearLayoutManager otherEventsLayoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
                         recyclerViewOtherEvents.setLayoutManager(otherEventsLayoutManager);
@@ -117,6 +147,12 @@ public class EventsFragment extends Fragment implements EventsAdapter.OnItemClic
 
     }
 
+    /**
+     * Initializes an EventsAdapter with a given list of events.
+     * Sets the item click listener to this fragment.
+     * @param eventsList the list of events
+     * @return initialized EventsAdapter with the associated click listener.
+     */
     private EventsAdapter initializeAdapter(List<Event> eventsList) {
         EventsAdapter adapter = new EventsAdapter(eventsList);
         adapter.setOnItemClickListener(this);
