@@ -1,4 +1,4 @@
-package edu.northeastern.rhythmlounge;
+package edu.northeastern.rhythmlounge.LoginRegisterAndAccount;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +23,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Objects;
+
+import edu.northeastern.rhythmlounge.R;
 
 /**
  * SettingsActivity handles user account settings functionalities, including email and password changes, account deletion, and logging out.

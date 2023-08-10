@@ -1,4 +1,4 @@
-package edu.northeastern.rhythmlounge.Playlist;
+package edu.northeastern.rhythmlounge.Playlists;
 
 /**
  * This class represents a song object, which has a title, a artist, and a youtubeLink.

@@ -1,4 +1,4 @@
-package edu.northeastern.rhythmlounge.Playlist;
+package edu.northeastern.rhythmlounge.Playlists;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -20,47 +20,50 @@ import java.util.Objects;
 import edu.northeastern.rhythmlounge.R;
 
 /**
- * Adapter to bind a user's own playlists to a RecyclerView.
+ * This adapter populates items for displaying other user's playlists via RecyclerView.
  */
-public class SelfUserPlaylistAdapter extends RecyclerView.Adapter<SelfUserPlaylistAdapter.PlaylistViewHolder> {
+public class OtherUserPlaylistAdapter extends RecyclerView.Adapter<OtherUserPlaylistAdapter.PlaylistViewHolder> {
 
     private final List<DocumentSnapshot> playlistSnapshots;
     private final Context context;
+    private final String otherUserId;
 
     /**
-     * Constructor for SelfUserPlaylistAdapter.
-     * @param context           the activity or context invoking this adapter.
-     * @param playlistSnapshots the list of DocumentSnapshots containing playlist data
+     * Constructor for OtherUserPlaylistAdapter.
+     * @param context           The context where the adapter is used.
+     * @param playlistSnapshots The list of playlists to be displayed.
+     * @param otherUserId       The ID of the user whose playlists are being displayed.
      */
-    public SelfUserPlaylistAdapter(Context context, List<DocumentSnapshot> playlistSnapshots) {
+    public OtherUserPlaylistAdapter(Context context, List<DocumentSnapshot> playlistSnapshots, String otherUserId) {
         this.playlistSnapshots = playlistSnapshots;
         this.context = context;
+        this.otherUserId = otherUserId;
     }
 
     /**
-     * Called when RecyclerView needs a ViewHolder
+     * Inflates each playlist item.
      * @param parent The ViewGroup into which the new View will be added after it is bound to
      *               an adapter position.
      * @param viewType The view type of the new View.
-     *
+     * @return a new playlist viewholder
      */
     @NonNull
     @Override
     public PlaylistViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Log.d("SelfUserPlaylistAdapter", "onCreateViewHolder is called");
+        Log.d("OtherPlaylistAdapter", "onCreateViewHolder is called");
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_playlist, parent, false);
         return new PlaylistViewHolder(view);
     }
 
     /**
-     * Called by RecyclerView to display playlist data at the specified position.
+     * Binds the data to the views for each item.
      * @param holder The ViewHolder which should be updated to represent the contents of the
      *        item at the given position in the data set.
      * @param position The position of the item within the adapter's data set.
      */
     @Override
     public void onBindViewHolder(@NonNull PlaylistViewHolder holder, int position) {
-        Log.d("SelfUserPlaylistAdapter", "onBindViewHolder is called for position " + position);
+        Log.d("PlaylistAdapter", "onBindViewHolder is called for position " + position);
 
         DocumentSnapshot playlistSnapshot = playlistSnapshots.get(position);
 
@@ -70,37 +73,37 @@ public class SelfUserPlaylistAdapter extends RecyclerView.Adapter<SelfUserPlayli
 
         holder.itemView.setOnClickListener(v -> {
             String playlistId = playlistSnapshot.getId();
-            Intent intent = new Intent(context, SelfUserSongListActivity.class);
+            Intent intent = new Intent(context, OtherUserSongListActivity.class);
             intent.putExtra("playlistId", playlistId);
+            intent.putExtra("otherUserId", otherUserId);
             context.startActivity(intent);
-            Log.d("SelfUserPlaylistAdapter", "SongListActivity has been started with playlistId " + playlistId + intent);
+            Log.d("OtherPlaylistAdapter", "SongListActivity has been started with playlistId " + playlistId + intent);
         });
     }
 
     /**
-     * Returns the total number of playlists
-     * @return the number of playlists available.
+     * Provides the total number of items.
      */
     @Override
     public int getItemCount() {
-        Log.d("SelfUserPlaylistAdapter", "getItemCount is called. The count is: " + playlistSnapshots.size());
+        Log.d("OtherPlaylistAdapter", "getItemCount is called. The count is: " + playlistSnapshots.size());
         return playlistSnapshots.size();
     }
 
     /**
-     * Refresh the data in the adapter with a new list of DocumentSnapshots.
-     * @param freshPlaylists the new list of DocumentSnapshots.
+     * Updates the data in the adapter with a fresh data set.
+     * @param freshPlaylists the updated list of playlists
      */
     @SuppressLint("NotifyDataSetChanged")
     public void refreshData(List<DocumentSnapshot> freshPlaylists) {
-        Log.d("SelfUserPlaylistAdapter", "refreshData is called. The freshPlaylists size is: " + freshPlaylists.size());
+        Log.d("OtherPlaylistAdapter", "refreshData is called. The freshPlaylists size is: " + freshPlaylists.size());
         playlistSnapshots.clear();
         playlistSnapshots.addAll(freshPlaylists);
         notifyDataSetChanged();
     }
 
     /**
-     * Viewholder to hold the view items for playlists.
+     * ViewHolder class that represents each playlist item.
      */
     public static class PlaylistViewHolder extends RecyclerView.ViewHolder {
         final TextView playlistNameTextView;
@@ -108,7 +111,7 @@ public class SelfUserPlaylistAdapter extends RecyclerView.Adapter<SelfUserPlayli
         public PlaylistViewHolder(View view) {
             super(view);
             playlistNameTextView = view.findViewById(R.id.playlistNameText);
-            Log.d("SelfUserPlaylistViewHolder", "PlaylistViewHolder has been initialized");
+            Log.d("OtherPlaylistViewHolder", "PlaylistViewHolder has been initialized");
         }
     }
 }

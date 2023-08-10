@@ -1,4 +1,4 @@
-package edu.northeastern.rhythmlounge;
+package edu.northeastern.rhythmlounge.LoginRegisterAndAccount;
 
 import static android.content.ContentValues.TAG;
 
@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
+
+import edu.northeastern.rhythmlounge.R;
 
 /**
  * This activity handles user re-authentication, for the purpose of deleting a account in our Firebase database.

@@ -1,4 +1,4 @@
-package edu.northeastern.rhythmlounge;
+package edu.northeastern.rhythmlounge.Events;
 
 import android.content.Intent;
 import android.media.Image;
@@ -37,6 +37,10 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.RecursiveAction;
+
+import edu.northeastern.rhythmlounge.R;
+import edu.northeastern.rhythmlounge.User;
+import edu.northeastern.rhythmlounge.UserListItemAdapter;
 
 /**
  * EventDetailsActivity provides a detailed view of a specific event.

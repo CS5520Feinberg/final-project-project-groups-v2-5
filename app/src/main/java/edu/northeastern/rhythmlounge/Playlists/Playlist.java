@@ -1,4 +1,4 @@
-package edu.northeastern.rhythmlounge.Playlist;
+package edu.northeastern.rhythmlounge.Playlists;
 
 import java.util.List;
 

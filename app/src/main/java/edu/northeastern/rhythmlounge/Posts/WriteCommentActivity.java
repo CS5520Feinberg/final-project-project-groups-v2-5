@@ -1,4 +1,4 @@
-package edu.northeastern.rhythmlounge.Post;
+package edu.northeastern.rhythmlounge.Posts;
 
 import android.os.Bundle;
 import android.util.Log;

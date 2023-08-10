@@ -1,4 +1,4 @@
-package edu.northeastern.rhythmlounge;
+package edu.northeastern.rhythmlounge.Events;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
+
+import edu.northeastern.rhythmlounge.R;
 
 /**
  * EventsAdapter is an Adapter used to populate a RecyclerView with Event items in the Events Fragment.

@@ -1,4 +1,4 @@
-package edu.northeastern.rhythmlounge;
+package edu.northeastern.rhythmlounge.Events;
 
 import static android.content.ContentValues.TAG;
 
@@ -49,6 +49,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import edu.northeastern.rhythmlounge.R;
 
 /**
  * A fragment class that allows user's to create a new event.

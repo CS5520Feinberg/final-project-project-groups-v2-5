@@ -22,7 +22,10 @@ import androidx.viewpager.widget.ViewPager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import edu.northeastern.rhythmlounge.Post.PostActivity;
+import edu.northeastern.rhythmlounge.Events.CreateEventFragment;
+import edu.northeastern.rhythmlounge.Events.EventsFragment;
+import edu.northeastern.rhythmlounge.LoginRegisterAndAccount.SettingsActivity;
+import edu.northeastern.rhythmlounge.Posts.PostActivity;
 
 public class HomeActivity extends AppCompatActivity {
 

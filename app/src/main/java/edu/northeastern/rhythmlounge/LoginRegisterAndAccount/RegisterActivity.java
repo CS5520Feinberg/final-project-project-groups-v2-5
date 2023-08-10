@@ -1,4 +1,4 @@
-package edu.northeastern.rhythmlounge;
+package edu.northeastern.rhythmlounge.LoginRegisterAndAccount;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import edu.northeastern.rhythmlounge.R;
 
 public class RegisterActivity extends AppCompatActivity {
 

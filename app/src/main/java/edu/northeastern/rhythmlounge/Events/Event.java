@@ -1,4 +1,4 @@
-package edu.northeastern.rhythmlounge;
+package edu.northeastern.rhythmlounge.Events;
 
 import java.util.ArrayList;
 import java.util.List;

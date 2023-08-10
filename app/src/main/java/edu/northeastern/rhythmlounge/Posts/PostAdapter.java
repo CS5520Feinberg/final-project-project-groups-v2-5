@@ -1,4 +1,4 @@
-package edu.northeastern.rhythmlounge.Post;
+package edu.northeastern.rhythmlounge.Posts;
 
 import android.app.Activity;
 import android.content.Intent;

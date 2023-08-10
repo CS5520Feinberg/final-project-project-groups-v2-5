@@ -1,4 +1,4 @@
-package edu.northeastern.rhythmlounge;
+package edu.northeastern.rhythmlounge.Events;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,6 +22,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
+import edu.northeastern.rhythmlounge.R;
+import edu.northeastern.rhythmlounge.RecyclerViewEventSpace;
 
 public class EventsFragment extends Fragment implements EventsAdapter.OnItemClickListener {
     private CollectionReference eventsRef;

@@ -1,4 +1,4 @@
-package edu.northeastern.rhythmlounge;
+package edu.northeastern.rhythmlounge.LoginRegisterAndAccount;
 
 import static android.content.ContentValues.TAG;
 
@@ -28,10 +28,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Map;
+
+import edu.northeastern.rhythmlounge.HomeActivity;
+import edu.northeastern.rhythmlounge.R;
+import edu.northeastern.rhythmlounge.SelfUserPageFragment;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package edu.northeastern.rhythmlounge.Post;
+package edu.northeastern.rhythmlounge.Posts;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -22,7 +22,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 

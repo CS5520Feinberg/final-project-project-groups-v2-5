@@ -28,7 +28,7 @@
             android:name=".HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginRegisterAndAccount.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,23 +36,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".Post.PostActivity" />
+        <activity android:name=".LoginRegisterAndAccount.RegisterActivity" />
+        <activity android:name=".Posts.PostActivity" />
         <activity android:name=".SelfUserPageFragment" />
         <activity android:name=".OtherUserPageActivity" />
         <activity android:name=".UserSearchFragment" />
         <activity android:name=".FollowersActivity" />
         <activity android:name=".FollowingActivity" />
-        <activity android:name=".SettingsActivity" />
-        <activity android:name=".ReAuthActivity"/>
-        <activity android:name=".EventsFragment" />
+        <activity android:name=".LoginRegisterAndAccount.SettingsActivity" />
+        <activity android:name=".LoginRegisterAndAccount.ReAuthActivity"/>
+        <activity android:name=".Events.EventsFragment" />
         <activity android:name=".NotificationsFragment" />
-        <activity android:name=".EventDetailsActivity" />
-        <activity android:name=".Post.DetailedPostActivity"/>
-        <activity android:name=".Playlist.SelfUserSongListActivity" />
-        <activity android:name=".Playlist.OtherUserSongListActivity"/>
-        <activity android:name=".Post.WriteCommentActivity"/>
-        <activity android:name=".Post.CreatePostActivity"/>
+        <activity android:name=".Events.EventDetailsActivity" />
+        <activity android:name=".Posts.DetailedPostActivity"/>
+        <activity android:name=".Playlists.SelfUserSongListActivity" />
+        <activity android:name=".Playlists.OtherUserSongListActivity"/>
+        <activity android:name=".Posts.WriteCommentActivity"/>
+        <activity android:name=".Posts.CreatePostActivity"/>
 
         <meta-data
             android:name="com.google.android.gms.version"

@@ -1,4 +1,4 @@
-package edu.northeastern.rhythmlounge.Post;
+package edu.northeastern.rhythmlounge.Posts;
 
 import java.util.ArrayList;
 import java.util.Date;
