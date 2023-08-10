@@ -22,7 +22,7 @@ import com.google.firebase.firestore.ListenerRegistration;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.northeastern.rhythmlounge.Playlist.OtherUserPlaylistAdapter;
+import edu.northeastern.rhythmlounge.Playlists.OtherUserPlaylistAdapter;
 
 
 /**
