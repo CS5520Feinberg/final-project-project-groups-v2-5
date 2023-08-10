@@ -17,13 +17,13 @@ import java.util.List;
  * EventsAdapter is an Adapter used to populate a RecyclerView with Event items in the Events Fragment.
  */
 public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewHolder> {
-    private static List<Event> eventList = null;
+    private final List<Event> eventList;
 
     public interface OnItemClickListener {
         void onItemClick(Event event);
     }
 
-    private static OnItemClickListener onItemClickListener;
+    private OnItemClickListener onItemClickListener;
 
     /**
      * Constructor for the EventsAdapter.
@@ -47,7 +47,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     @Override
     public EventViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_event, parent, false);
-        return new EventViewHolder(itemView);
+        return new EventViewHolder(itemView, onItemClickListener);
 
 
     }
@@ -92,7 +92,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     /**
      * A ViewHolder describes an item view and metadata about its place within the RecyclerView.
      */
-    static class EventViewHolder extends RecyclerView.ViewHolder {
+    class EventViewHolder extends RecyclerView.ViewHolder {
         TextView textViewEventName;
         TextView textViewLocation;
         TextView textViewVenue;
@@ -100,12 +100,15 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         TextView textViewTime;
         ImageView imageViewEvent;
 
+        private final OnItemClickListener listener;
+
         /**
          * Constructor for the EventViewHolder.
          * @param itemView the item view.
          */
-        EventViewHolder(View itemView) {
+        EventViewHolder(View itemView, OnItemClickListener listener) {
             super(itemView);
+            this.listener = listener;
             textViewEventName = itemView.findViewById(R.id.textViewEventName);
             textViewLocation = itemView.findViewById(R.id.textViewLocation);
             textViewVenue = itemView.findViewById(R.id.textViewVenue);
@@ -114,14 +117,13 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
             imageViewEvent = itemView.findViewById(R.id.imageViewEvent);
 
             itemView.setOnClickListener(v -> {
-                if (onItemClickListener != null) {
-                    // Use getAdapterPosition() to get current item's position
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION) { // Check if position is valid
-                        onItemClickListener.onItemClick(eventList.get(position));
-                    }
+                int position = getAdapterPosition();
+                if (listener != null && position != RecyclerView.NO_POSITION) {
+                    listener.onItemClick(eventList.get(position));
                 }
             });
         }
+
     }
+
 }

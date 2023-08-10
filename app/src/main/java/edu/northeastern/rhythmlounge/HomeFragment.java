@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,26 +17,30 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import org.checkerframework.checker.units.qual.A;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class HomeFragment extends Fragment {
 
     private TextView textViewGreeting;
-    private EventsAdapter eventsAdapter;
-    private List<Event> discoverEventsConcertsList;
-    private CollectionReference eventsRef;
-    private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
+    private EventsAdapter discoverEventsConcertsAdapter, myEventsAdapter, myConcertsAdapter;
+    private List<Event> discoverEventsConcertsList, myConcertsList, myEventsList;
+
+    ProgressBar progressBarDiscoverEventsConcerts, progressBarMyEvents, progressBarMyConcerts;
+    private final CollectionReference eventsRef;
+    private final FirebaseAuth mAuth;
+    private final FirebaseFirestore db;
 
     public HomeFragment() {
         Log.d("HomeFragment", "Initializing HomeFragment...");
@@ -51,22 +57,47 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         textViewGreeting = view.findViewById(R.id.textViewGreeting);
+
+        // Loaders for the RecyclerViews
+        progressBarDiscoverEventsConcerts = view.findViewById(R.id.progressBarDiscoverEventsConcerts);
+        progressBarMyEvents = view.findViewById(R.id.progressBarMyEvents);
+        progressBarMyConcerts = view.findViewById(R.id.progressBarMyConcerts);
+
+        // The Discover Events/Concerts section:
         RecyclerView recyclerViewDiscoverEventsConcerts = view.findViewById(R.id.recyclerViewDiscoverEvents);
-
         discoverEventsConcertsList = new ArrayList<>();
-        eventsAdapter = new EventsAdapter(discoverEventsConcertsList);
-
+        discoverEventsConcertsAdapter = new EventsAdapter(discoverEventsConcertsList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerViewDiscoverEventsConcerts.setLayoutManager(layoutManager);
-        recyclerViewDiscoverEventsConcerts.setAdapter(eventsAdapter);
+        recyclerViewDiscoverEventsConcerts.setAdapter(discoverEventsConcertsAdapter);
+
+        // My events section
+        RecyclerView recyclerViewMyEvents = view.findViewById(R.id.recyclerViewMyEvents);
+        myEventsList = new ArrayList<>();
+        myEventsAdapter = new EventsAdapter(myEventsList);
+        LinearLayoutManager layoutManager1 = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerViewMyEvents.setLayoutManager(layoutManager1);
+        recyclerViewMyEvents.setAdapter(myEventsAdapter);
+
+        // My concerts section
+        RecyclerView recyclerViewMyConcerts = view.findViewById(R.id.recyclerViewMyConcerts);
+        myConcertsList = new ArrayList<>();
+        myConcertsAdapter = new EventsAdapter(myConcertsList);
+        LinearLayoutManager layoutManager2 = new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false);
+        recyclerViewMyConcerts.setLayoutManager(layoutManager2);
+        recyclerViewMyConcerts.setAdapter(myConcertsAdapter);
 
         setupGreeting();
-        setupEventClickListeners();
-        fetchDiscoverEventsConcerts();
+        setupEventClickListeners(); // Click listeners for each event
+        fetchDiscoverEventsConcerts();  // Fetch the all events.
+        fetchMyEventsAndConcerts(); // Fetch the events and concerts.
 
         return view;
     }
 
+    /**
+     * Sets up the greeting based on the time of day and user details.
+     */
     private void setupGreeting() {
         String greeting = getGreetingBasedOnTimeOfDay();
         String userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
@@ -85,9 +116,13 @@ public class HomeFragment extends Fragment {
 
     }
 
+    /**
+     * Sets up event click listeners for events lists.
+     */
     private void setupEventClickListeners() {
         Log.d("HomeFragment", "Setting up event click listener");
-        eventsAdapter.setOnItemClickListener(event -> {
+
+        EventsAdapter.OnItemClickListener listener = event -> {
             Log.d("HomeFragment", "Event clicked with ID: " + event.getDocId());
             Intent intent = new Intent(getContext(), EventDetailsActivity.class);
             intent.putExtra("eventId", event.getDocId());
@@ -101,7 +136,11 @@ public class HomeFragment extends Fragment {
             intent.putExtra("imageURL", event.getImageURL());
             Log.d("EventsFragment", "Passing eventId: " + event.getDocId());
             startActivity(intent);
-        });
+        };
+
+        discoverEventsConcertsAdapter.setOnItemClickListener(listener);
+        myEventsAdapter.setOnItemClickListener(listener);
+        myConcertsAdapter.setOnItemClickListener(listener);
     }
 
 
@@ -117,10 +156,61 @@ public class HomeFragment extends Fragment {
                             event.setDocId(document.getId());
                             discoverEventsConcertsList.add(event);
                         }
-                        eventsAdapter.notifyDataSetChanged();
+                        discoverEventsConcertsAdapter.notifyDataSetChanged();
                     }
+
+                    progressBarDiscoverEventsConcerts.setVisibility(View.GONE);
                 });
     }
+
+    private void fetchMyEventsAndConcerts() {
+        String userId = Objects.requireNonNull(mAuth.getCurrentUser().getUid());
+
+        db.collection("users").document(userId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                   if (documentSnapshot.exists()) {
+                       List<String> rsvpdEvents = (List<String>) documentSnapshot.get("rsvpd");
+
+                       if (rsvpdEvents != null && !rsvpdEvents.isEmpty()) {
+                           myEventsList.clear();
+
+                           AtomicInteger counter = new AtomicInteger(rsvpdEvents.size());
+
+                           for (String eventId : rsvpdEvents) {
+                               eventsRef.document(eventId)
+                                       .get()
+                                       .addOnSuccessListener(eventDocument -> {
+                                           if (eventDocument.exists() && !eventDocument.getBoolean("isConcert")) {
+                                               Event event = eventDocument.toObject(Event.class);
+                                               event.setDocId(eventDocument.getId());
+                                               myEventsList.add(event);
+                                           }
+                                           if (eventDocument.exists() && eventDocument.getBoolean("isConcert")) {
+                                               Event event = eventDocument.toObject(Event.class);
+                                               event.setDocId(eventDocument.getId());
+                                               myConcertsList.add(event);
+                                           }
+
+                                           if (counter.decrementAndGet() == 0) {
+                                               myEventsAdapter.notifyDataSetChanged();
+                                               myConcertsAdapter.notifyDataSetChanged();
+                                               progressBarMyEvents.setVisibility(View.GONE);
+                                               progressBarMyConcerts.setVisibility(View.GONE);
+                                           }
+                                       });
+                           }
+                       } else {
+                           progressBarMyEvents.setVisibility(View.GONE);
+                           progressBarMyConcerts.setVisibility(View.GONE);
+                       }
+                   } else {
+                       progressBarMyConcerts.setVisibility(View.GONE);
+                       progressBarMyConcerts.setVisibility(View.GONE);
+                   }
+                });
+    }
+
 
     private String getGreetingBasedOnTimeOfDay() {
         Calendar calendar = Calendar.getInstance();
