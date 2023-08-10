@@ -4,17 +4,12 @@ import static android.content.ContentValues.TAG;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -28,12 +23,9 @@ public class OtherUserSongListActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private SongAdapter songAdapter;
-
     private List<DocumentSnapshot> songSnapShots;
-
     private String playlistId;
     private FirebaseFirestore db;
-
     private String otherUserId;
 
     /**

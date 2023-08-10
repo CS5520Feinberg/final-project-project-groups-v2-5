@@ -17,7 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -25,6 +27,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import edu.northeastern.rhythmlounge.R;
 import okhttp3.Call;
@@ -67,9 +70,12 @@ public class SelfUserSongListActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
-        currentUserId = mAuth.getCurrentUser().getUid();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        db.collection("users")
+        if (currentUser != null) {
+            currentUserId = currentUser.getUid();
+
+            db.collection("users")
                     .document(currentUserId)
                     .collection("playlists")
                     .document(playlistId)
@@ -87,12 +93,11 @@ public class SelfUserSongListActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> Log.d(TAG, "There was an issue fetching the documents: ", e));
 
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showAddSongDialog();
-            }
-        });
+            addButton.setOnClickListener(v -> showAddSongDialog());
+        } else {
+            Toast.makeText(this, "You are not signed in. Please sign into continue.", Toast.LENGTH_SHORT).show();
+            finish();
+        }
     }
 
     /**
@@ -120,7 +125,28 @@ public class SelfUserSongListActivity extends AppCompatActivity {
                 public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                     int position = viewHolder.getAdapterPosition();
                     DocumentSnapshot songSnapshot = songSnapShots.get(position);
-                    deleteSong(songSnapshot.getId());
+
+                    String songTitle = songSnapshot.getString("title");
+                    String artistName = songSnapshot.getString("artist");
+                    String message = songTitle + " by " + artistName + " was deleted";
+
+                    songSnapShots.remove(position);
+                    songAdapter.notifyItemRemoved(position);
+
+                    Snackbar.make(recyclerView, message, Snackbar.LENGTH_LONG)
+                                    .setAction("Undo", v -> {
+                                        songSnapShots.add(position, songSnapshot);
+                                        songAdapter.notifyItemInserted(position);
+                                    })
+                                            .addCallback(new Snackbar.Callback() {
+                                                @Override
+                                                public void onDismissed(Snackbar snackbar, int event) {
+                                                    if (event != Snackbar.Callback.DISMISS_EVENT_ACTION) {
+                                                        deleteSong(songSnapshot.getId());
+                                                    }
+                                                }
+                                            })
+                                            .show();
                 }
             });
 
@@ -136,7 +162,7 @@ public class SelfUserSongListActivity extends AppCompatActivity {
      * @param playListId the id of the playlist from which songs are to be fetched.
      */
     private void getSongsFromPlaylist(String playListId) {
-        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String currentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         db.collection("users")
                 .document(currentUserId)
                 .collection("playlists")
@@ -214,7 +240,7 @@ public class SelfUserSongListActivity extends AppCompatActivity {
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    String responseData = response.body().string();
+                    String responseData = Objects.requireNonNull(response.body()).string();
                     try {
                         JSONObject jsonObject = new JSONObject(responseData);
                         String videoId = jsonObject.getJSONArray("items").getJSONObject(0).getJSONObject("id").getString("videoId");

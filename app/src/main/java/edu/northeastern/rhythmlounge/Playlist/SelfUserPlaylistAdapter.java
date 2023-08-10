@@ -1,5 +1,6 @@
 package edu.northeastern.rhythmlounge.Playlist;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.List;
+import java.util.Objects;
 
 import edu.northeastern.rhythmlounge.R;
 
@@ -41,7 +43,6 @@ public class SelfUserPlaylistAdapter extends RecyclerView.Adapter<SelfUserPlayli
      *               an adapter position.
      * @param viewType The view type of the new View.
      *
-     * @return
      */
     @NonNull
     @Override
@@ -65,7 +66,7 @@ public class SelfUserPlaylistAdapter extends RecyclerView.Adapter<SelfUserPlayli
 
         Playlist clickedPlaylist = playlistSnapshot.toObject(Playlist.class);
 
-        holder.playlistNameTextView.setText(clickedPlaylist.getName());
+        holder.playlistNameTextView.setText(Objects.requireNonNull(clickedPlaylist).getName());
 
         holder.itemView.setOnClickListener(v -> {
             String playlistId = playlistSnapshot.getId();
@@ -90,6 +91,7 @@ public class SelfUserPlaylistAdapter extends RecyclerView.Adapter<SelfUserPlayli
      * Refresh the data in the adapter with a new list of DocumentSnapshots.
      * @param freshPlaylists the new list of DocumentSnapshots.
      */
+    @SuppressLint("NotifyDataSetChanged")
     public void refreshData(List<DocumentSnapshot> freshPlaylists) {
         Log.d("SelfUserPlaylistAdapter", "refreshData is called. The freshPlaylists size is: " + freshPlaylists.size());
         playlistSnapshots.clear();

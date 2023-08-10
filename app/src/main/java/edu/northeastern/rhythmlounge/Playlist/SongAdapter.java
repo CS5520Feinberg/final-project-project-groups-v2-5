@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.List;
+import java.util.Objects;
 
 import edu.northeastern.rhythmlounge.R;
 
@@ -41,7 +42,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
      *               an adapter position.
      * @param viewType The view type of the new View.
      *
-     * @return
      */
     @NonNull
     @Override
@@ -60,7 +60,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         DocumentSnapshot songSnapshot = songSnapshots.get(position);
         Song song = songSnapshot.toObject(Song.class);
-        Log.d("SongAdapter", "Binding song to holder: " + song.getTitle() + " by " + song.getArtist());
+        Log.d("SongAdapter", "Binding song to holder: " + Objects.requireNonNull(song).getTitle() + " by " + song.getArtist());
         holder.bind(song);
     }
 
@@ -89,7 +89,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 
         /**
          * Binds song data to the view elements.
-         * @param song
          */
         void bind(Song song) {
             Log.d("SongAdapter", "Setting text views for song: " + song.getTitle() + " by " + song.getArtist());

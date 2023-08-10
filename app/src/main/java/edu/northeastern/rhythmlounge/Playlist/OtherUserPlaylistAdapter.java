@@ -1,5 +1,6 @@
 package edu.northeastern.rhythmlounge.Playlist;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.List;
+import java.util.Objects;
 
 import edu.northeastern.rhythmlounge.R;
 
@@ -67,7 +69,7 @@ public class OtherUserPlaylistAdapter extends RecyclerView.Adapter<OtherUserPlay
 
         Playlist clickedPlaylist = playlistSnapshot.toObject(Playlist.class);
 
-        holder.playlistNameTextView.setText(clickedPlaylist.getName());
+        holder.playlistNameTextView.setText(Objects.requireNonNull(clickedPlaylist).getName());
 
         holder.itemView.setOnClickListener(v -> {
             String playlistId = playlistSnapshot.getId();
@@ -81,7 +83,6 @@ public class OtherUserPlaylistAdapter extends RecyclerView.Adapter<OtherUserPlay
 
     /**
      * Provides the total number of items.
-     * @return
      */
     @Override
     public int getItemCount() {
@@ -93,6 +94,7 @@ public class OtherUserPlaylistAdapter extends RecyclerView.Adapter<OtherUserPlay
      * Updates the data in the adapter with a fresh data set.
      * @param freshPlaylists the updated list of playlists
      */
+    @SuppressLint("NotifyDataSetChanged")
     public void refreshData(List<DocumentSnapshot> freshPlaylists) {
         Log.d("OtherPlaylistAdapter", "refreshData is called. The freshPlaylists size is: " + freshPlaylists.size());
         playlistSnapshots.clear();
