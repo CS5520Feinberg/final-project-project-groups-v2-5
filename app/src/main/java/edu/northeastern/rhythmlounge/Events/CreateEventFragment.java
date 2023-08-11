@@ -317,9 +317,12 @@ public class CreateEventFragment extends Fragment {
         // Assemble the event
         Map<String, Object> event = new HashMap<>();
         event.put("eventName", eventName);
+        event.put("eventName_lowercase", eventName.toLowerCase());
         event.put("isConcert", isConcert);
         event.put("location", location);
+        event.put("location_lowercase", location.toLowerCase());
         event.put("venue", venue);
+        event.put("venue_lowercase", venue.toLowerCase());
         event.put("description", description);
         event.put("date", date);
         event.put("time", time);

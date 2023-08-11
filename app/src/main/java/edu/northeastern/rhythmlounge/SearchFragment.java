@@ -2,6 +2,7 @@ package edu.northeastern.rhythmlounge;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -14,7 +15,6 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -40,6 +40,9 @@ public class SearchFragment extends Fragment {
 
     private final List<String> eventIds = new ArrayList<>();
     private FirebaseFirestore db;
+    private Handler searchHandler = new Handler();
+
+    private static final long SEARCH_DELAY = 500; // 500ms delay
 
     public SearchFragment() {
     }
@@ -120,8 +123,8 @@ public class SearchFragment extends Fragment {
         }
 
         db.collection("users")
-                .whereGreaterThanOrEqualTo("username", query)
-                .whereLessThanOrEqualTo("username", query + "\uf8ff")
+                .whereGreaterThanOrEqualTo("username_lowercase", query)
+                .whereLessThanOrEqualTo("username_lowercase", query + "\uf8ff")
                 .limit(10)
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -139,26 +142,27 @@ public class SearchFragment extends Fragment {
 
     private void searchEvents(String query) {
 
+        query = query.toLowerCase().trim();
         if (query.trim().isEmpty()) {
             eventSuggestionRecyclerView.setVisibility(View.GONE);
             return;
         }
 
         Task<QuerySnapshot> task1 = db.collection("events")
-                .whereGreaterThanOrEqualTo("eventName", query)
-                .whereLessThanOrEqualTo("eventName", query + "\uf8ff")
+                .whereGreaterThanOrEqualTo("eventName_lowercase", query)
+                .whereLessThanOrEqualTo("eventName_lowercase", query + "\uf8ff")
                 .limit(10)
                 .get();
 
         Task<QuerySnapshot> task2 = db.collection("events")
-                .whereGreaterThanOrEqualTo("location", query)
-                .whereLessThanOrEqualTo("location", query + "\uf8ff")
+                .whereGreaterThanOrEqualTo("location_lowercase", query)
+                .whereLessThanOrEqualTo("location_lowercase", query + "\uf8ff")
                 .limit(10)
                 .get();
 
         Task<QuerySnapshot> task3 = db.collection("events")
-                .whereGreaterThanOrEqualTo("venue", query)
-                .whereLessThanOrEqualTo("venue", query + "\uf8ff")
+                .whereGreaterThanOrEqualTo("venue_lowercase", query)
+                .whereLessThanOrEqualTo("venue_lowercase", query + "\uf8ff")
                 .limit(10)
                 .get();
 
