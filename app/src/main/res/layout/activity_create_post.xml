@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -10,35 +11,45 @@
         android:id="@+id/etTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:hint="@string/post_title"
         android:maxLength="50"
-        android:hint="@string/post_title" />
+        android:minHeight="48dp"
+        android:textColorHint="#8D6E63"
+        tools:ignore="Autofill,TextFields,VisualLintTextFieldSize" />
 
     <EditText
         android:id="@+id/etContent"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:maxLength="500"
+        android:gravity="top"
         android:hint="@string/write_your_post_here"
-        android:gravity="top" />
+        android:maxLength="500"
+        android:textColorHint="#8D6E63"
+        tools:ignore="Autofill,TextFields,VisualLintTextFieldSize" />
 
     <Button
         android:id="@+id/btnUploadImage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/upload_image" />
+        android:text="@string/upload_image"
+        android:textColor="#3E2723"
+        tools:ignore="VisualLintButtonSize" />
 
     <ImageView
         android:id="@+id/ivDialogPreview"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:visibility="gone"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        tools:ignore="ContentDescription" />
 
     <Button
         android:id="@+id/btnPost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/post" />
+        android:text="@string/post"
+        android:textColor="#3E2723"
+        tools:ignore="VisualLintButtonSize" />
 
 </LinearLayout>

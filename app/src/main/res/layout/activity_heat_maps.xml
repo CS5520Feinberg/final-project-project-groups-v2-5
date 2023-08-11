@@ -41,20 +41,23 @@
             android:layout_gravity="center_vertical"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="15dp"
-            android:layout_marginLeft="15dp"
-            android:src="@drawable/ic_search_icon"/>
+            android:layout_marginStart="15dp"
+            android:src="@drawable/ic_search_icon"
+            tools:ignore="ContentDescription" />
 
         <EditText
             android:id="@+id/search_input3"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toRightOf="@id/ic_search_icon3"
+            android:layout_toEndOf="@id/ic_search_icon3"
             android:background="@null"
             android:gravity="center"
-            android:hint="Search"
+            android:hint="@string/search"
             android:imeOptions="actionSearch"
             android:textColor="@color/Black"
-            android:textSize="15sp" />
+            android:textColorHint="#757575"
+            android:textSize="15sp"
+            tools:ignore="Autofill,TextFields,VisualLintTextFieldSize" />
     </RelativeLayout>
 
     <ImageView
@@ -67,7 +70,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchBarLayout3"
         app:layout_constraintVertical_bias="0.019"
-        app:srcCompat="@drawable/ic_current_location" />
+        app:srcCompat="@drawable/ic_current_location"
+        tools:ignore="ContentDescription" />
 
 
 

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -10,15 +11,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/manrope_light"
-        android:hint="Song Title"
-        android:inputType="text" />
+        android:hint="@string/song_title"
+        android:inputType="text"
+        android:minHeight="48dp"
+        tools:ignore="Autofill,VisualLintTextFieldSize" />
 
     <EditText
         android:id="@+id/editTextArtist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/manrope_light"
-        android:hint="Artist"
-        android:inputType="text" />
+        android:hint="@string/artist"
+        android:inputType="text"
+        android:minHeight="48dp"
+        tools:ignore="Autofill,VisualLintTextFieldSize" />
 
 </LinearLayout>

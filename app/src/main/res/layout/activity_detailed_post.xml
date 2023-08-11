@@ -1,5 +1,6 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FAFAFA">
@@ -24,9 +25,10 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginEnd="12dp"
-                android:scaleType="centerCrop"
                 android:background="@drawable/circular_shape"
-                android:contentDescription="@string/profile_picture" />
+                android:contentDescription="@string/profile_picture"
+                android:scaleType="centerCrop"
+                tools:ignore="ImageContrastCheck" />
 
             <!-- User Name -->
             <TextView
@@ -106,8 +108,9 @@
                 android:layout_height="24dp"
                 android:layout_marginEnd="4dp"
                 android:background="?android:selectableItemBackground"
+                android:contentDescription="@string/like_button"
                 android:src="@drawable/ic_like"
-                android:contentDescription="@string/like_button" />
+                tools:ignore="RedundantDescriptionCheck,TouchTargetSizeCheck" />
 
             <!-- Like Count -->
             <TextView
@@ -115,9 +118,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                android:textColor="#888"
+                android:fontFamily="sans-serif-medium"
                 android:text="@string/_0"
-                android:fontFamily="sans-serif-medium" />
+                android:textColor="#546E7A" />
 
             <!-- Comment Button -->
             <ImageButton
@@ -126,18 +129,19 @@
                 android:layout_height="24dp"
                 android:layout_marginEnd="4dp"
                 android:background="?android:selectableItemBackground"
+                android:contentDescription="@string/post_comment"
                 android:src="@drawable/ic_commented"
-                android:contentDescription="@string/post_comment" />
+                tools:ignore="TouchTargetSizeCheck" />
 
             <!-- Comment Count -->
             <TextView
                 android:id="@+id/tv_comment_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#888"
                 android:layout_marginEnd="4dp"
+                android:fontFamily="sans-serif-medium"
                 android:text="@string/_0"
-                android:fontFamily="sans-serif-medium" />
+                android:textColor="#546E7A" />
 
         </LinearLayout>
 

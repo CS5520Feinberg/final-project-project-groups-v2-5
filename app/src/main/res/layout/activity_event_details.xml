@@ -9,63 +9,72 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imageViewEvent"
-            android:layout_width="192dp"
-            android:layout_height="192dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:scaleType="centerCrop"
             android:src="@drawable/concert"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="395dp" />
+
         <TextView
             android:id="@+id/textViewEventName"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="8dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/manrope_bold"
-            android:paddingStart="16dp"
-            android:text="Event Name"
-            android:textSize="16sp"
+            android:text="@string/event_name"
+            android:textSize="14sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:textAppearance="@style/TextAppearance.Manrope"
             app:layout_constraintStart_toEndOf="@+id/imageViewEvent"
-            app:layout_constraintTop_toTopOf="@+id/imageViewEvent" />
+            app:layout_constraintTop_toTopOf="@+id/imageViewEvent"
+            app:layout_constraintEnd_toStartOf="@id/guideline" />
 
         <TextView
             android:id="@+id/textViewLocation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/manrope_bold"
-            android:paddingStart="16dp"
-            android:text="Location"
-            android:textSize="16sp"
+            android:layout_marginTop="12dp"
+            android:text="@string/location"
+            android:textAppearance="@style/TextAppearance.Manrope"
+            android:textSize="14sp"
+            android:layout_marginStart="8dp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/textViewEventName"
-            app:layout_constraintTop_toBottomOf="@+id/textViewEventName" />
+            app:layout_constraintStart_toEndOf="@+id/imageViewEvent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewEventName"
+            app:layout_constraintEnd_toStartOf="@id/guideline" />
 
         <TextView
             android:id="@+id/textViewVenue"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/manrope_bold"
-            android:paddingStart="16dp"
-            android:text="Venue"
-            android:textSize="16sp"
+            android:layout_marginTop="12dp"
+            android:text="@string/venue"
+            android:textAppearance="@style/TextAppearance.Manrope"
+            android:textSize="14sp"
+            android:layout_marginStart="8dp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/textViewLocation"
-            app:layout_constraintTop_toBottomOf="@+id/textViewLocation" />
+            app:layout_constraintStart_toEndOf="@+id/imageViewEvent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewLocation"
+            app:layout_constraintEnd_toStartOf="@id/guideline" />
 
         <TextView
             android:id="@+id/textViewDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Event Details"
+            android:layout_marginTop="8dp"
+            android:text="@string/event_details"
             android:textSize="14sp"
+            android:textAppearance="@style/TextAppearance.Manrope"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageViewEvent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -75,19 +84,20 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Outside Link"
+            android:text="@string/outside_event_link"
+            android:textAppearance="@style/TextAppearance.Manrope"
+            android:textColor="#0277BD"
             android:textSize="14sp"
-            android:textColor="@android:color/holo_blue_light"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewDescription"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewDescription" />
 
         <TextView
             android:id="@+id/textViewDate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Date"
+            android:text="@string/date"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewOutsideLink"
@@ -98,30 +108,72 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="Time"
+            android:text="@string/time"
+            android:textAppearance="@style/TextAppearance.Manrope"
             android:textSize="14sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewDate"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <CheckBox
-            android:id="@+id/checkBoxRSVP"
-            android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/buttonsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/textViewTime"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <CheckBox
+                    android:id="@+id/checkBoxRSVP"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="RSVP" />
+
+                <Button
+                    android:id="@+id/editEventButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Edit"
+                    android:layout_marginRight="8dp"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/deleteEventButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Delete"
+                    android:layout_marginLeft="8dp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+        <TextView
+            android:id="@+id/whosgoing"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="RSVP to this event"
+            android:layout_marginTop="8dp"
+            android:text="@string/users_attending"
+            android:textAppearance="@style/TextAppearance.Manrope"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@+id/buttonsLayout"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewTime" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rsvpRecyclerView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="8dp"
             android:clipToPadding="false"
-            app:layout_constraintTop_toBottomOf="@+id/checkBoxRSVP"
+            android:padding="8dp"
+            android:textAppearance="@style/TextAppearance.Manrope"
+            app:layout_constraintTop_toBottomOf="@+id/whosgoing"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

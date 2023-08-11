@@ -7,12 +7,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 import java.util.Objects;
@@ -63,10 +65,32 @@ public class SelfUserPlaylistAdapter extends RecyclerView.Adapter<SelfUserPlayli
         Log.d("SelfUserPlaylistAdapter", "onBindViewHolder is called for position " + position);
 
         DocumentSnapshot playlistSnapshot = playlistSnapshots.get(position);
-
         Playlist clickedPlaylist = playlistSnapshot.toObject(Playlist.class);
 
         holder.playlistNameTextView.setText(Objects.requireNonNull(clickedPlaylist).getName());
+
+        holder.deletePlaylistIcon.setOnClickListener(v -> {
+            String playlistId = playlistSnapshot.getId();
+
+            int removedPosition = holder.getAdapterPosition();
+            playlistSnapshots.remove(removedPosition);
+            notifyItemRemoved(removedPosition);
+            notifyItemRangeChanged(removedPosition, playlistSnapshots.size());
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            // Pass the user's authentication information or required attributes
+            // to the delete function
+            db.collection("playlists").document(playlistId)
+                    .delete()
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d("SelfUserPlaylistAdapter", "Playlist deleted from Firestore: " + playlistId);
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("SelfUserPlaylistAdapter", "Error deleting playlist from Firestore: " + e.getMessage());
+                    });
+        });
+
+
 
         holder.itemView.setOnClickListener(v -> {
             String playlistId = playlistSnapshot.getId();
@@ -76,6 +100,7 @@ public class SelfUserPlaylistAdapter extends RecyclerView.Adapter<SelfUserPlayli
             Log.d("SelfUserPlaylistAdapter", "SongListActivity has been started with playlistId " + playlistId + intent);
         });
     }
+
 
     /**
      * Returns the total number of playlists
@@ -94,20 +119,26 @@ public class SelfUserPlaylistAdapter extends RecyclerView.Adapter<SelfUserPlayli
     @SuppressLint("NotifyDataSetChanged")
     public void refreshData(List<DocumentSnapshot> freshPlaylists) {
         Log.d("SelfUserPlaylistAdapter", "refreshData is called. The freshPlaylists size is: " + freshPlaylists.size());
+
         playlistSnapshots.clear();
+
         playlistSnapshots.addAll(freshPlaylists);
+
         notifyDataSetChanged();
     }
+
 
     /**
      * Viewholder to hold the view items for playlists.
      */
     public static class PlaylistViewHolder extends RecyclerView.ViewHolder {
         final TextView playlistNameTextView;
+        final ImageView deletePlaylistIcon;
 
         public PlaylistViewHolder(View view) {
             super(view);
             playlistNameTextView = view.findViewById(R.id.playlistNameText);
+            deletePlaylistIcon = view.findViewById(R.id.deletePlaylist);
             Log.d("SelfUserPlaylistViewHolder", "PlaylistViewHolder has been initialized");
         }
     }

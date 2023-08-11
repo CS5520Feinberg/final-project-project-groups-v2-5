@@ -1,5 +1,7 @@
 package edu.northeastern.rhythmlounge;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
@@ -22,6 +26,9 @@ import com.google.firebase.firestore.ListenerRegistration;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.northeastern.rhythmlounge.Events.Event;
+import edu.northeastern.rhythmlounge.Events.EventDetailsActivity;
+import edu.northeastern.rhythmlounge.Events.EventsAdapter;
 import edu.northeastern.rhythmlounge.Playlists.OtherUserPlaylistAdapter;
 
 
@@ -44,7 +51,9 @@ public class OtherUserPageActivity extends AppCompatActivity {
     private ImageView imageViewProfilePic;
     private Button buttonFollowUnfollow;
 
-    private RecyclerView otherUserRecyclerView;
+    private RecyclerView otherUserPlaylistRecyclerView, otherUserAttendingRecyclerView, otherUserHostingRecyclerView;
+
+    private EventsAdapter otherUserHostingEventsAdapter, otherUserAttendingEventsAdapter;
 
     private OtherUserPlaylistAdapter playlistAdapter;
 
@@ -100,6 +109,11 @@ public class OtherUserPageActivity extends AppCompatActivity {
                     Toast.makeText(this, "Failed to load the user information.", Toast.LENGTH_LONG).show();
                     finish();
                 });
+
+        initializePlaylistRecyclerView(otherUserId);
+        initializeAttendingRecyclerView(otherUserId);
+        initializeHostingRecyclerView(otherUserId);
+        setupEventClickListeners();
     }
 
 
@@ -116,10 +130,86 @@ public class OtherUserPageActivity extends AppCompatActivity {
         textViewFollowing.setOnClickListener(v -> handleFollowingClick(otherUserId));
         textViewFollowers.setOnClickListener(v -> handleFollowersClick(otherUserId));
 
-        otherUserRecyclerView = findViewById(R.id.recyclerViewPlaylists);
+
+    }
+
+    private void initializePlaylistRecyclerView(String otherUserId) {
+        otherUserPlaylistRecyclerView = findViewById(R.id.recyclerViewPlaylists);
         playlistAdapter = new OtherUserPlaylistAdapter(this, new ArrayList<>(), otherUserId);
-        otherUserRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        otherUserRecyclerView.setAdapter(playlistAdapter);
+        otherUserPlaylistRecyclerView.setAdapter(playlistAdapter);
+        otherUserPlaylistRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void initializeAttendingRecyclerView(String otherUserId) {
+        otherUserAttendingRecyclerView = findViewById(R.id.otherAttendingRecyclerView);
+        otherUserAttendingEventsAdapter = new EventsAdapter(new ArrayList<>());
+        otherUserAttendingRecyclerView.setAdapter(otherUserAttendingEventsAdapter);
+        otherUserAttendingRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        fetchUserEvents(otherUserId);
+    }
+
+    private void initializeHostingRecyclerView(String otherUserId) {
+        otherUserHostingRecyclerView = findViewById(R.id.otherHostingRecyclerView);
+        otherUserHostingEventsAdapter = new EventsAdapter(new ArrayList<>());
+        otherUserHostingRecyclerView.setAdapter(otherUserHostingEventsAdapter);
+        otherUserHostingRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        fetchUserEvents(otherUserId);
+    }
+
+    private void fetchUserEvents(String otherUserId) {
+        DocumentReference userDocRef = db.collection("users").document(otherUserId);
+
+        userDocRef.get().addOnSuccessListener(documentSnapshot -> {
+            List<String> hostingIds = (List<String>) documentSnapshot.get("hosting");
+            List<String> rsvpIds = (List<String>) documentSnapshot.get("rsvpd");
+
+            fetchEventsAndUpdateRecyclerView(hostingIds, otherUserHostingEventsAdapter);
+            fetchEventsAndUpdateRecyclerView(rsvpIds, otherUserAttendingEventsAdapter);
+        });
+    }
+
+    private void fetchEventsAndUpdateRecyclerView(List<String> eventIds, EventsAdapter adapter) {
+        if (eventIds == null || eventIds.isEmpty()) return;
+
+        CollectionReference eventsRef = db.collection("events");
+        List<Event> events = new ArrayList<>();
+
+        for (String eventId : eventIds) {
+            eventsRef.document(eventId).get().addOnSuccessListener(documentSnapshot -> {
+                Event event = documentSnapshot.toObject(Event.class);
+                if (event != null) {
+                    event.setDocId(documentSnapshot.getId());
+                    events.add(event);
+
+                    if (events.size() == eventIds.size()) {
+                        adapter.updateData(events);
+                    }
+                }
+            }).addOnFailureListener(e -> Log.e(TAG, "Failed to fetch event: " + e.getMessage()));
+        }
+    }
+
+    private void setupEventClickListeners() {
+        Log.d(TAG, "Setting up event click listener");
+
+        EventsAdapter.OnItemClickListener listener = event -> {
+            Log.d(TAG, "Event clicked with ID: " + event.getDocId());
+            Intent intent = new Intent(this, EventDetailsActivity.class);
+            intent.putExtra("eventId", event.getDocId());
+            intent.putExtra("event_name", event.getEventName());
+            intent.putExtra("location", event.getLocation());
+            intent.putExtra("venue", event.getVenue());
+            intent.putExtra("description", event.getDescription());
+            intent.putExtra("outside_link", event.getOutsideLink());
+            intent.putExtra("date", event.getDate());
+            intent.putExtra("time", event.getTime());
+            intent.putExtra("imageURL", event.getImageURL());
+            Log.d(TAG, "Passing eventId: " + event.getDocId());
+            startActivity(intent);
+        };
+
+        otherUserHostingEventsAdapter.setOnItemClickListener(listener);
+        otherUserAttendingEventsAdapter.setOnItemClickListener(listener);
     }
 
     /**

@@ -33,6 +33,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -45,6 +46,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import edu.northeastern.rhythmlounge.Events.Event;
+import edu.northeastern.rhythmlounge.Events.EventDetailsActivity;
+import edu.northeastern.rhythmlounge.Events.EventsAdapter;
 import edu.northeastern.rhythmlounge.Playlists.SelfUserPlaylistAdapter;
 
 public class SelfUserPageFragment extends Fragment {
@@ -54,9 +58,9 @@ public class SelfUserPageFragment extends Fragment {
     private static final int ERROR_DIALOGUE_REQ = 9001;
     private TextView textViewOwnUsername, textViewOwnBio, textViewOwnFollowers, textViewOwnFollowing;
     private ImageView imageViewProfilePic, heatMap;
-
-    private RecyclerView recyclerView;
+    private RecyclerView playlistRecyclerView, attendingRecyclerView, hostingRecyclerView;
     private SelfUserPlaylistAdapter selfUserPlaylistAdapter;
+    private EventsAdapter hostingEventsAdapter, attendingEventsAdapter;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private StorageReference storageReference;
@@ -107,12 +111,101 @@ public class SelfUserPageFragment extends Fragment {
         });
 
         initializePlaylistRecyclerView(view);
+        initializeAttendingRecyclerView(view);
+        initializeHostingRecyclerView(view);
+
+        setupEventClickListeners();
+
 
         imageViewProfilePic.setOnClickListener(v -> openImageDialog());
 
         heatMap.setOnClickListener(v -> openHeatMap());
 
         return view;
+    }
+
+
+    private void initializePlaylistRecyclerView(View view) {
+        playlistRecyclerView = view.findViewById(R.id.playlisRecyclerView);
+        selfUserPlaylistAdapter = new SelfUserPlaylistAdapter(getActivity(), new ArrayList<>());
+        playlistRecyclerView.setAdapter(selfUserPlaylistAdapter);
+        playlistRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        getCurrentUserPlaylists();
+    }
+
+    private void initializeAttendingRecyclerView(View view) {
+        attendingRecyclerView = view.findViewById(R.id.attendingRecyclerView);
+        attendingEventsAdapter = new EventsAdapter(new ArrayList<>());
+        attendingRecyclerView.setAdapter(attendingEventsAdapter);
+        LinearLayoutManager attendingLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        attendingRecyclerView.setLayoutManager(attendingLayoutManager);
+        fetchUserEvents();
+    }
+
+    private void initializeHostingRecyclerView(View view) {
+        hostingRecyclerView = view.findViewById(R.id.hostingRecyclerView);
+        hostingEventsAdapter = new EventsAdapter(new ArrayList<>());
+        hostingRecyclerView.setAdapter(hostingEventsAdapter);
+        LinearLayoutManager hostingLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        hostingRecyclerView.setLayoutManager(hostingLayoutManager);
+        fetchUserEvents();
+    }
+
+    private void fetchUserEvents() {
+        String currentUserId = getCurrentUserId();
+        DocumentReference userDocRef = db.collection("users").document(currentUserId);
+
+        userDocRef.get().addOnSuccessListener(documentSnapshot -> {
+            List<String> hostingIds = (List<String>) documentSnapshot.get("hosting");
+            List<String> rsvpIds = (List<String>) documentSnapshot.get("rsvpd");
+
+            fetchEventsAndUpdateRecyclerView(hostingIds, hostingEventsAdapter);
+            fetchEventsAndUpdateRecyclerView(rsvpIds, attendingEventsAdapter);
+        });
+    }
+
+    private void fetchEventsAndUpdateRecyclerView(List<String> eventIds, EventsAdapter adapter) {
+        if (eventIds == null || eventIds.isEmpty()) return;
+
+        CollectionReference eventsRef = db.collection("events");
+        List<Event> events = new ArrayList<>();
+
+        for (String eventId : eventIds) {
+            eventsRef.document(eventId).get().addOnSuccessListener(documentSnapshot -> {
+                Event event = documentSnapshot.toObject(Event.class);
+                if (event != null) {
+                    event.setDocId(documentSnapshot.getId());
+                    events.add(event);
+
+                    if (events.size() == eventIds.size()) {
+                        adapter.updateData(events);
+                    }
+                }
+            }).addOnFailureListener(e -> Log.e(TAG, "Failed to fetch event: " + e.getMessage()));
+        }
+    }
+
+    private void setupEventClickListeners() {
+        Log.d(TAG, "Setting up event click listener");
+
+        EventsAdapter.OnItemClickListener listener = event -> {
+            Log.d(TAG, "Event clicked with ID: " + event.getDocId());
+            Intent intent = new Intent(getContext(), EventDetailsActivity.class);
+            intent.putExtra("eventId", event.getDocId());
+            intent.putExtra("event_name", event.getEventName());
+            intent.putExtra("location", event.getLocation());
+            intent.putExtra("venue", event.getVenue());
+            intent.putExtra("description", event.getDescription());
+            intent.putExtra("outside_link", event.getOutsideLink());
+            intent.putExtra("date", event.getDate());
+            intent.putExtra("time", event.getTime());
+            intent.putExtra("imageURL", event.getImageURL());
+            Log.d(TAG, "Passing eventId: " + event.getDocId());
+            startActivity(intent);
+        };
+
+        hostingEventsAdapter.setOnItemClickListener(listener);
+        attendingEventsAdapter.setOnItemClickListener(listener);
     }
 
     @Override
@@ -299,15 +392,9 @@ public class SelfUserPageFragment extends Fragment {
     }
 
 
-    private void initializePlaylistRecyclerView(View view) {
-        recyclerView = view.findViewById(R.id.playlisRecyclerView);
-        selfUserPlaylistAdapter = new SelfUserPlaylistAdapter(getActivity(), new ArrayList<>());
-        recyclerView.setAdapter(selfUserPlaylistAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        getCurrentUserPlaylists();
-    }
 
-     private void getCurrentUserPlaylists() {
+
+    private void getCurrentUserPlaylists() {
         String currentUserId = getCurrentUserId();
 
         db.collection("users")

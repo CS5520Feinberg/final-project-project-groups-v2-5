@@ -5,10 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/profileInfoSection"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/other_user_profile_picture"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
         android:src="@drawable/defaultprofilepicture"
         app:civ_border_color="#FF000000"
         app:civ_border_width="2dp"
@@ -17,86 +26,101 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"/>
 
-    <TextView
-        android:id="@+id/textViewUsername"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:fontFamily="@font/manrope_bold"
-        android:text="@string/username_should_appear_here"
-        android:textColor="#000000"
-        android:textSize="12sp"
-        app:layout_constraintStart_toEndOf="@id/other_user_profile_picture"
-        app:layout_constraintTop_toTopOf="@id/other_user_profile_picture" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16sp"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textViewBio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="12sp"
-        app:layout_constraintStart_toEndOf="@id/other_user_profile_picture"
-        app:layout_constraintTop_toBottomOf="@id/textViewUsername"
-        android:layout_marginStart="8dp"/>
+            <TextView
+                android:id="@+id/textViewUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/username"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                android:textAppearance="@style/TextAppearance.Manrope"
+                android:textStyle="bold" />
 
-    <Button
+            <TextView
+                android:id="@+id/textViewFollowers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:minWidth="48dp"
+                android:minHeight="20dp"
+                android:text="@string/followers"
+                android:textAppearance="@style/TextAppearance.Manrope"
+                android:textSize="14sp"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <TextView
+                android:id="@+id/textViewFollowing"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="4dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:minWidth="48dp"
+                android:minHeight="20dp"
+                android:text="@string/following"
+                android:textAppearance="@style/TextAppearance.Manrope"
+                android:textSize="14sp"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <TextView
+                android:id="@+id/textViewBio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+
+                android:textSize="14sp"
+                android:textAppearance="@style/TextAppearance.Manrope"
+                android:text="@string/no_information_given" />
+
+        </LinearLayout>
+
+        <Button
         android:id="@+id/buttonFollowUnfollow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:fontFamily="@font/manrope_bold"
         android:text="@string/follow_unfollow"
         android:textColor="#3E2723"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textViewFollowers"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:fontFamily="@font/manrope_semibold"
-        android:text="Followers"
-        app:layout_constraintStart_toEndOf="@id/other_user_profile_picture"
-        app:layout_constraintTop_toBottomOf="@id/textViewBio" />
-
-    <TextView
-        android:id="@+id/textViewFollowing"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:fontFamily="@font/manrope_semibold"
-        android:text="Following"
-        app:layout_constraintStart_toEndOf="@id/textViewFollowers"
-        app:layout_constraintTop_toBottomOf="@id/textViewBio" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/textViewPlaylist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="50dp"
-        android:fontFamily="@font/manrope_bold"
+        android:layout_marginTop="8dp"
         android:text="@string/playlists"
-        android:textSize="14sp"
+        android:textSize="16sp"
+        android:textAppearance="@style/TextAppearance.Manrope"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewFollowers" />
+        app:layout_constraintTop_toBottomOf="@id/profileInfoSection" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewPlaylists"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textViewPlaylist"
-        android:layout_marginStart="8dp"
+        android:textAppearance="@style/TextAppearance.Manrope"
         android:layout_marginTop="8dp" />
 
     <TextView
@@ -105,12 +129,22 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:fontFamily="@font/manrope_bold"
         android:text="@string/hosting_events"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textStyle="bold"
+        android:textAppearance="@style/TextAppearance.Manrope"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/recyclerViewPlaylists" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/otherHostingRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:textAppearance="@style/TextAppearance.Manrope"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewHostingEvents" />
 
     <TextView
         android:id="@+id/textViewAttendingEvents"
@@ -118,11 +152,22 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:fontFamily="@font/manrope_bold"
         android:text="@string/attending_events"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textStyle="bold"
+        android:textAppearance="@style/TextAppearance.Manrope"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewHostingEvents" />
+        app:layout_constraintTop_toBottomOf="@id/otherHostingRecyclerView" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/otherAttendingRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewAttendingEvents"
+        android:textAppearance="@style/TextAppearance.Manrope"
+        android:layout_marginTop="8dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

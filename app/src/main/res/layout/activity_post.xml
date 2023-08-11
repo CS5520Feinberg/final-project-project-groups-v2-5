@@ -1,5 +1,6 @@
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/swipe_refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -18,21 +19,22 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_create_post"
+            style="@style/CustomFab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
-            android:padding="0dp"
-            style="@style/CustomFab"
             android:contentDescription="@string/create_new_posts"
+            android:padding="0dp"
             android:src="@drawable/post"
-            app:tint="@null" />
+            app:tint="@null"
+            tools:ignore="ImageContrastCheck" />
 
         <TextView
             android:id="@+id/tv_empty_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No posts available!"
+            android:text="@string/no_posts_available"
             android:visibility="gone"
             android:layout_gravity="center" />
 
@@ -41,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_centerInParent="true"
-            android:contentDescription="Image Preview"
+            android:contentDescription="@string/image_preview"
             android:visibility="gone"/>
 
 
