@@ -1,6 +1,7 @@
 package edu.northeastern.rhythmlounge;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -111,6 +112,12 @@ public class User {
 
         // Removes the current user from the followers list of the current user to unfollow.
         db.collection("users").document(userIdToUnfollow).update("followers", FieldValue.arrayRemove(currentUserId));
+    }
+
+    public String getUserId() {
+        // Assuming the documentSnapshot corresponds to the user document
+        String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        return currentUserId;
     }
 
 }

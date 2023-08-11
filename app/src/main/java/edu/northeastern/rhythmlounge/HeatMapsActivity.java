@@ -5,9 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -21,7 +18,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -45,6 +41,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -55,11 +52,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
@@ -70,10 +67,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -82,7 +77,7 @@ import java.util.Scanner;
  * The first part of the code is to initialise the map and get current devices' location
  * The second part of the code is to overlay HeatMap tile
  */
-public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCallback, AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "Activity____HeatMaps";
     private static final String FINE_LOCATION = android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -145,6 +140,19 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
     private CollectionReference userLocationRef;
 
+    List<User> followers = new ArrayList<>();
+    private ArrayList<UserLocation> userArrayList = new ArrayList<>();
+    private List<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
+
+    private LatLngBounds mMapBoundary;
+    // Position of the authenticated user
+    private UserLocation muserPosition;
+    private ClusterManager mClusterManager;
+    private MyClusterManagerRenderer mClusterManagerRenderer;
+    private ArrayList<ClusterMarker> mClusterMarkers = new ArrayList<>();
+
+
+
     //-------------------------------------------- Map Initialization -----------------------------------------------------
 
     @Override
@@ -152,7 +160,6 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         Toast.makeText(HeatMapsActivity.this, "Map is ready", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onMapReady: Map is ready");
         mMap = googleMap;
-
         if (mLocationPermissionGranted) {
             getDeviceLocation();
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -165,6 +172,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
             mMap.getUiSettings().setMyLocationButtonEnabled(false);
             // If permission is granted, initialise the widgets such as CurrentLocation Icon
             init();
+
             heatTileMethod(mIsRestore);
         }
 
@@ -176,6 +184,14 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         mIsRestore = savedInstanceState != null;
         setContentView(R.layout.activity_heat_maps);
 
+
+        if (savedInstanceState != null) {
+            CameraPosition cameraPosition = savedInstanceState.getParcelable("cameraPosition");
+            if (cameraPosition != null) {
+                mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }
+        }
+
         mSearchText = findViewById(R.id.search_input3);
         mGps = findViewById(R.id.ic_gps_icon);
 
@@ -186,11 +202,12 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         mDb = FirebaseFirestore.getInstance();
         userLocationRef = mDb.collection("user_locations");
 
-
         getLocationPermission();
         initMap();
         init();
         getDeviceLocation();
+        //setUserPosition();
+        addMapMarkers();
 
 
     }
@@ -254,6 +271,9 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
      */
     private void initMap() {
         Log.d(TAG, "initMap: Initializing Map");
+
+
+
         SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.heatmap3);
         supportMapFragment.getMapAsync(HeatMapsActivity.this);
 
@@ -273,41 +293,9 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
                 .title(title);
-        mMap.addMarker(options);
+        //mMap.addMarker(options);
         hideSoftKeyboard();
     }
-
-    /**
-     * Method to get current Device Location
-    */
-//    private void getDeviceLocation() {
-//        Log.d(TAG, "getDeviceLocation: Getting the Device's Current Location");
-//        ArrayList<LatLng> currentLatLon = new ArrayList<>();
-//        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-//        try {
-//            if (mLocationPermissionGranted) {
-//                Task location = mFusedLocationProviderClient.getLastLocation();
-//                location.addOnCompleteListener(task -> {
-//                    if (task.isSuccessful()) {
-//                        Log.d(TAG, "onComplete: Found Location");
-//                        Location currentLocation = (Location) task.getResult();
-//                        currentLatLon.add(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
-//                        moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, "My Location");
-//                        mLists.put(getString(R.string.mycurrentlocation), new DataSet(currentLatLon));
-//
-//
-//                        //new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()) );
-//                    } else {
-//                        Log.d(TAG, "onComplete: Unable to get Current Location");
-//                    }
-//                });
-//            }
-//
-//        } catch (SecurityException e) {
-//            Log.e(TAG, "getDeviceLocation: SecurityException" + e.getMessage());
-//        }
-//    }
-
 
     private void getDeviceLocation() {
         Log.d(TAG, "getDeviceLocation: Getting the Device's Current Location");
@@ -322,10 +310,10 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                         Location currentLocation = task.getResult();
                         currentLatLon.add(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
                         moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, "My Location");
-                        mLists.put(getString(R.string.mycurrentlocation), new DataSet(currentLatLon));
                     } else {
                         Log.d(TAG, "onComplete: Unable to get Current Location");
                     }
+                    Log.d(TAG, "getDeviceLocation: Am i coming here 10 AUG?");
                 });
             }
         } catch (SecurityException e) {
@@ -353,6 +341,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                     mUserLocation.setGeoPoint(geoPoint);
                     mUserLocation.setTimeStamp(null);
                     saveUserLocation();
+
                 }
             }
         });
@@ -368,26 +357,15 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     protected void heatTileMethod(boolean isRestore) {
         if (!isRestore) {
             getDeviceLocation();
+
         }
 
-        // Set up the spinner/dropdown list
-        Spinner spinner = findViewById(R.id.spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.heatmaps_datasets_array, android.R.layout.simple_spinner_item);
+        Spinner spinner = findViewById(R.id.spinner2);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.heatmaps_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new HeatMapsActivity.SpinnerActivity());
+        spinner.setOnItemSelectedListener(this);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-
-        try {
-            mLists.put(getString(R.string.events), new HeatMapsActivity.DataSet(readItems(R.raw.events)));
-            mLists.put(getString(R.string.friends), new HeatMapsActivity.DataSet(readItems(R.raw.friends)));
-        } catch (JSONException e) {
-            Toast.makeText(this, "Problem reading list of markers.", Toast.LENGTH_LONG).show();
-        }
     }
 
     public void changeRadius(View view) {
@@ -420,79 +398,77 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         mDefaultOpacity = !mDefaultOpacity;
     }
 
-    /**
-     * Class Spinner Activity that allows users to select HeapMaps or Friend's locations
-     */
-    public class SpinnerActivity implements AdapterView.OnItemSelectedListener {
-        public void onItemSelected(AdapterView<?> parent, View view,
-                                   int pos, long id) {
-            String dataset = parent.getItemAtPosition(pos).toString();
-            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-            int width = getResources().getDisplayMetrics().widthPixels;
-            int height = getResources().getDisplayMetrics().heightPixels;
-            int padding = (int) (width * 0.15); // offset from edges of the map 15% of screen
-            // Check if need to instantiate (avoid setData etc twice)
-            if (mProvider == null) {
-                mProvider = new HeatmapTileProvider.Builder().data(mLists.get(getString(R.string.events)).getData()).build();
-                mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
-                // Render links
-                //attribution.setMovementMethod(LinkMovementMethod.getInstance());
-            } else {
-                // HeatMap of events
-                if (parent.getSelectedItemPosition() == 1) {
-                    mMap.clear();
-                    mProvider.setData(mLists.get(dataset).getData());
-                    for (int i = 0; i < mLists.get(dataset).getData().size(); i++) {
-                        builder.include(mLists.get(dataset).getData().get(i));
-                        LatLngBounds bounds = builder.build();
-                        // to animate camera with some padding and bound -cover- all markers
-                        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
-                        mMap.animateCamera(cu);
-                    }
-                    mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
-                    mOverlay.setVisible(true);
-                    mOverlay.clearTileCache();
-                }
-                // Current Location
-                else if (parent.getSelectedItemPosition() == 0) {
-                    getDeviceLocation();
-                }
-                // Friend's Location
-                else {
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String text = parent.getItemAtPosition(position).toString();
 
-                    mOverlay.clearTileCache();
-                    mOverlay.setVisible(false);
-                    // Method to mark multiple points on screen
-                    for (int i = 0; i < dataset.length(); i++) {
-                        mMap.addMarker(new MarkerOptions().position(Objects.requireNonNull(mLists.get(dataset)).getData().get(i)).title("Friends"));
-                        builder.include(mLists.get(dataset).getData().get(i));
-                        LatLngBounds bounds = builder.build();
-                        // to animate camera with some padding and bound -cover- all markers
-                        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
-                        mMap.animateCamera(cu);
-                    }
-                }
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int height = getResources().getDisplayMetrics().heightPixels;
+        int padding = (int) (width * 0.15);
+
+        List<LatLng> dataPoints = new ArrayList<>();
+        dataPoints.add(new LatLng(37.7749, -122.4194));
+        for (GeoPoint geoPoint : geoPoints) {
+            double latitude = geoPoint.getLatitude();
+            double longitude = geoPoint.getLongitude();
+            LatLng latLng = new LatLng(latitude, longitude);
+            dataPoints.add(latLng);
+        }
+
+        if (mProvider == null) {
+            mProvider = new HeatmapTileProvider.Builder().data(dataPoints).build();
+            mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+            // Render links
+            //attribution.setMovementMethod(LinkMovementMethod.getInstance());
+        } else {
+            if(mOverlay.isVisible()){
+                mOverlay.clearTileCache();
+                mOverlay.setVisible(false);
             }
-        }
+            if (parent.getItemAtPosition(position).toString().equals("myfriends")) {
+                Toast.makeText(parent.getContext(), text + "HI FRIENDS", Toast.LENGTH_SHORT).show();
+                getFollowingUserList();
+                addMapMarkers();
+            }
 
-        public void onNothingSelected(AdapterView<?> parent) {
+
+            else if (parent.getItemAtPosition(position).toString().equals("myevents")) {
+                if (!mClusterMarkers.isEmpty()) {
+                    mClusterManager.clearItems();
+                    mClusterManager.cluster();
+                }
+                mProvider.setData(dataPoints);
+                for (int i = 0; i < dataPoints.size(); i++) {
+                    builder.include(dataPoints.get(i));
+                    LatLngBounds bounds = builder.build();
+                    // to animate camera with some padding and bound -cover- all markers
+                    CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+                    mMap.animateCamera(cu);
+                }
+                mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+                mOverlay.setVisible(true);
+                mOverlay.clearTileCache();
+
+
+
+                Toast.makeText(parent.getContext(), text + "HI EVENTS", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "onItemSelected:USERARRAYLOIST " + userArrayList);
+                Log.d(TAG, "onItemSelected:GEOPOINTS " + geoPoints);
+            }
+            else {
+                Toast.makeText(parent.getContext(), text + "MY LOCATION", Toast.LENGTH_SHORT).show();
+                getDeviceLocation();
+            }
 
         }
     }
 
-    private ArrayList<LatLng> readItems(int resource) throws JSONException {
-        ArrayList<LatLng> list = new ArrayList<>();
-        InputStream inputStream = getResources().openRawResource(resource);
-        String json = new Scanner(inputStream).useDelimiter("\\A").next();
-        JSONArray array = new JSONArray(json);
-        for (int i = 0; i < array.length(); i++) {
-            JSONObject object = array.getJSONObject(i);
-            double lat = object.getDouble("lat");
-            double lng = object.getDouble("lng");
-            list.add(new LatLng(lat, lng));
-        }
-        return list;
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
+
 
     private static class DataSet {
         private final ArrayList<LatLng> mDataset;
@@ -527,7 +503,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
             return true;
         }
         else if(GoogleApiAvailability.getInstance().isUserResolvableError(available)){
-            //an error occured but we can resolve it
+            //an error occurred but we can resolve it
             Log.d(TAG, "isServicesOK: an error occured but we can fix it");
             Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(HeatMapsActivity.this, available, ERROR_DIALOGUE_REQ);
             dialog.show();
@@ -594,7 +570,6 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                     (this.getApplicationContext(), COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 mLocationPermissionGranted = true;
                 initMap();
-                //getLastKnownLocation();;
                 getUserDetails();
                 Log.d("IsRefresh", "Yes");
             } else {
@@ -631,8 +606,6 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     private void getUserDetails(){
         if(mUserLocation==null){
             mUserLocation = new UserLocation();
-//            DocumentReference userRef = mDb.collection(getString(R.string.collection_users))
-//                    .document(FirebaseAuth.getInstance().getUid());
             String currentUserId = getIntent().getStringExtra("USER_ID");
 
             mDb.collection("users").document(currentUserId)
@@ -655,14 +628,10 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     }
     private void saveUserLocation(){
         String currentUserId = getCurrentUserId();
-        Log.d(TAG, "saveUserLocation:currentUserId " + currentUserId);
-
         if(mUserLocation != null){
-            Log.d(TAG, "saveUserLocation: Entering save method " );
             userLocationRef.document(currentUserId).set(mUserLocation).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    Log.d(TAG, "onComplete: AM I HERE?");
                     if(task.isSuccessful()){
                         Log.d(TAG, "saveUserLocation: Inserted user location to DB:  "+
                                 "\n latitude:" + mUserLocation.getGeoPoint().getLatitude() +
@@ -678,6 +647,123 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                             }
                         }
                     );
+        }
+    }
+
+    private void getFollowingUserList() {
+
+        String currentUserId = getIntent().getStringExtra("USER_ID");
+        Task<DocumentSnapshot> usersRef = mDb
+                .collection("users")
+                .document(currentUserId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+
+                    Log.d(TAG, "getFollowingUserList: Current User ID:"+currentUserId+getCurrentUserId());
+                    // Get the list of user IDs that are following the current user
+                    List<String> followerIds = (List<String>) documentSnapshot.get("following");
+                    Log.d(TAG, "getFollowingUserList: followerIDS"+followerIds);
+                    // For each follower, fetch their user location
+                    for (String followerId : followerIds) {
+                        getUserLocation(followerId);
+                    }
+
+                })
+                .addOnFailureListener(e -> {
+                    Log.w("FollowersActivity", "There was a problem getting the following list", e);
+                });
+    }
+
+    private void getUserLocation(String user){
+        DocumentReference locationRef = mDb.collection("user_locations")
+                .document(user);
+
+        locationRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    if(task.getResult().exists()){
+                        UserLocation userLocation = task.getResult().toObject(UserLocation.class);
+                        // Process the user location or add it to your userArrayList
+                        userArrayList.add(userLocation);
+
+                        // You can access user's GeoPoint using userLocation.getGeoPoint()
+                        GeoPoint geoPoint = userLocation.getGeoPoint();
+
+                        geoPoints.add(geoPoint);
+                        double latitude = geoPoint.getLatitude();
+                        double longitude = geoPoint.getLongitude();
+
+                        Log.d(TAG, "User Location: Lat: " + latitude + ", Lon: " + longitude);
+                    }
+                }
+            }
+        });
+    }
+
+
+    //-------------------------------------------- User Image - Icon marker -----------------------------------------------------
+
+    private void addMapMarkers(){
+
+        if(mMap != null){
+            Log.d(TAG, "addMapMarkers: I'm here");
+            if(mClusterManager == null){
+                Log.d(TAG, "addMapMarkers: I'm here2");
+                mClusterManager = new ClusterManager<>(getApplicationContext(),mMap);
+            }
+            if(mClusterManagerRenderer == null){
+                Log.d(TAG, "addMapMarkers: I'm here3");
+                mClusterManagerRenderer = new MyClusterManagerRenderer(
+                        getApplicationContext(),
+                        mMap,
+                        mClusterManager
+                );
+                mClusterManager.setRenderer(mClusterManagerRenderer);
+            }
+
+            for(UserLocation userLocation: userArrayList){
+                Log.d(TAG, "addMapMarkers: I'm here4");
+                Log.d(TAG, "addMapMarkers: location: " + userLocation.getGeoPoint().toString());
+                try{
+                    String snippet = "This is " + userLocation.getUser().getUsername();
+                    String profilePictureUrl = userLocation.getUser().getProfilePictureUrl();
+
+
+                    int avatar = R.drawable.avatar; // set the default avatar
+                    try{
+                        avatar = Integer.parseInt(userLocation.getUser().getProfilePictureUrl());
+                    }catch (NumberFormatException e){
+                        Log.d(TAG, "addMapMarkers: no avatar for " + userLocation.getUser().getUsername() + ", setting default.");
+                    }
+
+                    ClusterMarker newClusterMarker = new ClusterMarker(
+                            new LatLng(userLocation.getGeoPoint().getLatitude(), userLocation.getGeoPoint().getLongitude()),
+                            userLocation.getUser().getUsername(),
+                            snippet,
+                            avatar,
+                            userLocation.getUser()
+                    );
+                    mClusterManager.addItem(newClusterMarker);
+                    mClusterMarkers.add(newClusterMarker);
+
+                }catch (NullPointerException e){
+                    Log.e(TAG, "addMapMarkers: NullPointerException: " + e.getMessage() );
+                }
+
+            }
+            mClusterManager.cluster();
+
+            //setCameraView();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mMap != null) {
+            CameraPosition cameraPosition = mMap.getCameraPosition();
+            outState.putParcelable("cameraPosition", cameraPosition);
         }
     }
 
@@ -699,9 +785,13 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         Log.v(TAG, "onResume()");
         super.onResume();
         if(checkMapServices()){
+            Log.v(TAG, "onResume() I'm Here");
             if(mLocationPermissionGranted){
-                initMap();
-                init();
+                Log.v(TAG, "onResume()I'm here2"+mMap);
+                if (mMap == null) {
+                    initMap();
+                }
+                Log.v(TAG, "onResume()Am I here?"+mMap);
                 getUserDetails();
             }
             else {
@@ -710,7 +800,8 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         }
     }
 
-    @Override
+
+        @Override
     protected void onRestart() {
         Log.v(TAG, "onRestart()");
         super.onRestart();
