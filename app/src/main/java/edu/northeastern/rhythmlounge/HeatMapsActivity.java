@@ -259,7 +259,6 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         }
         if (list.size() > 0) {
             Address address = list.get(0);
-            //Toast.makeText(this, address.toString(), Toast.LENGTH_SHORT).show();
             Log.d(TAG, "geoLocate: Found a location:" + address.toString());
 
             moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM, address.getAddressLine(0));
@@ -271,9 +270,6 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
      */
     private void initMap() {
         Log.d(TAG, "initMap: Initializing Map");
-
-
-
         SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.heatmap3);
         supportMapFragment.getMapAsync(HeatMapsActivity.this);
 
@@ -293,7 +289,6 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
                 .title(title);
-        //mMap.addMarker(options);
         hideSoftKeyboard();
     }
 
@@ -419,8 +414,6 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         if (mProvider == null) {
             mProvider = new HeatmapTileProvider.Builder().data(dataPoints).build();
             mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
-            // Render links
-            //attribution.setMovementMethod(LinkMovementMethod.getInstance());
         } else {
             if(mOverlay.isVisible()){
                 mOverlay.clearTileCache();
@@ -702,7 +695,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
 
-    //-------------------------------------------- User Image - Icon marker -----------------------------------------------------
+    //-------------------------------------------- Custom Map Marker -----------------------------------------------------
 
     private void addMapMarkers(){
 
@@ -753,8 +746,6 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
             }
             mClusterManager.cluster();
-
-            //setCameraView();
         }
     }
 
@@ -785,13 +776,11 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         Log.v(TAG, "onResume()");
         super.onResume();
         if(checkMapServices()){
-            Log.v(TAG, "onResume() I'm Here");
             if(mLocationPermissionGranted){
-                Log.v(TAG, "onResume()I'm here2"+mMap);
+                Log.v(TAG, "onResume()"+mMap);
                 if (mMap == null) {
                     initMap();
                 }
-                Log.v(TAG, "onResume()Am I here?"+mMap);
                 getUserDetails();
             }
             else {
@@ -799,8 +788,6 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
             }
         }
     }
-
-
         @Override
     protected void onRestart() {
         Log.v(TAG, "onRestart()");
