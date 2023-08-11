@@ -26,6 +26,10 @@ public class Event {
     private String outsideLink;
 
     private String docId;
+    private String eventName_lowercase;
+    private String location_lowercase;
+    private String venue_lowercase;
+
 
     /**
      * Default Constructor
@@ -51,9 +55,12 @@ public class Event {
                  String description, String date, String time,
                  String imageURL, String eventCreator, String outsideLink) {
         this.eventName = eventName;
+        this.eventName_lowercase = eventName.toLowerCase();
         this.isConcert = isConcert;
         this.location = location;
+        this.location_lowercase = location.toLowerCase();
         this.venue = venue;
+        this.venue_lowercase = venue.toLowerCase();
         this.description = description;
         this.date = date;
         this.time = time;
@@ -73,7 +80,10 @@ public class Event {
      *
      * @param eventName The new name of the event.
      */
-    public void setEventName(String eventName) { this.eventName = eventName;}
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
+        this.eventName_lowercase = eventName.toLowerCase();
+    }
 
     /**
      * @return If the event is a concert
@@ -95,7 +105,10 @@ public class Event {
      *
      * @param location The new location of the event.
      */
-    public void setLocation(String location) { this.location = location; }
+    public void setLocation(String location) {
+        this.location = location;
+        this.location_lowercase = location.toLowerCase();
+    }
 
     /**
      * @return The venue of the event.
@@ -107,7 +120,10 @@ public class Event {
      *
      * @param venue The new venue of the event.
      */
-    public void setVenue(String venue) { this.venue = venue; }
+    public void setVenue(String venue) {
+        this.venue = venue;
+        this.venue_lowercase = venue.toLowerCase();
+    }
 
     /**
      * @return A description of the event.

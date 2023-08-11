@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class User {
     private String username;
+    private String username_lowercase;
     private String email;
     private List<String> followers;
     private List<String> following;
@@ -32,6 +33,7 @@ public class User {
      */
     public User(String username, String email) {
         this.username = username;
+        this.username_lowercase = username.toLowerCase();
         this.email = email;
         this.followers = new ArrayList<>();
         this.following = new ArrayList<>();
@@ -46,6 +48,7 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+        this.username_lowercase = username.toLowerCase();
     }
 
     public String getEmail() {

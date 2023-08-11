@@ -79,9 +79,10 @@ public class RegisterActivity extends AppCompatActivity {
                                     // create a new user object to store in the Firestore
                                     Map<String, Object> userObj = new HashMap<>();
                                     userObj.put("username", username);
+                                    userObj.put("username_lowercase", username.toLowerCase());
                                     userObj.put("email", email);
 
-                                    // New code for creating following and followers arrays
+                                    // creating following and followers arrays
                                     List<String> followers = new ArrayList<>();
                                     List<String> following = new ArrayList<>();
                                     userObj.put("followers", followers);
