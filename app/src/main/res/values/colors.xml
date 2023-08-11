@@ -8,5 +8,6 @@
     <color name="Option5">#F82E2D</color>
     <color name="Black">#FF000000</color>
     <color name="spotifyGray">#191414</color>
+    <color name="Background">#8A8989</color>
 
 </resources>

@@ -14,9 +14,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher_r"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_r_round"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RhythmLounge"
         tools:targetApi="31">
@@ -28,7 +28,7 @@
             android:name=".HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginRegisterAndAccount.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,19 +36,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".LobbyActivity" />
+        <activity android:name=".LoginRegisterAndAccount.RegisterActivity" />
+        <activity android:name=".Posts.PostActivity" />
         <activity android:name=".SelfUserPageFragment" />
         <activity android:name=".OtherUserPageActivity" />
-        <activity android:name=".UserSearchFragment" />
+        <activity android:name=".SearchFragment" />
         <activity android:name=".FollowersActivity" />
         <activity android:name=".FollowingActivity" />
-        <activity android:name=".SettingsActivity" />
-        <activity android:name=".ReAuthActivity"/>
-        <activity android:name=".EventsFragment" />
+        <activity android:name=".LoginRegisterAndAccount.SettingsActivity" />
+        <activity android:name=".LoginRegisterAndAccount.ReAuthActivity"/>
+        <activity android:name=".Events.EventsFragment" />
         <activity android:name=".NotificationsFragment" />
-        <activity android:name=".EditProfileFragment" />
-        <activity android:name=".EventDetailsFragment" />
+        <activity android:name=".Events.EventDetailsActivity" />
+        <activity android:name=".Posts.DetailedPostActivity"/>
+        <activity android:name=".Playlists.SelfUserSongListActivity" />
+        <activity android:name=".Playlists.OtherUserSongListActivity"/>
+        <activity android:name=".Posts.WriteCommentActivity"/>
+        <activity android:name=".Posts.CreatePostActivity"/>
 
         <meta-data
             android:name="com.google.android.gms.version"

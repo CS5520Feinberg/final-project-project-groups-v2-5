@@ -2,10 +2,10 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="136dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:padding="4dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageViewEvent"
@@ -18,9 +18,10 @@
         android:id="@+id/textViewEventName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="8sp"
-        android:textStyle="bold"
         android:layout_marginTop="8dp"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textAppearance="@style/TextAppearance.Manrope"
         tools:ignore="SmallSp" />
 
 
@@ -28,41 +29,45 @@
         android:id="@+id/textViewLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="8sp"
         android:layout_marginTop="4dp"
+        android:textSize="12sp"
+        android:textAppearance="@style/TextAppearance.Manrope"
         tools:ignore="SmallSp" />
 
     <TextView
         android:id="@+id/textViewVenue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="8sp"
         android:layout_marginTop="4dp"
+        android:textSize="12sp"
+        android:textAppearance="@style/TextAppearance.Manrope"
         tools:ignore="SmallSp" />
 
-    <TextView
-        android:id="@+id/textViewDate"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="8sp"
-        android:layout_marginTop="4dp"
-        tools:ignore="SmallSp" />
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/textViewTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="8sp"
-        android:layout_marginTop="4dp"
-        tools:ignore="SmallSp" />
+        <TextView
+            android:id="@+id/textViewDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:textSize="12sp"
+            android:textAppearance="@style/TextAppearance.Manrope"
+            tools:ignore="SmallSp" />
 
-    <TextView
-        android:id="@+id/textViewDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="8sp"
-        android:layout_marginTop="8dp"
-        tools:ignore="SmallSp" />
+        <TextView
+            android:id="@+id/textViewTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="12sp"
+            android:textAppearance="@style/TextAppearance.Manrope"
+            tools:ignore="SmallSp" />
+
+    </LinearLayout>
 
 </LinearLayout>
 

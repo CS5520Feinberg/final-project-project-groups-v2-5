@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 public class UserViewModel extends ViewModel {
-    private MutableLiveData<String> usernameLiveData = new MutableLiveData<>();
-    private MutableLiveData<String> emailLiveData = new MutableLiveData<>();
+    private final MutableLiveData<String> usernameLiveData = new MutableLiveData<>();
+    private final MutableLiveData<String> emailLiveData = new MutableLiveData<>();
 
     public void setUsername(String username) {
         usernameLiveData.setValue(username);

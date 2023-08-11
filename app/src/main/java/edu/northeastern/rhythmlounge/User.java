@@ -5,7 +5,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,10 +17,11 @@ public class User {
     private String email;
     private List<String> followers;
     private List<String> following;
-
     private String profilePictureUrl;
-
+    private String bio;
     private List<String> hosting;
+
+    private List<String> rsvpd;
 
     public User() {
     }
@@ -36,6 +36,9 @@ public class User {
         this.email = email;
         this.followers = new ArrayList<>();
         this.following = new ArrayList<>();
+        this.bio = "";
+        this.hosting = new ArrayList<>();
+        this.rsvpd = new ArrayList<>();
     }
 
     public String getUsername() {
@@ -73,13 +76,20 @@ public class User {
     public String getProfilePictureUrl() {
         return profilePictureUrl;
     }
-    public void setProfilePictureUrl(String profilePictureUrl) {
-        this.profilePictureUrl = profilePictureUrl;
-    }
+
+    public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
+
+    public String getBio() { return bio; }
+
+    public void setBio(String bio) { this.bio = bio; }
 
     public List<String> getHosting() { return hosting; }
 
     public void setHosting(List<String> hosting) { this.hosting = hosting; }
+
+    public List<String> getRsvpd() { return rsvpd; }
+
+    public void setRsvpd(List<String> rsvpd) { this.rsvpd = rsvpd; }
 
     /**
      * Method that allows a User A to add User B to their following list.

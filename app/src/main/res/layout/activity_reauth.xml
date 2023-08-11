@@ -18,15 +18,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         app:srcCompat="@drawable/logo"
-        android:contentDescription="TODO" />
+        android:contentDescription="@string/enter_email" />
 
     <EditText
         android:id="@+id/editTextEmailAuth"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:autofillHints=""
         android:ems="10"
-        android:hint="Enter Email"
+        android:fontFamily="@font/manrope_light"
+        android:hint="@string/enter_email1"
         android:inputType="textEmailAddress"
         android:minHeight="48dp"
         android:textColorHint="#8D6E63"
@@ -34,14 +36,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        android:autofillHints="" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <Button
         android:id="@+id/reauthButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Confirm Account Deletion"
+        android:fontFamily="@font/manrope_bold"
+        android:text="@string/confirm_account_deletion"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -54,7 +56,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:ems="10"
-        android:hint="Enter Password"
+        android:fontFamily="@font/manrope_light"
+        android:hint="@string/enter_password"
         android:inputType="textPassword"
         android:minHeight="48dp"
         android:textColorHint="#8D6E63"
@@ -62,7 +65,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextEmailAuth" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextEmailAuth"
+        android:autofillHints="" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

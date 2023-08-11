@@ -20,7 +20,16 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import edu.northeastern.rhythmlounge.Events.CreateEventFragment;
+import edu.northeastern.rhythmlounge.Events.EventsFragment;
+import edu.northeastern.rhythmlounge.LoginRegisterAndAccount.SettingsActivity;
+import edu.northeastern.rhythmlounge.Posts.PostActivity;
+
+/**
+ * The home activity for the home screen 
+ */
 public class HomeActivity extends AppCompatActivity {
 
     private ViewPager viewPager;
@@ -36,7 +45,8 @@ public class HomeActivity extends AppCompatActivity {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
 
-
+        FloatingActionButton fab = findViewById(R.id.fab_create_post);
+        fab.setOnClickListener(v -> openPostCreationModal());
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int currentItem = viewPager.getCurrentItem();
@@ -80,14 +90,6 @@ public class HomeActivity extends AppCompatActivity {
 
         ImageView imageViewSettings = findViewById(R.id.imageViewSettings);
         imageViewSettings.setOnClickListener(v -> openActivity(SettingsActivity.class));
-
-        ImageView imageViewNotification = findViewById(R.id.imageViewNotification);
-        imageViewNotification.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openFragment(new NotificationsFragment());
-            }
-        });
     }
 
 
@@ -119,7 +121,7 @@ public class HomeActivity extends AppCompatActivity {
                 case 0:
                     return new HomeFragment();
                 case 1:
-                    return new UserSearchFragment();
+                    return new SearchFragment();
                 case 2:
                     return new CreateEventFragment();
                 case 3:
@@ -135,5 +137,10 @@ public class HomeActivity extends AppCompatActivity {
         public int getCount() {
             return NUM_PAGES;
         }
+    }
+
+    private void openPostCreationModal() {
+        Intent intent = new Intent(this, PostActivity.class);
+        startActivity(intent);
     }
 }

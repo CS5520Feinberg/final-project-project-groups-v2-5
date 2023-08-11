@@ -19,7 +19,6 @@ import java.util.List;
 public class FollowingActivity extends AppCompatActivity {
 
     private RecyclerView followingRecyclerView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

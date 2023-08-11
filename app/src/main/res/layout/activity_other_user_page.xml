@@ -9,131 +9,120 @@
         android:id="@+id/other_user_profile_picture"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:src="@drawable/defaultprofilepicture"
         app:civ_border_color="#FF000000"
         app:civ_border_width="2dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <TextView
-        android:id="@+id/textViewPlaylist"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/playlists"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/other_user_profile_picture"
-        app:layout_constraintHorizontal_bias="0.466"
-        app:layout_constraintStart_toStartOf="@+id/other_user_profile_picture"
-        app:layout_constraintTop_toBottomOf="@+id/other_user_profile_picture" />
-
-    <TextView
-        android:id="@+id/textViewHostingEvents"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="156dp"
-        android:text="@string/hosting_events"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/other_user_profile_picture"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/other_user_profile_picture"
-        app:layout_constraintTop_toBottomOf="@+id/other_user_profile_picture" />
-
-    <TextView
-        android:id="@+id/textViewAttendingEvents"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="296dp"
-        android:text="@string/attending_events"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="@+id/other_user_profile_picture"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/other_user_profile_picture"
-        app:layout_constraintTop_toBottomOf="@+id/other_user_profile_picture" />
-
-    <TextView
-        android:id="@+id/textViewEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/email_should_appear_here"
-        android:textSize="12sp"
-        app:layout_constraintStart_toEndOf="@+id/other_user_profile_picture"
-        app:layout_constraintTop_toBottomOf="@+id/textViewUsername" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"/>
 
     <TextView
         android:id="@+id/textViewUsername"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
+        android:fontFamily="@font/manrope_bold"
         android:text="@string/username_should_appear_here"
-        android:textColor="@color/Black"
+        android:textColor="#000000"
         android:textSize="12sp"
-        app:layout_constraintStart_toEndOf="@+id/other_user_profile_picture"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@id/other_user_profile_picture"
+        app:layout_constraintTop_toTopOf="@id/other_user_profile_picture" />
 
+    <TextView
+        android:id="@+id/textViewBio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@id/other_user_profile_picture"
+        app:layout_constraintTop_toBottomOf="@id/textViewUsername"
+        android:layout_marginStart="8dp"/>
+
+    <Button
+        android:id="@+id/buttonFollowUnfollow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/manrope_bold"
+        android:text="@string/follow_unfollow"
+        android:textColor="#3E2723"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textViewFollowers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:clickable="true"
-        android:minWidth="20dp"
-        android:minHeight="48dp"
-        android:onClick="onFollowersClicked"
-        android:text="@string/followers"
-        android:textSize="12sp"
-        app:layout_constraintStart_toEndOf="@+id/other_user_profile_picture"
-        app:layout_constraintTop_toBottomOf="@+id/textViewEmail" />
-
-    <Button
-        android:id="@+id/buttonFollowUnfollow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/follow_unfollow"
-        android:textColor="#3E2723"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="@font/manrope_semibold"
+        android:text="Followers"
+        app:layout_constraintStart_toEndOf="@id/other_user_profile_picture"
+        app:layout_constraintTop_toBottomOf="@id/textViewBio" />
 
-    <Button
-        android:id="@+id/buttonFollowers"
+    <TextView
+        android:id="@+id/textViewFollowing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="588dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/followers"
-        app:layout_constraintBottom_toTopOf="@+id/textViewFollowers"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.801"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewFollowers"
-        app:layout_constraintVertical_bias="0.351" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="@font/manrope_semibold"
+        android:text="Following"
+        app:layout_constraintStart_toEndOf="@id/textViewFollowers"
+        app:layout_constraintTop_toBottomOf="@id/textViewBio" />
 
-    <Button
-        android:id="@+id/buttonFollowing"
+    <TextView
+        android:id="@+id/textViewPlaylist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/following"
-        android:textColor="#3E2723"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.864"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="50dp"
+        android:fontFamily="@font/manrope_bold"
+        android:text="@string/playlists"
+        android:textSize="14sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewFollowers"
-        app:layout_constraintVertical_bias="0.343" />
+        app:layout_constraintTop_toBottomOf="@id/textViewFollowers" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewPlaylists"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewPlaylist"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/textViewHostingEvents"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/manrope_bold"
+        android:text="@string/hosting_events"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recyclerViewPlaylists" />
+
+    <TextView
+        android:id="@+id/textViewAttendingEvents"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/manrope_bold"
+        android:text="@string/attending_events"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textViewHostingEvents" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

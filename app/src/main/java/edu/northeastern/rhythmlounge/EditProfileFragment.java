@@ -19,6 +19,20 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+
+
+
+
+
+// NOTE: This has been replaced by the edit profile dialog in SelfUserPageFragment, and the SettingActivity
+// SelfUserPageFragment:
+// -- Can edit cosmetic details like username and your bio.
+// Settings:
+// -- Can change email, password, or even delete a account.
+
+
+
+/**
 public class EditProfileFragment extends Fragment {
 
     private EditText editTextUsername, editTextEmail;
@@ -105,5 +119,5 @@ public class EditProfileFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
     }
 }
-
+*/
 

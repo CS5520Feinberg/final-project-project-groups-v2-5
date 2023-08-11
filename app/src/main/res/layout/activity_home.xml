@@ -15,8 +15,10 @@
         android:textSize="16sp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:textAppearance="@style/TextAppearance.Manrope"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:textStyle="bold"/>
 
     <ImageView
         android:id="@+id/imageViewSettings"
@@ -27,18 +29,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:importantForAccessibility="no" />
-
-    <ImageView
-        android:id="@+id/imageViewNotification"
-        android:layout_width="33dp"
-        android:layout_height="36dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="4dp"
-        android:padding="4dp"
-        android:src="@drawable/notifications"
-        app:layout_constraintEnd_toStartOf="@+id/imageViewSettings"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="ContentDescription" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/fragmentContainer"
@@ -54,20 +44,28 @@
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bottom_navigation_menu" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_create_post"
+        style="@style/CustomFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_marginTop="210dp"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="viewPost"
+        android:padding="0dp"
+        android:paddingEnd="16dp"
+        android:src="@drawable/viewpost"
+        app:layout_constraintBottom_toBottomOf="@+id/fragmentContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/fragmentContainer"
+        app:tint="@null"
         app:menu="@menu/bottom_navigation_menu"
         app:labelVisibilityMode="labeled"
         tools:ignore="VisualLintBottomNav" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
-
-
-
-
-
-
-

@@ -10,12 +10,23 @@
         android:id="@+id/editTextUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/manrope_light"
         android:hint="Username" />
 
     <EditText
-        android:id="@+id/editTextEmail"
+        android:id="@+id/editTextBio"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email" />
+        android:fontFamily="@font/manrope_light"
+        android:hint="Bio "
+        android:inputType="textMultiLine"
+        android:maxLength="150" />
+
+    <TextView
+        android:id="@+id/textViewBioCounter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/manrope_medium"
+        android:text="Remaining characters 150" />
 
 </LinearLayout>
