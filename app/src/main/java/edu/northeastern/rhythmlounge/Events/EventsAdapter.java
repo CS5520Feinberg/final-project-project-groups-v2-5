@@ -1,5 +1,6 @@
 package edu.northeastern.rhythmlounge.Events;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     }
 
     public void updateData(List<Event> newEvents) {
+        Log.d("EventsAdapter", "Updating data with " + newEvents.size() + " events.");
         this.eventList.clear();
         this.eventList.addAll(newEvents);
         notifyDataSetChanged();
@@ -68,6 +70,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
     @Override
     public void onBindViewHolder(@NonNull EventViewHolder holder, int position) {
         Event event = eventList.get(position);
+        Log.d("EventsAdapter", "Binding event with ID: " + event.getDocId() + " and Name: " + event.getEventName());
         holder.textViewEventName.setText(event.getEventName());
         holder.textViewLocation.setText(event.getLocation());
         holder.textViewVenue.setText(event.getVenue());
@@ -117,6 +120,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         EventViewHolder(View itemView, OnItemClickListener listener) {
             super(itemView);
             this.listener = listener;
+            Log.d("EventsAdapter", "ViewHolder created and listener initialized");
             textViewEventName = itemView.findViewById(R.id.textViewEventName);
             textViewLocation = itemView.findViewById(R.id.textViewLocation);
             textViewVenue = itemView.findViewById(R.id.textViewVenue);
@@ -125,9 +129,13 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
             imageViewEvent = itemView.findViewById(R.id.imageViewEvent);
 
             itemView.setOnClickListener(v -> {
+
                 int position = getAdapterPosition();
                 if (listener != null && position != RecyclerView.NO_POSITION) {
+                    Log.d("EventsAdapter", "Item clicked. Event ID: " + eventList.get(position).getDocId());
                     listener.onItemClick(eventList.get(position));
+                } else {
+                    Log.d("EventsAdapter", "Item clicked, but either listener is null or position is invalid");
                 }
             });
         }
