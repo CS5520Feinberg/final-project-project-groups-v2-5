@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
@@ -9,15 +10,21 @@
         android:id="@+id/comment_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/write_your_comment_here"
         android:layout_above="@+id/post_button"
+        android:layout_marginBottom="10dp"
+        android:hint="@string/write_your_comment_here"
         android:maxLength="250"
-        android:layout_marginBottom="10dp" />
+        android:minHeight="48dp"
+        android:textColorHint="#8D6E63"
+        tools:ignore="Autofill,TextFields,VisualLintTextFieldSize" />
 
     <Button
         android:id="@+id/post_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:text="@string/post_comment" />
+        android:text="@string/post_comment"
+        android:textColor="#3E2723"
+        tools:ignore="VisualLintButtonSize" />
+
 </RelativeLayout>

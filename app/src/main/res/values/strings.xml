@@ -94,6 +94,17 @@
     <string name="event_details">Event Details</string>
     <string name="rsvp_to_this_event">RSVP to this event</string>
     <string name="users_attending">Users Attending:</string>
+    <string name="viewpost">viewPost</string>
+    <string name="no_posts_available">No posts available!</string>
+    <string name="image_preview">Image Preview</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="settings">Settings</string>
+    <string name="change_account_email">Change Account Email</string>
+    <string name="change_account_password">Change Account Password</string>
+    <string name="_0h_ago">0h ago</string>
+    <string name="playlist_name">Playlist Name</string>
+    <string name="song_title">Song Title</string>
+    <string name="artist">Artist</string>
 
     <string-array name="heatmaps_datasets_array">
         <item>@string/mycurrentlocation</item>

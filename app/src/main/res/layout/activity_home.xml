@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
     <TextView
         android:id="@+id/textViewRhythmLounge"
         android:layout_width="wrap_content"
@@ -46,7 +45,8 @@
         android:layout_height="wrap_content"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/bottom_navigation_menu" />
+        app:menu="@menu/bottom_navigation_menu"
+        tools:ignore="VisualLintBottomNav" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_create_post"
@@ -56,16 +56,16 @@
         android:layout_margin="@dimen/fab_margin"
         android:layout_marginTop="210dp"
         android:layout_marginEnd="16dp"
-        android:contentDescription="viewPost"
+        android:contentDescription="@string/viewpost"
         android:padding="0dp"
         android:paddingEnd="16dp"
         android:src="@drawable/viewpost"
+        app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="@+id/fragmentContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/fragmentContainer"
-        app:tint="@null"
         app:menu="@menu/bottom_navigation_menu"
-        app:labelVisibilityMode="labeled"
-        tools:ignore="VisualLintBottomNav" />
+        app:tint="@null"
+        tools:ignore="RtlSymmetry,VisualLintBottomNav,ImageContrastCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

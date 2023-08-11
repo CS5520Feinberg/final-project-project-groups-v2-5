@@ -20,7 +20,8 @@
         android:fontFamily="@font/manrope_light"
         android:hint="Bio "
         android:inputType="textMultiLine"
-        android:maxLength="150" />
+        android:maxLength="150"
+        android:minHeight="48dp" />
 
     <TextView
         android:id="@+id/textViewBioCounter"
