@@ -137,7 +137,7 @@
         app:layout_constraintTop_toBottomOf="@id/recyclerViewPlaylists" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/otherHostingRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -157,10 +157,10 @@
         android:textStyle="bold"
         android:textAppearance="@style/TextAppearance.Manrope"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/recyclerView" />
+        app:layout_constraintTop_toBottomOf="@id/otherHostingRecyclerView" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView2"
+        android:id="@+id/otherAttendingRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
