@@ -2,23 +2,29 @@ package edu.northeastern.rhythmlounge.Events;
 
 import android.content.Intent;
 import android.media.Image;
+import android.media.metrics.Event;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,6 +42,7 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.RecursiveAction;
 
 import edu.northeastern.rhythmlounge.R;
@@ -53,9 +60,13 @@ public class EventDetailsActivity extends AppCompatActivity {
                      textViewTime;
     private ImageView imageViewEvent;
     private CheckBox checkBoxRSVP;
+
+    private Button editEventButton, deleteEventButton;
     private RecyclerView rsvpRecyclerView;
     private UserListItemAdapter userListItemAdapter;
     private String currentUserId, eventId;
+
+    private boolean isCurrentUserHost = false;
 
     private ListenerRegistration rsvpUsersListenerRegistration;
 
@@ -73,6 +84,8 @@ public class EventDetailsActivity extends AppCompatActivity {
         initializeUIComponents();
         bindDataFromIntent();
         setupEventListeners();
+
+        deleteEventButton.setOnClickListener(view -> confirmDeleteEvent());
     }
 
     /**
@@ -89,6 +102,46 @@ public class EventDetailsActivity extends AppCompatActivity {
         imageViewEvent = findViewById(R.id.imageViewEvent);
         checkBoxRSVP = findViewById(R.id.checkBoxRSVP);
         rsvpRecyclerView = findViewById(R.id.rsvpRecyclerView);
+
+        // Buttons for editing and deleting the event.
+        editEventButton = findViewById(R.id.editEventButton);
+        deleteEventButton = findViewById(R.id.deleteEventButton);
+
+
+
+    }
+
+    private void updateHostButtonsVisibility() {
+        if (isCurrentUserHost) {
+            editEventButton.setVisibility(View.VISIBLE);
+            deleteEventButton.setVisibility(View.VISIBLE);
+        } else {
+            editEventButton.setVisibility(View.GONE);
+            deleteEventButton.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * Checks if the current user viewing the event details activity is the host of the event.
+     * Additionally, it will update the host buttons visibility (delete buttons and edit buttons).
+     */
+    private void checkIfCurrentUserIsHost() {
+        Log.d("EventDetailsActivity", "Checking if current user is host.");
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference eventRef = db.collection("events").document(eventId);
+
+        eventRef.get().addOnSuccessListener(documentSnapshot -> {
+           if (documentSnapshot.exists()) {
+               String hostId = documentSnapshot.getString("eventCreator");
+               isCurrentUserHost = currentUserId.equals(hostId);
+               updateHostButtonsVisibility();
+               if (isCurrentUserHost) {
+                   Log.d("EventDetailsActivity", "Current user is the host");
+               }
+           }
+        }).addOnFailureListener(e -> {
+           Log.d("EventDetailsActivity", "Something went wrong.");
+        });
     }
 
     /**
@@ -114,6 +167,8 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         checkRSVPStatus();
         fetchRSVPUsers();
+        checkIfCurrentUserIsHost();
+
     }
 
     /**
@@ -162,6 +217,60 @@ public class EventDetailsActivity extends AppCompatActivity {
                 removeRSVP(currentUserId, eventId);
             }
         }));
+    }
+
+    private void confirmDeleteEvent() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Delete Event");
+        builder.setMessage("Are you sure you want to delete this event? This action cannot be reversed.");
+
+        builder.setPositiveButton("Confirm", ((dialog, which) -> deleteEvent()));
+        builder.setNegativeButton("Cancel", ((dialog, which) -> dialog.dismiss()));
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+    }
+    private void deleteEvent() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference eventRef = db.collection("events").document(eventId);
+        
+        eventRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Map<String, Object> eventData = documentSnapshot.getData();
+
+                db.collection("deleted_events").add(eventData).addOnSuccessListener(documentReference -> {
+
+                    handleEventRemoval(eventData);
+
+                    eventRef.delete().addOnSuccessListener(void1 -> {
+                        Toast.makeText(EventDetailsActivity.this, "Event deleted successfully", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }).addOnFailureListener(e -> Toast.makeText(EventDetailsActivity.this, "Error deleting event: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                }).addOnFailureListener(e -> Toast.makeText(EventDetailsActivity.this, "Error moving event to deleted_events: " + e.getMessage(), Toast.LENGTH_LONG).show());
+            }
+        }).addOnFailureListener(e -> Toast.makeText(EventDetailsActivity.this, "Error fetching event data: " + e.getMessage(), Toast.LENGTH_LONG).show());
+    }
+
+    private void handleEventRemoval(Map<String, Object> eventData) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        String hostId = (String) eventData.get("eventCreator");
+        List<String> rsvps = (List<String>) eventData.get("rsvps");
+
+
+        if (hostId != null && !hostId.isEmpty()) {
+            DocumentReference hostRef = db.collection("users").document(hostId);
+            hostRef.update("hosting", FieldValue.arrayRemove(eventId));
+        }
+
+        if (rsvps != null && !rsvps.isEmpty()) {
+            for (String userId : rsvps) {
+                DocumentReference userRef = db.collection("users").document(userId);
+                userRef.update("rsvpd", FieldValue.arrayRemove(eventId));
+            }
+        }
     }
 
     /**

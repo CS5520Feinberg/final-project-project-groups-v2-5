@@ -115,15 +115,41 @@
             app:layout_constraintTop_toBottomOf="@+id/textViewDate"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <CheckBox
-            android:id="@+id/checkBoxRSVP"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/rsvp_to_this_event"
-            android:textAppearance="@style/TextAppearance.Manrope"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewTime" />
+            <LinearLayout
+                android:id="@+id/buttonsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/textViewTime"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <CheckBox
+                    android:id="@+id/checkBoxRSVP"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="RSVP" />
+
+                <Button
+                    android:id="@+id/editEventButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Edit"
+                    android:layout_marginRight="8dp"
+                    android:visibility="gone" />
+
+                <Button
+                    android:id="@+id/deleteEventButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Delete"
+                    android:layout_marginLeft="8dp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
 
         <TextView
             android:id="@+id/whosgoing"
@@ -133,8 +159,8 @@
             android:text="@string/users_attending"
             android:textAppearance="@style/TextAppearance.Manrope"
             android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@+id/buttonsLayout"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/checkBoxRSVP"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -144,10 +170,10 @@
             android:clipToPadding="false"
             android:padding="8dp"
             android:textAppearance="@style/TextAppearance.Manrope"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.156"
+            app:layout_constraintTop_toBottomOf="@+id/whosgoing"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/whosgoing" />
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
