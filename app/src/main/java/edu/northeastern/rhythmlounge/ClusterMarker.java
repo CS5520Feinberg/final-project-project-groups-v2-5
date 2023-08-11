@@ -26,6 +26,13 @@ public class ClusterMarker implements ClusterItem {
     public ClusterMarker() {
     }
 
+    public ClusterMarker(LatLng latLng, String locationName, String snippet, int avatar) {
+        this.position = latLng;
+        this.title = locationName;
+        this.snippet = snippet;
+        this.iconPicture = avatar;
+    }
+
     @NonNull
     @Override
     public LatLng getPosition() {
