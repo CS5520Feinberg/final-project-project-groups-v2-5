@@ -87,6 +87,13 @@
     <string name="select_date">Select Date</string>
     <string name="click_to_select_a_time">Click to Select a Time</string>
     <string name="time">Time</string>
+    <string name="testtext">testtext</string>
+    <string name="user_bio_goes_here">User bio goes here.</string>
+    <string name="add_playlist">Add Playlist</string>
+    <string name="no_information_given">No information given.</string>
+    <string name="event_details">Event Details</string>
+    <string name="rsvp_to_this_event">RSVP to this event</string>
+    <string name="users_attending">Users Attending:</string>
 
     <string-array name="heatmaps_datasets_array">
         <item>@string/mycurrentlocation</item>

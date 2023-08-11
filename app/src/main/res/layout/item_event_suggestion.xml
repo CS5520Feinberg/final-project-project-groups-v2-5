@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -11,57 +12,46 @@
         android:layout_height="100dp"
         android:layout_gravity="center"
         android:scaleType="centerCrop"
-        android:src="@drawable/defaulteventpicture" />
+        android:src="@drawable/defaulteventpicture"
+        tools:ignore="ContentDescription,ImageContrastCheck" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:layout_marginLeft="10dp">
+        android:layout_marginStart="10dp">
 
         <TextView
             android:id="@+id/eventNameText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Event Name"
-            android:textStyle="bold"
-            android:layout_marginTop="5dp" />
+            android:text="@string/event_name"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/venueText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Venue"
-            android:layout_marginTop="5dp" />
+            android:text="@string/venue" />
 
         <TextView
             android:id="@+id/eventLocationText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Location"
-            android:layout_marginTop="5dp" />
+            android:text="@string/location" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/eventDateText"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:orientation="horizontal">
+            android:text="@string/date" />
 
-            <TextView
-                android:id="@+id/eventDateText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:text="Date" />
+        <TextView
+            android:id="@+id/eventTimeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/time" />
 
-            <TextView
-                android:id="@+id/eventTimeText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:text="Time" />
-
-        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
