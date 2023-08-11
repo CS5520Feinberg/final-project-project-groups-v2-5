@@ -12,6 +12,8 @@
         android:orientation="horizontal"
         android:padding="16dp">
 
+
+
         <Button
             android:id="@+id/buttonUploadImage"
             android:layout_width="wrap_content"
