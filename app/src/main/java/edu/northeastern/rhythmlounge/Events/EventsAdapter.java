@@ -35,6 +35,12 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.EventViewH
         this.eventList = eventList;
     }
 
+    public void updateData(List<Event> newEvents) {
+        this.eventList.clear();
+        this.eventList.addAll(newEvents);
+        notifyDataSetChanged();
+    }
+
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.onItemClickListener = listener;
     }
