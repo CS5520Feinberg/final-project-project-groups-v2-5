@@ -86,29 +86,19 @@
         tools:ignore="ContentDescription" />
 
 
-
-    <Spinner
-        android:id="@+id/spinner2"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.976" />
-
-
     <Spinner
         android:id="@+id/customspinner"
         android:layout_width="fill_parent"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
+        android:background="@drawable/bg_spinner_custom"
+        android:dropDownHorizontalOffset="40dp"
+        android:dropDownVerticalOffset="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.886" />
+        app:layout_constraintVertical_bias="0.989" />
 
     <Button
         android:id="@+id/buttonShowDetails"

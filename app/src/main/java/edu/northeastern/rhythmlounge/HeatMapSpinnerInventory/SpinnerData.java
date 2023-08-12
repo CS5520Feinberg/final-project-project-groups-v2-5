@@ -13,17 +13,17 @@ public class SpinnerData {
 
         SpinnerOptions myLocation = new SpinnerOptions();
         myLocation.setName("My Location");
-        myLocation.setImage(R.drawable.ic_current_location);
+        myLocation.setImage(R.drawable.mylocation);
         spinnerOptions.add(myLocation);
 
-        SpinnerOptions myFollowing = new SpinnerOptions();
-        myLocation.setName("My Following");
-        myLocation.setImage(R.drawable.defaultprofilepicture);
-        spinnerOptions.add(myFollowing);
-
         SpinnerOptions allEvents = new SpinnerOptions();
-        myLocation.setName("All Events");
-        myLocation.setImage(R.drawable.defaulteventpicture);
+        allEvents.setName("All Events");
+        allEvents.setImage(R.drawable.defaulteventpicture);
+        spinnerOptions.add(allEvents);
+
+        SpinnerOptions myFollowing = new SpinnerOptions();
+        myFollowing.setName("My Following");
+        myFollowing.setImage(R.drawable.defaultprofilepicture);
         spinnerOptions.add(myFollowing);
 
         return spinnerOptions;

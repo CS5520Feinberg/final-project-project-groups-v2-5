@@ -78,6 +78,7 @@ import java.util.Objects;
 import java.util.Scanner;
 
 import edu.northeastern.rhythmlounge.Events.Event;
+import edu.northeastern.rhythmlounge.HeatMapSpinnerInventory.SpinnerData;
 
 /**
  * Class to implement HeatMaps using Google MAPs SDK
@@ -167,6 +168,9 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
     private Button showdetailsButton;
     private ProgressBar loadingIndicator;
+    private Spinner spinner_heatmap;
+
+    private HeatMapSpinnerAdapter mAdapter;
 
 
 
@@ -217,6 +221,8 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         showdetailsButton = findViewById(R.id.buttonShowDetails);
         loadingIndicator = findViewById(R.id.loadingIndicator);
         loadingIndicator.setVisibility(View.VISIBLE);
+
+
 
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -402,14 +408,10 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
             getDeviceLocation();
 
         }
-
-        Spinner spinner = findViewById(R.id.spinner2);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.heatmaps_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(this);
-
-
+        spinner_heatmap = findViewById(R.id.customspinner);
+        mAdapter = new HeatMapSpinnerAdapter(HeatMapsActivity.this, SpinnerData.getSpinnerOptions());
+        spinner_heatmap.setAdapter(mAdapter);
+        spinner_heatmap.setOnItemSelectedListener(this);
 
     }
 
@@ -477,9 +479,9 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                 mOverlay.clearTileCache();
                 mOverlay.setVisible(false);
             }
-            
+
             // ------------------------------------ SHOW FRIENDS/FOLLOWERS -------------------------------------------------
-            if (parent.getItemAtPosition(position).toString().equals("My Following")) {
+            if (parent.getItemAtPosition(position).toString().equals("2")) {
                 if (!mClusterMarkers2.isEmpty()) {
                     mClusterManager2.clearItems();
                     mClusterManager2.cluster();
@@ -502,7 +504,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
             // ------------------------------------ SHOW ALL EVENTS ----------------------------------------------------------
 
-            else if (parent.getItemAtPosition(position).toString().equals("All Events")) {
+            else if (parent.getItemAtPosition(position).toString().equals("1")) {
 
 
                 showdetailsButton.setVisibility(View.VISIBLE);
