@@ -25,6 +25,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -40,12 +43,10 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -58,9 +59,8 @@ public class MainActivity extends AppCompatActivity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        // Add click listener to Google sign-in button
+        // Google sign-in button
         findViewById(R.id.google_sign_in_button).setOnClickListener(view -> signInWithGoogle());
-
 
 
         editTextEmail = findViewById(R.id.editTextEmail);
@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         buttonLogin.setOnClickListener(v -> {
             String email = editTextEmail.getText().toString().trim();
             String password = editTextPassword.getText().toString().trim();
+
 
             // check if the email and password fields are empty
             if(email.isEmpty() || password.isEmpty()){
@@ -93,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
         });
-
 
         buttonGoToRegister.setOnClickListener(v -> {
             // Start the Registration Activity
@@ -122,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
@@ -147,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
-                            checkAndUpdateEmail(user);
+                            checkAndCreateUserInFirestore(user, acct.getDisplayName());
                         }
                         // Sign in success, update UI with the signed-in user's information
                         Log.d(TAG, "signInWithCredential:success");
@@ -155,8 +154,6 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         // If sign in fails, display a message to the user.
                         if (task.getException() instanceof FirebaseAuthUserCollisionException) {
-                            // This exception is thrown if a user tries to sign in with a Google account that has the same email
-                            // as a user that was already created with another sign-in method.
 
                             // Ask the user if they want to link the accounts
                             new AlertDialog.Builder(MainActivity.this)
@@ -171,6 +168,32 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private void checkAndCreateUserInFirestore(FirebaseUser user, String username) {
+        db.collection("users").document(user.getUid()).get().addOnSuccessListener(documentSnapshot -> {
+            if (!documentSnapshot.exists()) {
+                // This user doesn't exist in Firestore yet, create a new record
+                Map<String, Object> userObj = new HashMap<>();
+                userObj.put("username", username);
+                userObj.put("username_lowercase", username.toLowerCase());
+                userObj.put("email", user.getEmail());
+
+                // creating following and followers arrays
+                List<String> followers = new ArrayList<>();
+                List<String> following = new ArrayList<>();
+                userObj.put("followers", followers);
+                userObj.put("following", following);
+
+                db.collection("users").document(user.getUid()).set(userObj)
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, "Error saving user data to Firestore", e);
+                            Toast.makeText(MainActivity.this, "Error saving user data.", Toast.LENGTH_SHORT).show();
+                        });
+            } else {
+                checkAndUpdateEmail(user);
+            }
+        });
     }
 
     private void linkAccounts(AuthCredential newCredential) {
