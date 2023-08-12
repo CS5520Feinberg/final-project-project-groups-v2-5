@@ -98,6 +98,7 @@
             android:id="@+id/textViewDate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Manrope"
             android:layout_marginTop="8dp"
             android:text="@string/date"
             android:textSize="14sp"
