@@ -30,6 +30,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -165,6 +166,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     private ArrayList<ClusterMarker> mClusterMarkers2 = new ArrayList<>();
 
     private Button showdetailsButton;
+    private ProgressBar loadingIndicator;
 
 
 
@@ -172,6 +174,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
+        loadingIndicator.setVisibility(View.GONE);
         Toast.makeText(HeatMapsActivity.this, "Map is ready", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onMapReady: Map is ready");
         mMap = googleMap;
@@ -212,6 +215,9 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         mSearchText = findViewById(R.id.search_input3);
         mGps = findViewById(R.id.ic_gps_icon);
         showdetailsButton = findViewById(R.id.buttonShowDetails);
+        loadingIndicator = findViewById(R.id.loadingIndicator);
+        loadingIndicator.setVisibility(View.VISIBLE);
+
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
