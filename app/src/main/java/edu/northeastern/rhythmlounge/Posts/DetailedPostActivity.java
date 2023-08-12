@@ -10,6 +10,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,7 +46,6 @@ public class DetailedPostActivity extends AppCompatActivity {
     private Post currentPost;
     private TextView commentCountTextView;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +75,6 @@ public class DetailedPostActivity extends AppCompatActivity {
             intent.putExtra("POST_ID", postId);  // Pass the postId to WriteCommentActivity
             startActivity(intent);
         });
-
 
         // Get post ID from intent
         postId = getIntent().getStringExtra("POST_ID");
@@ -177,13 +177,21 @@ public class DetailedPostActivity extends AppCompatActivity {
     }
 
     private void deletePost(String postId) {
-        db.collection("posts").document(postId).delete()
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(DetailedPostActivity.this, "Post deleted successfully", Toast.LENGTH_SHORT).show();
-                    setResult(RESULT_OK); // Indicate that the deletion was successful
-                    finish();
-                })
-                .addOnFailureListener(e -> Toast.makeText(DetailedPostActivity.this, "Error deleting post", Toast.LENGTH_SHORT).show());
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete Post");
+        builder.setMessage("Are you sure you want to delete this post?");
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            db.collection("posts").document(postId).delete()
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(DetailedPostActivity.this, "Post deleted successfully", Toast.LENGTH_SHORT).show();
+                        setResult(RESULT_OK); // Indicate that the deletion was successful
+                        finish();
+                    })
+                    .addOnFailureListener(e -> Toast.makeText(DetailedPostActivity.this, "Error deleting post", Toast.LENGTH_SHORT).show());
+        });
+        builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void showFullScreenImage(String imageUrl) {
