@@ -115,8 +115,8 @@
     </string-array>
 
     <string-array name="heatmaps_array">
-        <item>mylocation</item>
-        <item>myevents</item>
-        <item>myfriends</item>
+        <item>My Location</item>
+        <item>All Events</item>
+        <item>My Following</item>
     </string-array>
 </resources>

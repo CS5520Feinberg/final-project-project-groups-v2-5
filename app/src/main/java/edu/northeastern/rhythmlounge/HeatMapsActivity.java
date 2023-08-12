@@ -477,8 +477,9 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                 mOverlay.clearTileCache();
                 mOverlay.setVisible(false);
             }
+            
             // ------------------------------------ SHOW FRIENDS/FOLLOWERS -------------------------------------------------
-            if (parent.getItemAtPosition(position).toString().equals("myfriends")) {
+            if (parent.getItemAtPosition(position).toString().equals("My Following")) {
                 if (!mClusterMarkers2.isEmpty()) {
                     mClusterManager2.clearItems();
                     mClusterManager2.cluster();
@@ -501,7 +502,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
             // ------------------------------------ SHOW ALL EVENTS ----------------------------------------------------------
 
-            else if (parent.getItemAtPosition(position).toString().equals("myevents")) {
+            else if (parent.getItemAtPosition(position).toString().equals("All Events")) {
 
 
                 showdetailsButton.setVisibility(View.VISIBLE);
