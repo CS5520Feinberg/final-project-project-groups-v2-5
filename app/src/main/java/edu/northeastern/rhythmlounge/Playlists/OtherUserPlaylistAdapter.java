@@ -51,7 +51,7 @@ public class OtherUserPlaylistAdapter extends RecyclerView.Adapter<OtherUserPlay
     @Override
     public PlaylistViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.d("OtherPlaylistAdapter", "onCreateViewHolder is called");
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_playlist, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_other_playlist, parent, false);
         return new PlaylistViewHolder(view);
     }
 
