@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -50,7 +51,7 @@ public class SelfUserPlaylistAdapter extends RecyclerView.Adapter<SelfUserPlayli
     @Override
     public PlaylistViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Log.d("SelfUserPlaylistAdapter", "onCreateViewHolder is called");
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_playlist, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_self_playlist, parent, false);
         return new PlaylistViewHolder(view);
     }
 
@@ -78,10 +79,9 @@ public class SelfUserPlaylistAdapter extends RecyclerView.Adapter<SelfUserPlayli
             notifyItemRangeChanged(removedPosition, playlistSnapshots.size());
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            // Pass the user's authentication information or required attributes
-            // to the delete function
-            db.collection("playlists").document(playlistId)
-                    .delete()
+            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            db.collection("users").document(userId).collection("playlists").document(playlistId)
+                .delete()
                     .addOnSuccessListener(aVoid -> {
                         Log.d("SelfUserPlaylistAdapter", "Playlist deleted from Firestore: " + playlistId);
                     })

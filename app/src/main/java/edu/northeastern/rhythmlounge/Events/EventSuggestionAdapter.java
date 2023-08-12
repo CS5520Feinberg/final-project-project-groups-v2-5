@@ -1,4 +1,4 @@
-package edu.northeastern.rhythmlounge;
+package edu.northeastern.rhythmlounge.Events;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,8 +16,7 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-import edu.northeastern.rhythmlounge.Events.Event;
-import edu.northeastern.rhythmlounge.Events.EventDetailsActivity;
+import edu.northeastern.rhythmlounge.R;
 
 /**
  * Adapter for displaying event suggestions in a RecyclerView.

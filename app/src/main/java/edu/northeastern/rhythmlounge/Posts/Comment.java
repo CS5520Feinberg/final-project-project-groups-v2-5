@@ -21,7 +21,6 @@ public class Comment {
         this.username = username;
         this.content = content;
         this.timestamp = new Date();
-        this.postId = postId;
     }
     public String getCommentId() {
         return commentId;

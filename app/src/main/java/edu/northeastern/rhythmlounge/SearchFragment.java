@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.northeastern.rhythmlounge.Events.Event;
+import edu.northeastern.rhythmlounge.Events.EventSuggestionAdapter;
 
 public class SearchFragment extends Fragment {
 

@@ -190,37 +190,42 @@ public class SettingsActivity extends AppCompatActivity {
      */
     private void reauthenticateAndChangeEmail(String newEmail, String password, AlertDialog dialog) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        AuthCredential credential = EmailAuthProvider.getCredential(Objects.requireNonNull(user.getEmail()), password);
+        AuthCredential credential = null;
+        if (user != null) {
+            credential = EmailAuthProvider.getCredential(Objects.requireNonNull(user.getEmail()), password);
+        }
 
         // Reauthenticate the user with the provided credential.
-        user.reauthenticate(credential)
-            .addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    // Once reauthenticated, update the user's email
-                    user.updateEmail(newEmail)
-                        .addOnCompleteListener(emailUpdateTask -> {
-                            if (emailUpdateTask.isSuccessful()) {
-                               // If email update is successful, also update it in Firestore database
-                                FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                db.collection("users").document(user.getUid())
-                                    .update("email", newEmail)
-                                    .addOnSuccessListener(void1 -> {
-                                        Toast.makeText(SettingsActivity.this, "Email changed successfully.", Toast.LENGTH_SHORT).show();
-                                        dialog.dismiss();
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(SettingsActivity.this, "Failed to update email in the database.", Toast.LENGTH_SHORT).show();
-                                        dialog.dismiss();
-                                    });
-                            } else {
-                                Toast.makeText(SettingsActivity.this, "Failed to update email.", Toast.LENGTH_SHORT).show();
-                                dialog.dismiss();
-                            }
-                        });
-                } else {
-                    Toast.makeText(SettingsActivity.this, "Re-authentication failed.", Toast.LENGTH_SHORT).show();
-                }
-            });
+        if (credential != null) {
+            user.reauthenticate(credential)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        // Once reauthenticated, update the user's email
+                        user.updateEmail(newEmail)
+                            .addOnCompleteListener(emailUpdateTask -> {
+                                if (emailUpdateTask.isSuccessful()) {
+                                   // If email update is successful, also update it in Firestore database
+                                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                    db.collection("users").document(user.getUid())
+                                        .update("email", newEmail)
+                                        .addOnSuccessListener(void1 -> {
+                                            Toast.makeText(SettingsActivity.this, "Email changed successfully.", Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Toast.makeText(SettingsActivity.this, "Failed to update email in the database.", Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        });
+                                } else {
+                                    Toast.makeText(SettingsActivity.this, "Failed to update email.", Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                }
+                            });
+                    } else {
+                        Toast.makeText(SettingsActivity.this, "Re-authentication failed.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        }
     }
 
     /**
@@ -306,22 +311,24 @@ public class SettingsActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         AuthCredential credential = EmailAuthProvider.getCredential(email, currentPassword);
         // User reauthentication, this is needed to move forward with the password change.
-        user.reauthenticate(credential)
-            .addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    user.updatePassword(newPassword)
-                        .addOnCompleteListener(passwordUpdateTask -> {
-                            if (passwordUpdateTask.isSuccessful()) {
-                                Toast.makeText(SettingsActivity.this, "Password changed successfully.", Toast.LENGTH_SHORT).show();
-                                dialog.dismiss();
-                            } else {
-                                Toast.makeText(SettingsActivity.this, "Failed to update password.", Toast.LENGTH_SHORT).show();
-                                dialog.dismiss();
-                            }
-                        });
-                } else {
-                    Toast.makeText(SettingsActivity.this, "Re-authentication failed.", Toast.LENGTH_SHORT).show();
-                }
-            });
+        if (user != null) {
+            user.reauthenticate(credential)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        user.updatePassword(newPassword)
+                            .addOnCompleteListener(passwordUpdateTask -> {
+                                if (passwordUpdateTask.isSuccessful()) {
+                                    Toast.makeText(SettingsActivity.this, "Password changed successfully.", Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                } else {
+                                    Toast.makeText(SettingsActivity.this, "Failed to update password.", Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                }
+                            });
+                    } else {
+                        Toast.makeText(SettingsActivity.this, "Re-authentication failed.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        }
     }
 }

@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -136,35 +137,45 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
     }
 
     private void deleteComment(String postId, String commentId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        if (postId == null || commentId == null) {
-            Toast.makeText(context, "Error: Post ID or Comment ID is null.", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        // Create an AlertDialog
+        new AlertDialog.Builder(context)
+                .setTitle("Delete Comment")
+                .setMessage("Are you sure you want to delete this comment?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    // The actual delete logic
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    if (postId == null || commentId == null) {
+                        Toast.makeText(context, "Error: Post ID or Comment ID is null.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-        db.collection("posts").document(postId).collection("comments").document(commentId)
-                .delete()
-                .addOnSuccessListener(aVoid -> {
-                    // Comment deleted successfully
-                    int indexToRemove = -1;
-                    for (int i = 0; i < comments.size(); i++) {
-                        if (comments.get(i).getCommentId().equals(commentId)) {
-                            indexToRemove = i;
-                            break;
-                        }
-                    }
-                    if (indexToRemove != -1) {
-                        comments.remove(indexToRemove);
-                        notifyItemRemoved(indexToRemove);
-                    }
-                    Toast.makeText(context, "Comment deleted", Toast.LENGTH_SHORT).show();
-                    decrementPostCommentCount(postId);
+                    db.collection("posts").document(postId).collection("comments").document(commentId)
+                            .delete()
+                            .addOnSuccessListener(aVoid -> {
+                                // Comment deleted successfully
+                                int indexToRemove = -1;
+                                for (int i = 0; i < comments.size(); i++) {
+                                    if (comments.get(i).getCommentId().equals(commentId)) {
+                                        indexToRemove = i;
+                                        break;
+                                    }
+                                }
+                                if (indexToRemove != -1) {
+                                    comments.remove(indexToRemove);
+                                    notifyItemRemoved(indexToRemove);
+                                }
+                                Toast.makeText(context, "Comment deleted", Toast.LENGTH_SHORT).show();
+                                decrementPostCommentCount(postId);
+                            })
+                            .addOnFailureListener(e -> {
+                                // Handle the error
+                                Toast.makeText(context, "Error deleting comment: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
                 })
-                .addOnFailureListener(e -> {
-                    // Handle the error
-                    Toast.makeText(context, "Error deleting comment: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
+                .setNegativeButton("No", null)  // No action for "No"
+                .show();
     }
+
     private void decrementPostCommentCount(String postId) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference postRef = db.collection("posts").document(postId);

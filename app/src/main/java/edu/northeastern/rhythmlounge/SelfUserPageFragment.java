@@ -1,6 +1,7 @@
 package edu.northeastern.rhythmlounge;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,6 +22,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -58,7 +59,6 @@ public class SelfUserPageFragment extends Fragment {
     private static final int ERROR_DIALOGUE_REQ = 9001;
     private TextView textViewOwnUsername, textViewOwnBio, textViewOwnFollowers, textViewOwnFollowing;
     private ImageView imageViewProfilePic, heatMap;
-    private RecyclerView playlistRecyclerView, attendingRecyclerView, hostingRecyclerView;
     private SelfUserPlaylistAdapter selfUserPlaylistAdapter;
     private EventsAdapter hostingEventsAdapter, attendingEventsAdapter;
     private FirebaseAuth mAuth;
@@ -86,10 +86,10 @@ public class SelfUserPageFragment extends Fragment {
         textViewOwnFollowers.setOnClickListener(v -> onFollowersClicked());
         textViewOwnFollowing.setOnClickListener(v -> onFollowingClicked());
 
-        Button buttonEdit = view.findViewById(R.id.button_edit);
+        AppCompatImageButton buttonEdit = view.findViewById(R.id.button_edit);
         buttonEdit.setOnClickListener(v -> showEditProfileDialog());
 
-        Button buttonAddPlaylist = view.findViewById(R.id.addPlaylistButton);
+        AppCompatImageButton buttonAddPlaylist = view.findViewById(R.id.addPlaylistButton);
         buttonAddPlaylist.setOnClickListener(v -> addNewPlaylist());
 
         UserViewModel userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
@@ -126,7 +126,7 @@ public class SelfUserPageFragment extends Fragment {
 
 
     private void initializePlaylistRecyclerView(View view) {
-        playlistRecyclerView = view.findViewById(R.id.playlisRecyclerView);
+        RecyclerView playlistRecyclerView = view.findViewById(R.id.playlisRecyclerView);
         selfUserPlaylistAdapter = new SelfUserPlaylistAdapter(getActivity(), new ArrayList<>());
         playlistRecyclerView.setAdapter(selfUserPlaylistAdapter);
         playlistRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -134,7 +134,7 @@ public class SelfUserPageFragment extends Fragment {
     }
 
     private void initializeAttendingRecyclerView(View view) {
-        attendingRecyclerView = view.findViewById(R.id.attendingRecyclerView);
+        RecyclerView attendingRecyclerView = view.findViewById(R.id.attendingRecyclerView);
         attendingEventsAdapter = new EventsAdapter(new ArrayList<>());
         attendingRecyclerView.setAdapter(attendingEventsAdapter);
         LinearLayoutManager attendingLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
@@ -143,7 +143,7 @@ public class SelfUserPageFragment extends Fragment {
     }
 
     private void initializeHostingRecyclerView(View view) {
-        hostingRecyclerView = view.findViewById(R.id.hostingRecyclerView);
+        RecyclerView hostingRecyclerView = view.findViewById(R.id.hostingRecyclerView);
         hostingEventsAdapter = new EventsAdapter(new ArrayList<>());
         hostingRecyclerView.setAdapter(hostingEventsAdapter);
         LinearLayoutManager hostingLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
@@ -264,6 +264,7 @@ public class SelfUserPageFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
 
+            @SuppressLint("SetTextI18n")
             @Override
             public void afterTextChanged(Editable s) {
                 int remaining = 150 - s.toString().length();
@@ -328,6 +329,7 @@ public class SelfUserPageFragment extends Fragment {
         });
     }
 
+    @SuppressLint("SetTextI18n")
     private void populateUIWithCurrentUserDetails(User currentUser) {
         textViewOwnUsername.setText(currentUser.getUsername());
 

@@ -37,7 +37,6 @@ public class ReAuthActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private EditText editTextEmail, editTextPassword;
-    private Button reauthButton;
 
     /**
      * Sets up the UI and Firebase instances.
@@ -57,7 +56,7 @@ public class ReAuthActivity extends AppCompatActivity {
         // Maps the UI elements for the activity.
         editTextEmail = findViewById(R.id.editTextEmailAuth);
         editTextPassword = findViewById(R.id.editTextPasswordAuth);
-        reauthButton = findViewById(R.id.reauthButton);
+        Button reauthButton = findViewById(R.id.reauthButton);
 
         // Set a reauthentication on click.
         reauthButton.setOnClickListener(v -> reauthenticateUser());

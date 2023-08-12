@@ -10,8 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
-
         <LinearLayout
             android:id="@+id/profileInfoSection"
             android:layout_width="0dp"
@@ -94,12 +92,13 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <Button
+                <ImageButton
                     android:id="@+id/button_edit"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/edit"
-                    android:textColor="#3E2723" />
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_edit"
+                    android:background="?android:selectableItemBackground"
+                    android:contentDescription="@string/edit" />
 
                 <ImageView
                     android:id="@+id/map_icon"
@@ -112,7 +111,7 @@
                     android:layout_marginEnd="16dp"
                     android:layout_marginBottom="16dp"
                     android:layout_gravity="right"
-                    tools:ignore="ContentDescription,ImageContrastCheck" />
+                    tools:ignore="ContentDescription,ImageContrastCheck,RtlHardcoded" />
 
             </LinearLayout>
 
@@ -141,16 +140,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewPlaylist" />
 
-        <Button
+        <ImageButton
             android:id="@+id/addPlaylistButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/add_playlist"
-            android:textColor="#3E2723"
-            android:textSize="14sp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/ic_add"
             app:layout_constraintEnd_toEndOf="@+id/playlisRecyclerView"
             app:layout_constraintStart_toStartOf="@+id/playlisRecyclerView"
-            app:layout_constraintTop_toBottomOf="@+id/playlisRecyclerView" />
+            app:layout_constraintTop_toBottomOf="@+id/playlisRecyclerView"
+            android:contentDescription="@string/add_playlist" />
 
 
         <androidx.recyclerview.widget.RecyclerView
