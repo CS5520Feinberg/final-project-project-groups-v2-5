@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,6 +21,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatImageButton;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -86,10 +86,10 @@ public class SelfUserPageFragment extends Fragment {
         textViewOwnFollowers.setOnClickListener(v -> onFollowersClicked());
         textViewOwnFollowing.setOnClickListener(v -> onFollowingClicked());
 
-        Button buttonEdit = view.findViewById(R.id.button_edit);
+        AppCompatImageButton buttonEdit = view.findViewById(R.id.button_edit);
         buttonEdit.setOnClickListener(v -> showEditProfileDialog());
 
-        Button buttonAddPlaylist = view.findViewById(R.id.addPlaylistButton);
+        AppCompatImageButton buttonAddPlaylist = view.findViewById(R.id.addPlaylistButton);
         buttonAddPlaylist.setOnClickListener(v -> addNewPlaylist());
 
         UserViewModel userViewModel = new ViewModelProvider(requireActivity()).get(UserViewModel.class);
