@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -130,6 +131,8 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
             ALT_HEATMAP_GRADIENT_START_POINTS);
 
     private HeatmapTileProvider mProvider;
+
+    private boolean isMapReady = false;
     private TileOverlay mOverlay;
 
     private boolean mDefaultGradient = true;
@@ -146,6 +149,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
     private FirebaseFirestore mDb;
     private UserLocation mUserLocation;
+    private SupportMapFragment supportMapFragment;
 
     private CollectionReference userLocationRef;
 
@@ -157,6 +161,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     private List<LatLng> event_dataPoints = new ArrayList<>();
 
     List<HashMap<String, Object>> eventList = new ArrayList<>();
+
 
     private LatLngBounds mMapBoundary;
     // Position of the authenticated user
@@ -171,6 +176,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     private Spinner spinner_heatmap;
 
     private HeatMapSpinnerAdapter mAdapter;
+    private MapViewModel mapViewModel;
 
 
 
@@ -178,10 +184,17 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
+        Log.d(TAG, "onMapReady: Am i Here?");
+        mMap = googleMap;
+        CameraPosition cameraPosition = mapViewModel.getCameraPosition();
+        if (cameraPosition != null) {
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        }
+
         loadingIndicator.setVisibility(View.GONE);
         Toast.makeText(HeatMapsActivity.this, "Map is ready", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onMapReady: Map is ready");
-        mMap = googleMap;
+
         if (mLocationPermissionGranted) {
             getDeviceLocation();
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -196,6 +209,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
             init();
             getCurrentUserId();
             heatTileMethod(mIsRestore);
+            isMapReady = true;
         }
 
     }
@@ -208,13 +222,8 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         mIsRestore = savedInstanceState != null;
         setContentView(R.layout.activity_heat_maps);
 
+        mapViewModel = new ViewModelProvider(this).get(MapViewModel.class);
 
-        if (savedInstanceState != null) {
-            CameraPosition cameraPosition = savedInstanceState.getParcelable("cameraPosition");
-            if (cameraPosition != null) {
-                mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }
-        }
 
         mSearchText = findViewById(R.id.search_input3);
         mGps = findViewById(R.id.ic_gps_icon);
@@ -249,6 +258,9 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
      * Method to initialize the custom widgets.
      */
     private void init() {
+        getCurrentUserId();
+        heatTileMethod(mIsRestore);
+        isMapReady = true;
         Log.d(TAG, "init: Initializing Widgets");
         mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -324,8 +336,35 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
      */
     private void initMap() {
         Log.d(TAG, "initMap: Initializing Map");
-        SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.heatmap3);
-        supportMapFragment.getMapAsync(HeatMapsActivity.this);
+        supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.heatmap3);
+        supportMapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull GoogleMap googleMap) {
+                mMap = googleMap;
+                CameraPosition cameraPosition = mapViewModel.getCameraPosition();
+                if (cameraPosition != null) {
+                    mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                }
+
+                loadingIndicator.setVisibility(View.GONE);
+                Toast.makeText(HeatMapsActivity.this, "Map is ready", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "onMapReady: Map is ready");
+
+                if (mLocationPermissionGranted) {
+                    if (ActivityCompat.checkSelfPermission(HeatMapsActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                            != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(HeatMapsActivity.this,
+                            android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+                    mMap.setMyLocationEnabled(true);
+                    // Setting the default Location button to false
+                    mMap.getUiSettings().setMyLocationButtonEnabled(false);
+                    // If permission is granted, initialise the widgets such as CurrentLocation Icon
+                    init();
+
+
+            }
+        }});
 
     }
 
@@ -338,7 +377,9 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
      */
     private void moveCamera(LatLng latLng, float zoom, String title) {
         Log.d(TAG, "moveCamera: Moving the camera to: Lat:" + latLng.latitude + "Lon: " + latLng.longitude);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        if (mMap != null) {
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom)); }
+        Log.d(TAG, "moveCamera: Am I the probelm?");
 
         MarkerOptions options = new MarkerOptions()
                 .position(latLng)
@@ -353,12 +394,13 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         try {
             if (mLocationPermissionGranted) {
                 Task<Location> locationTask = mFusedLocationProviderClient.getLastLocation();
-                locationTask.addOnCompleteListener(task -> {
+                locationTask.addOnCompleteListener(this, task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
                         Log.d(TAG, "onComplete: Found Location");
                         Location currentLocation = task.getResult();
                         currentLatLon.add(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
                         moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, "My Location");
+                        Log.d(TAG, "getDeviceLocation: Do i COme here again?");
                     } else {
                         Log.d(TAG, "onComplete: Unable to get Current Location");
                     }
@@ -958,8 +1000,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (mMap != null) {
-            CameraPosition cameraPosition = mMap.getCameraPosition();
-            outState.putParcelable("cameraPosition", cameraPosition);
+            mapViewModel.setCameraPosition(mMap.getCameraPosition());
         }
     }
 
@@ -974,24 +1015,24 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         //stopLocationUpdates();
         //Log.v(TAG, "Stop FusedLocationClient Updates");
         super.onDestroy();
+        if (mMap != null) {
+            mMap.clear();
+        }
     }
 
     @Override
     protected void onResume() {
-        Log.v(TAG, "onResume()");
-        super.onResume();
-        if(checkMapServices()){
-            if(mLocationPermissionGranted){
-                Log.v(TAG, "onResume()"+mMap);
-                if (mMap == null) {
-                    initMap();
+            Log.v(TAG, "onResume()");
+            super.onResume();
+
+            if (checkMapServices()) {
+                if (mLocationPermissionGranted) {
+                    if (mMap == null) {
+                        initMap();
+                        getUserDetails();
+                    }
                 }
-                getUserDetails();
             }
-            else {
-                getLocationPermission();
-            }
-        }
     }
         @Override
     protected void onRestart() {
