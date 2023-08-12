@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Locale;
 
 import edu.northeastern.rhythmlounge.R;
-import edu.northeastern.rhythmlounge.RecyclerViewEventSpace;
 
 /**
  * EventsFragment displays a list of events from a Firestore database in multiple RecyclerViews.
