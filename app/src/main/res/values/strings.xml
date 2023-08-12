@@ -105,6 +105,8 @@
     <string name="playlist_name">Playlist Name</string>
     <string name="song_title">Song Title</string>
     <string name="artist">Artist</string>
+    <string name="rsvp">RSVP</string>
+    <string name="delete">Delete</string>
 
     <string-array name="heatmaps_datasets_array">
         <item>@string/mycurrentlocation</item>
