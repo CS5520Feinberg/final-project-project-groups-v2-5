@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import edu.northeastern.rhythmlounge.HeatMapSpinnerInventory.SpinnerOptions;
+import edu.northeastern.rhythmlounge.HeatMapSpinnerInventory.SpinnerOptions_Events;
 
 public class HeatMapSpinnerAdapter extends BaseAdapter {
 
@@ -24,6 +25,7 @@ public class HeatMapSpinnerAdapter extends BaseAdapter {
         this.context = context;
         this.spinnerOptionsList = spinnerOptionsList;
     }
+
 
     @Override
     public int getCount() {
