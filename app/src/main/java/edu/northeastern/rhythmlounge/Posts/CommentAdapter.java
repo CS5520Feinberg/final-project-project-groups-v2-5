@@ -1,6 +1,7 @@
 package edu.northeastern.rhythmlounge.Posts;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -27,8 +29,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import edu.northeastern.rhythmlounge.OtherUserPageActivity;
 import edu.northeastern.rhythmlounge.R;
 import edu.northeastern.rhythmlounge.User;
+import edu.northeastern.rhythmlounge.UserProfileActivity;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentViewHolder> {
 
@@ -83,6 +87,15 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                                 .placeholder(R.drawable.avatar)
                                 .into(holder.profileImageView);
                     }
+
+                    holder.profileImageView.setOnClickListener(v -> {
+                        goToUserProfile(comment.getUserId());
+                    });
+
+                    holder.usernameTextView.setOnClickListener(v -> {
+                        goToUserProfile(comment.getUserId());
+                    });
+
                     Log.d("CommentAdapter", "CommentID: " + comment.getCommentId() + ", PostID: " + comment.getPostId());
                 })
                 .addOnFailureListener(e -> Log.e("CommentAdapter", "Error fetching user details: " + e.getMessage()));
@@ -195,4 +208,17 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                 .addOnFailureListener(e -> Log.e("CommentAdapter", "Error decrementing comment count", e));
     }
 
+    private void goToUserProfile(String userId) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null && userId.equals(currentUser.getUid())) {
+            // Navigate to SelfUserPageFragment through UserProfileActivity
+            Intent intent = new Intent(context, UserProfileActivity.class);
+            context.startActivity(intent);
+        } else {
+            // Navigate to other user's page
+            Intent intent = new Intent(context, OtherUserPageActivity.class);
+            intent.putExtra("USER_ID", userId);
+            context.startActivity(intent);
+        }
+    }
 }
