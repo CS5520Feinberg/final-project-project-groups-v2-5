@@ -65,11 +65,8 @@ public class PostActivity extends AppCompatActivity {
         } else {
             tvEmptyState.setVisibility(View.GONE);
         }
-
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            fetchPosts();
-            swipeRefreshLayout.setRefreshing(false);
-        });
+        // Refresh the page
+        swipeRefreshLayout.setOnRefreshListener(this::fetchPosts);
 
         fabCreatePost.setOnClickListener(v -> {
             Intent intent = new Intent(PostActivity.this, CreatePostActivity.class);
@@ -101,7 +98,7 @@ public class PostActivity extends AppCompatActivity {
                     // Check if this post is not already in the list
                     boolean isDuplicate = false;
                     for (Post existingPost : posts) {
-                        if (existingPost.getUserId().equals(post.getUserId())) {
+                        if (existingPost.getPostId().equals(post.getPostId())) {
                             isDuplicate = true;
                             break;
                         }
@@ -125,6 +122,8 @@ public class PostActivity extends AppCompatActivity {
                 } else {
                     tvEmptyState.setVisibility(View.GONE);
                 }
+
+                swipeRefreshLayout.setRefreshing(false);
 
             } else {
                 Toast.makeText(PostActivity.this, "Error fetching posts.", Toast.LENGTH_SHORT).show();

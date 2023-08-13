@@ -1,6 +1,7 @@
 package edu.northeastern.rhythmlounge.Posts;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -9,16 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Locale;
-
-import android.content.Context;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -27,6 +23,10 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Locale;
+
 import edu.northeastern.rhythmlounge.R;
 import edu.northeastern.rhythmlounge.User;
 
@@ -34,6 +34,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     private final List<Post> posts;
     private final Context context;
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
 
     public PostAdapter(List<Post> posts, Context context) {
         this.posts = posts;
@@ -52,15 +53,22 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         Post post = posts.get(position);
         holder.usernameTextView.setText(post.getUsername());
         holder.titleTextView.setText(post.getTitle());
+        // The date
+        holder.dateTextView.setText(sdf.format(post.getTimestamp()));
+        // The like count
         holder.likeCountTextView.setText(String.valueOf(post.getLikeCount()));
+        // The comment count
         holder.commentCountTextView.setText(String.valueOf(post.getCommentCount()));
 
-        // Format the date
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
-        holder.dateTextView.setText(sdf.format(post.getTimestamp()));
-        holder.likeCountTextView.setText(String.valueOf(post.getLikeCount()));
-
         // Fetch the profile picture URL for this post's user
+        fetchUserProfilePic(post, holder);
+
+        // Image Loading
+        loadImageIntoView(post, holder);
+    }
+
+    // Fetch the profile picture URL for this post's user
+    private void fetchUserProfilePic(Post post, PostViewHolder holder) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("users").document(post.getUserId()).get()
                 .addOnSuccessListener(documentSnapshot -> {
@@ -77,9 +85,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                     }
                 })
                 .addOnFailureListener(e -> {
+                    Log.e("FirebaseError", "Error fetching user profile picture", e);
+                    holder.userProfilePicImageView.setImageResource(R.drawable.avatar); // Set default image on failure
                 });
+    }
 
-
+    // Image Loading
+    private void loadImageIntoView(Post post, PostViewHolder holder) {
         String imageUrlToShow = post.getThumbnailUrl();
         if (imageUrlToShow == null || imageUrlToShow.isEmpty()) {
             imageUrlToShow = post.getImageUrl(); // Use imageUrl as a fallback
@@ -113,6 +125,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             holder.thumbnailImageView.setVisibility(View.GONE);
         }
     }
+
 
     @Override
     public int getItemCount() {
