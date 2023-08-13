@@ -1,4 +1,4 @@
-package edu.northeastern.rhythmlounge;
+package edu.northeastern.rhythmlounge.HeatMapAdapters;
 
 import android.content.Context;
 import android.util.Log;
@@ -12,7 +12,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import edu.northeastern.rhythmlounge.HeatMapSpinnerInventory.SpinnerOptions;
-import edu.northeastern.rhythmlounge.HeatMapSpinnerInventory.SpinnerOptions_Events;
+import edu.northeastern.rhythmlounge.R;
 
 public class HeatMapSpinnerAdapter extends BaseAdapter {
 
