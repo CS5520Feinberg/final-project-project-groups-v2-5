@@ -43,7 +43,6 @@ public class EventsFragment extends Fragment implements EventsAdapter.OnItemClic
      * @param savedInstanceState If non-null, this fragment is being re-constructed
      * from a previous saved state as given here.
      *
-     * @return
      */
     @Nullable
     @Override

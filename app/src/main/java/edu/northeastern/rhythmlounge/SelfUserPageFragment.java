@@ -52,6 +52,9 @@ import edu.northeastern.rhythmlounge.Events.EventDetailsActivity;
 import edu.northeastern.rhythmlounge.Events.EventsAdapter;
 import edu.northeastern.rhythmlounge.Playlists.SelfUserPlaylistAdapter;
 
+/**
+ * Fragment representing the page for viewing the user's own profile.
+ */
 public class SelfUserPageFragment extends Fragment {
 
     private static final String TAG = "SelfUserPageFragment";
@@ -124,7 +127,10 @@ public class SelfUserPageFragment extends Fragment {
         return view;
     }
 
-
+    /**
+     * Initializes the recyclerview for playlists
+     * @param view the root view of the fragment
+     */
     private void initializePlaylistRecyclerView(View view) {
         RecyclerView playlistRecyclerView = view.findViewById(R.id.playlisRecyclerView);
         selfUserPlaylistAdapter = new SelfUserPlaylistAdapter(getActivity(), new ArrayList<>());
@@ -133,6 +139,10 @@ public class SelfUserPageFragment extends Fragment {
         getCurrentUserPlaylists();
     }
 
+    /**
+     * Initializes the Recylerview for events the current user is attending.
+     * @param view the root view of the fragment
+     */
     private void initializeAttendingRecyclerView(View view) {
         RecyclerView attendingRecyclerView = view.findViewById(R.id.attendingRecyclerView);
         attendingEventsAdapter = new EventsAdapter(new ArrayList<>());
@@ -142,6 +152,10 @@ public class SelfUserPageFragment extends Fragment {
         fetchUserEvents();
     }
 
+    /**
+     * The RecyclerView for events the current user is hosting.
+     * @param view the root view of the fragment.
+     */
     private void initializeHostingRecyclerView(View view) {
         RecyclerView hostingRecyclerView = view.findViewById(R.id.hostingRecyclerView);
         hostingEventsAdapter = new EventsAdapter(new ArrayList<>());
@@ -164,6 +178,11 @@ public class SelfUserPageFragment extends Fragment {
         });
     }
 
+    /**
+     * Fetches information for the attending events and hosting event recyclerviews
+     * @param eventIds
+     * @param adapter
+     */
     private void fetchEventsAndUpdateRecyclerView(List<String> eventIds, EventsAdapter adapter) {
         if (eventIds == null || eventIds.isEmpty()) return;
 
@@ -185,6 +204,9 @@ public class SelfUserPageFragment extends Fragment {
         }
     }
 
+    /**
+     * Sets up event click listeners for the given events.
+     */
     private void setupEventClickListeners() {
         Log.d(TAG, "Setting up event click listener");
 
@@ -208,6 +230,9 @@ public class SelfUserPageFragment extends Fragment {
         attendingEventsAdapter.setOnItemClickListener(listener);
     }
 
+    /**
+     * Overrides the onResume method to get the current user data when the fragment resumes
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -215,18 +240,27 @@ public class SelfUserPageFragment extends Fragment {
         retrieveCurrentUser(currentUserId);
     }
 
+    /**
+     * Initiates intent to open the heat map activity.
+     */
     private void openHeatMap() {
         Intent intent = new Intent(getActivity(), HeatMapsActivity.class);
         intent.putExtra("USER_ID", getCurrentUserId());
         startActivity(intent);
     }
 
+    /**
+     * Opens the followers activity if the followers is clicked.
+     */
     public void onFollowersClicked() {
         Intent intent = new Intent(getActivity(), FollowersActivity.class);
         intent.putExtra("USER_ID", getCurrentUserId());
         startActivity(intent);
     }
 
+    /**
+     * Opens the following activity if the followers is clicked.
+     */
     public void onFollowingClicked() {
 
         Intent intent = new Intent(getActivity(), FollowingActivity.class);
@@ -234,6 +268,10 @@ public class SelfUserPageFragment extends Fragment {
         startActivity(intent);
     }
 
+    /**
+     * Initializes the view elements required in the user profile.
+     * @param view the parent view.
+     */
     private void initializeViewElements(View view) {
         textViewOwnUsername = view.findViewById(R.id.textViewOwnUsername);
         textViewOwnBio = view.findViewById(R.id.textViewOwnBio);
@@ -244,6 +282,9 @@ public class SelfUserPageFragment extends Fragment {
 
     }
 
+    /**
+     * Displays the dialog allowing the user to edit their profile.
+     */
     private void showEditProfileDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         builder.setTitle("Edit Profile");
@@ -286,6 +327,11 @@ public class SelfUserPageFragment extends Fragment {
         dialog.show();
     }
 
+    /**
+     * Updates the user's profile data with new username and bio if they made these edits.
+     * @param newUsername the new username
+     * @param newBio the new bio.
+     */
     private void updateProfileData(String newUsername, String newBio) {
         String currentUserId = getCurrentUserId();
         DocumentReference userRef = db.collection("users").document(currentUserId);
@@ -307,6 +353,9 @@ public class SelfUserPageFragment extends Fragment {
                 });
     }
 
+    /**
+     * Initializes firebase elements required for authenitcation  and the database.
+     */
     private void initializeFirebaseElements() {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -314,10 +363,18 @@ public class SelfUserPageFragment extends Fragment {
         storageReference = fbStorage.getReference();
     }
 
+    /**
+     * Retrieves the ID of the current authenticated user.
+     * @return the ID of the current user.
+     */
     private String getCurrentUserId() {
         return Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
     }
 
+    /**
+     * Retrieves and displays details of the current user based on the given user ID.
+     * @param userId the given user id.
+     */
     private void retrieveCurrentUser(String userId) {
         db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
             User currentUser = documentSnapshot.toObject(User.class);
@@ -329,6 +386,10 @@ public class SelfUserPageFragment extends Fragment {
         });
     }
 
+    /**
+     * Populates the userpage with details about the current user.
+     * @param currentUser the current user.
+     */
     @SuppressLint("SetTextI18n")
     private void populateUIWithCurrentUserDetails(User currentUser) {
         textViewOwnUsername.setText(currentUser.getUsername());
@@ -350,13 +411,15 @@ public class SelfUserPageFragment extends Fragment {
         }
     }
 
-
+    /**
+     * Gets permission for the application to access storage, in this case so they can upload their own profile picture, using images on their device.
+     */
     private void checkPermission() {
         if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 new AlertDialog.Builder(requireActivity())
                         .setTitle("Permission needed")
-                        .setMessage("This permission is needed to access your media.")
+                        .setMessage("Permission is needed to access your media.")
                         .setPositiveButton("OK", (dialog, which) -> ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE))
                         .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                         .create().show();
@@ -366,6 +429,9 @@ public class SelfUserPageFragment extends Fragment {
         }
     }
 
+    /**
+     * Opens a dialog prompting the user to update their profile picture.
+     */
     private void openImageDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         builder.setTitle("Update Profile Picture")
@@ -376,6 +442,10 @@ public class SelfUserPageFragment extends Fragment {
                 .show();
     }
 
+    /**
+     * Uploads the selected image to Firebase storage and updates the user's profile picture URL.
+     * @param imageUri URI of the image to upload.
+     */
     private void uploadImageToFirebaseStorage(Uri imageUri) {
         String userId = getCurrentUserId();
         StorageReference profilePicRef = storageReference.child("profile_pics/" + userId);
@@ -393,9 +463,9 @@ public class SelfUserPageFragment extends Fragment {
         });
     }
 
-
-
-
+    /**
+     * Retrieves and displays the playlists of the current user.
+     */
     private void getCurrentUserPlaylists() {
         String currentUserId = getCurrentUserId();
 
@@ -413,6 +483,9 @@ public class SelfUserPageFragment extends Fragment {
             });
     }
 
+    /**
+     * Shows a dialog to add a new playlist for the user.
+     */
     private void addNewPlaylist() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         builder.setTitle("Add Playlist");
@@ -435,6 +508,10 @@ public class SelfUserPageFragment extends Fragment {
         dialog.show();
     }
 
+    /**
+     * Saves a playlist with the given name to Firebase.
+     * @param playlistName the name of the new playlist.
+     */
     private void savePlaylistToFirebase(String playlistName) {
         String currentUserId = getCurrentUserId();
         Map<String, Object> playlist = new HashMap<>();
@@ -474,15 +551,15 @@ public class SelfUserPageFragment extends Fragment {
     public boolean isServicesOK() {
         Log.d(TAG, "isServicesOK: Validating Google Services version");
         int available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getActivity());
-        /**
-         * Everything is fine and User can make API calls
+        /*
+          Everything is fine and User can make API calls
          */
         if (available == ConnectionResult.SUCCESS) {
             Log.d(TAG, "isServicesOK: Google play services is working");
             return true;
         }
-        /**
-         * Error occurred but is resolvable
+        /*
+          Error occurred but is resolvable
          */
         else if (GoogleApiAvailability.getInstance().isUserResolvableError(available)) {
             Log.d(TAG, "isServicesOK: Error occurred but is resolvable");

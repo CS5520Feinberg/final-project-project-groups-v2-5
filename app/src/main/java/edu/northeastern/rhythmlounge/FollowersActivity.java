@@ -74,14 +74,10 @@ public class FollowersActivity extends AppCompatActivity {
                                             followersRecyclerView.setAdapter(userListItemAdapter);
                                         }
                                     })
-                                    .addOnFailureListener(e -> {
-                                        Log.w("FollowersActivity", "There was a problem getting a follower", e);
-                                    });
+                                    .addOnFailureListener(e -> Log.w("FollowersActivity", "There was a problem getting a follower", e));
                         }
                     }
                 })
-                .addOnFailureListener(e -> {
-                    Log.w("FollowersActivity", "There was a problem getting the followers list", e);
-                });
+                .addOnFailureListener(e -> Log.w("FollowersActivity", "There was a problem getting the followers list", e));
     }
 }
