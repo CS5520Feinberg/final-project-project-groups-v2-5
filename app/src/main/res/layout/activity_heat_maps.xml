@@ -32,6 +32,7 @@
 
     <RelativeLayout
         android:id="@+id/searchBarLayout3"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@drawable/search_white_border"
@@ -70,21 +71,22 @@
             android:textColorHint="#757575"
             android:textSize="15sp"
             tools:ignore="Autofill,TextFields,VisualLintTextFieldSize" />
+
     </RelativeLayout>
+
 
     <ImageView
         android:id="@+id/ic_gps_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="48dp"
+        android:layout_height="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/heatmap3"
         app:layout_constraintHorizontal_bias="0.958"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchBarLayout3"
-        app:layout_constraintVertical_bias="0.019"
+        app:layout_constraintVertical_bias="0.838"
         app:srcCompat="@drawable/ic_current_location"
         tools:ignore="ContentDescription" />
-
 
     <Spinner
         android:id="@+id/customspinner"
@@ -93,12 +95,32 @@
         android:background="@drawable/bg_spinner_custom"
         android:dropDownHorizontalOffset="40dp"
         android:dropDownVerticalOffset="40dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.989" />
+        app:layout_constraintVertical_bias="0.989"
+        />
+
+    <Spinner
+        android:id="@+id/customspinner_events"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:visibility="gone"
+        android:background="@drawable/bg_spinner_custom"
+        android:dropDownHorizontalOffset="40dp"
+        android:dropDownVerticalOffset="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.526"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.023" />
 
     <Button
         android:id="@+id/buttonShowDetails"
@@ -107,10 +129,22 @@
         android:text="Show details"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/ic_gps_icon"
-        app:layout_constraintHorizontal_bias="0.975"
+        app:layout_constraintHorizontal_bias="0.041"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/searchBarLayout3"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_bias="0.908"
         android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/search_maps"
+        android:layout_width="49dp"
+        android:layout_height="33dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/ic_gps_icon"
+        app:layout_constraintTop_toBottomOf="@+id/ic_gps_icon"
+        app:layout_constraintVertical_bias="0.141"
+        app:srcCompat="@drawable/ic_search_icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
