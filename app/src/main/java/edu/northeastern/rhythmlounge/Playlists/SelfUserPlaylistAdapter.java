@@ -79,15 +79,11 @@ public class SelfUserPlaylistAdapter extends RecyclerView.Adapter<SelfUserPlayli
             notifyItemRangeChanged(removedPosition, playlistSnapshots.size());
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            String userId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
             db.collection("users").document(userId).collection("playlists").document(playlistId)
                 .delete()
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d("SelfUserPlaylistAdapter", "Playlist deleted from Firestore: " + playlistId);
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("SelfUserPlaylistAdapter", "Error deleting playlist from Firestore: " + e.getMessage());
-                    });
+                    .addOnSuccessListener(aVoid -> Log.d("SelfUserPlaylistAdapter", "Playlist deleted from Firestore: " + playlistId))
+                    .addOnFailureListener(e -> Log.e("SelfUserPlaylistAdapter", "Error deleting playlist from Firestore: " + e.getMessage()));
         });
 
 

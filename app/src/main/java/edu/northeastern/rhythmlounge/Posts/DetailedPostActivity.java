@@ -180,15 +180,13 @@ public class DetailedPostActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Delete Post");
         builder.setMessage("Are you sure you want to delete this post?");
-        builder.setPositiveButton("Yes", (dialog, which) -> {
-            db.collection("posts").document(postId).delete()
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(DetailedPostActivity.this, "Post deleted successfully", Toast.LENGTH_SHORT).show();
-                        setResult(RESULT_OK); // Indicate that the deletion was successful
-                        finish();
-                    })
-                    .addOnFailureListener(e -> Toast.makeText(DetailedPostActivity.this, "Error deleting post", Toast.LENGTH_SHORT).show());
-        });
+        builder.setPositiveButton("Yes", (dialog, which) -> db.collection("posts").document(postId).delete()
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(DetailedPostActivity.this, "Post deleted successfully", Toast.LENGTH_SHORT).show();
+                    setResult(RESULT_OK); // Indicate that the deletion was successful
+                    finish();
+                })
+                .addOnFailureListener(e -> Toast.makeText(DetailedPostActivity.this, "Error deleting post", Toast.LENGTH_SHORT).show()));
         builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
         AlertDialog dialog = builder.create();
         dialog.show();

@@ -69,12 +69,10 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                         assert user != null;
                         holder.usernameTextView.setText(user.getUsername());
 
-                        // Show the delete button if the comment belongs to the currently logged-in user
-                        // (assuming you have the logged-in user's ID stored somewhere, e.g., in a variable called currentUserId)
                         if (comment.getUserId().equals(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
                             holder.deleteButton.setVisibility(View.VISIBLE);
                             holder.deleteButton.setOnClickListener(v -> {
-                                // Implement the delete action
+
                                 deleteComment(comment.getPostId(), comment.getCommentId());
                             });
                         }
@@ -168,7 +166,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                                 decrementPostCommentCount(postId);
                             })
                             .addOnFailureListener(e -> {
-                                // Handle the error
                                 Toast.makeText(context, "Error deleting comment: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                             });
                 })

@@ -121,6 +121,7 @@ public class SelfUserSongListActivity extends AppCompatActivity {
                     return false;
                 }
 
+                // If the user swipes left or right on the song item, it will remove the song.
                 @Override
                 public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                     int position = viewHolder.getAdapterPosition();
@@ -133,6 +134,8 @@ public class SelfUserSongListActivity extends AppCompatActivity {
                     songSnapShots.remove(position);
                     songAdapter.notifyItemRemoved(position);
 
+                    // Create a snackbar letting the user know the song was deleted
+                    // This also provides an undo action if this was a mistake.
                     Snackbar.make(recyclerView, message, Snackbar.LENGTH_LONG)
                                     .setAction("Undo", v -> {
                                         songSnapShots.add(position, songSnapshot);
@@ -202,6 +205,10 @@ public class SelfUserSongListActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Displays a dialog for the user to add a new song to to their playlist by entering its title and artist name.
+     * This triggers a YouTube search for the song.
+     */
     private void showAddSongDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add Song");
@@ -215,7 +222,7 @@ public class SelfUserSongListActivity extends AppCompatActivity {
         builder.setPositiveButton("Search", (dialog, which) -> {
             String songTitle = editTextSongTitle.getText().toString().trim();
             String artist = editTextArtist.getText().toString().trim();
-            searchYouTubeForSong(songTitle, artist);
+            searchYouTubeForSong(songTitle, artist); // Begin search
         });
 
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
@@ -223,6 +230,11 @@ public class SelfUserSongListActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    /**
+     * Searches for a song on YouTube using the provided title and artist.
+     * @param songTitle the title of the song to search for
+     * @param artist the name of the artist for the song.
+     */
     private void searchYouTubeForSong(String songTitle, String artist) {
         String myApiKey = "AIzaSyC6LZAxWYKscXYvUsLep2dZ_FEzB1jMceI";
         String query = songTitle + " " + artist;
@@ -254,6 +266,13 @@ public class SelfUserSongListActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Saves a new song to the Firebase database.
+     * The song is linked to the YouTube video using its videoId
+     * @param songTitle the title of the song
+     * @param artistName the name of the artist for the song
+     * @param videoId the youtube video ID for the song's videos.
+     */
     private void saveSongToFirestore(String songTitle, String artistName, String videoId) {
         Song newSong = new Song(songTitle, artistName, "https://www.youtube.com/watch?v=" + videoId);
 

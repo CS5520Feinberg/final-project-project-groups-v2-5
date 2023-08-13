@@ -74,7 +74,6 @@ public class CreatePostActivity extends AppCompatActivity {
                             .add(newPost)
                             .addOnSuccessListener(documentReference -> {
                                 Toast.makeText(CreatePostActivity.this, "Post created!", Toast.LENGTH_SHORT).show();
-                                // Assuming you want to close the CreatePostActivity once the post is created
                                 finish();
                             })
                             .addOnFailureListener(e -> Toast.makeText(CreatePostActivity.this, "Error creating post.", Toast.LENGTH_SHORT).show());
