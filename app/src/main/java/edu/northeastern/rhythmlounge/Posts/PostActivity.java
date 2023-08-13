@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +23,6 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import edu.northeastern.rhythmlounge.R;
@@ -35,7 +36,7 @@ public class PostActivity extends AppCompatActivity {
     FloatingActionButton fabRefresh;
     SwipeRefreshLayout swipeRefreshLayout;
     TextView tvEmptyState;
-    private Date latestTimestamp = null;
+    Spinner spinnerFilter;
     private FirebaseFirestore db;
     public static final int REQUEST_CODE_DETAILED_POST_ACTIVITY = 100;  // Defining the request code
     private static final int PAGE_SIZE = 10; // Amount of posts loaded in a single batch
@@ -54,6 +55,18 @@ public class PostActivity extends AppCompatActivity {
         fabRefresh = findViewById(R.id.fab_refresh);
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         tvEmptyState = findViewById(R.id.tv_empty_state);
+
+        // Initialize and set up the spinner
+        spinnerFilter = findViewById(R.id.spinner_filter);
+        spinnerFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                resetPagination();
+                fetchPosts();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
         posts = new ArrayList<>();
         postAdapter = new PostAdapter(posts, this);
@@ -90,9 +103,24 @@ public class PostActivity extends AppCompatActivity {
         if (!isLoading) { // Only fetch new posts if it's not currently loading
             isLoading = true;
 
-            Query query = db.collection("posts")
-                    .orderBy("timestamp", Query.Direction.DESCENDING)
-                    .limit(PAGE_SIZE);
+            String filter = spinnerFilter.getSelectedItem().toString();
+            Query query;
+
+            switch (filter) {
+                case "Likes":
+                    query = db.collection("posts")
+                            .orderBy("likeCount", Query.Direction.DESCENDING);
+                    break;
+                case "Comments":
+                    query = db.collection("posts")
+                            .orderBy("commentCount", Query.Direction.DESCENDING);
+                    break;
+                default: // Default is "Time"
+                    query = db.collection("posts")
+                            .orderBy("timestamp", Query.Direction.DESCENDING);
+                    break;
+            }
+            query = query.limit(PAGE_SIZE);
 
             if (lastVisiblePost != null) {
                 query = query.startAfter(lastVisiblePost);
@@ -173,10 +201,12 @@ public class PostActivity extends AppCompatActivity {
         rvPosts.addOnScrollListener(onScrollListener);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void resetPagination() {
         lastVisiblePost = null;
         isLastPage = false;
         isLoading = false;
         posts.clear();
+        postAdapter.notifyDataSetChanged();
     }
 }

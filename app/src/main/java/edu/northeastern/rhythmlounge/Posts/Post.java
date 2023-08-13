@@ -28,6 +28,8 @@ public class Post {
         this.timestamp = new Date();
         this.title = title;
         this.imageUrl = imageUrl;
+        this.likeCount = 0;
+        this.commentCount = 0;
     }
 
     // Getters and Setters
