@@ -119,6 +119,7 @@ public class HomeFragment extends Fragment {
 
     /**
      * Sets up event click listeners for events lists.
+     * Clicking on an event item will navigate a user to the specified event's details page.
      */
     private void setupEventClickListeners() {
         Log.d("HomeFragment", "Setting up event click listener");
@@ -145,7 +146,10 @@ public class HomeFragment extends Fragment {
     }
 
 
-
+    /**
+     * Fetches a list of discoverable events and concerts.
+     * Updates the UI with the fetched data.
+     */
     @SuppressLint("NotifyDataSetChanged")
     private void fetchDiscoverEventsConcerts() {
         eventsRef.get()
@@ -164,35 +168,51 @@ public class HomeFragment extends Fragment {
                 });
     }
 
+    /**
+     * Fetches the user's RSVP'd events and concerts.
+     * Updates the respective displays.
+     */
     private void fetchMyEventsAndConcerts() {
+
         String userId = Objects.requireNonNull(mAuth.getCurrentUser().getUid());
 
+        // Fetchs the current user's document
         db.collection("users").document(userId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
+
                    if (documentSnapshot.exists()) {
+                       // Get the list of events the user has rsvpd to.
                        List<String> rsvpdEvents = (List<String>) documentSnapshot.get("rsvpd");
 
                        if (rsvpdEvents != null && !rsvpdEvents.isEmpty()) {
                            myEventsList.clear();
 
+                           // Counter to track document fetchess
                            AtomicInteger counter = new AtomicInteger(rsvpdEvents.size());
 
+                           // Iterate through each RSVP'd event ID
                            for (String eventId : rsvpdEvents) {
+                               // Fetch the event details
                                eventsRef.document(eventId)
                                        .get()
                                        .addOnSuccessListener(eventDocument -> {
+
+                                           // If the event is not a concert add it to the events list.
                                            if (eventDocument.exists() && !eventDocument.getBoolean("isConcert")) {
                                                Event event = eventDocument.toObject(Event.class);
                                                event.setDocId(eventDocument.getId());
                                                myEventsList.add(event);
                                            }
+
+                                           // If the event is a concert add it to the concerts list.
                                            if (eventDocument.exists() && eventDocument.getBoolean("isConcert")) {
                                                Event event = eventDocument.toObject(Event.class);
                                                event.setDocId(eventDocument.getId());
                                                myConcertsList.add(event);
                                            }
 
+                                           // If all RSVP'd events are fetched, update the end the loaders.
                                            if (counter.decrementAndGet() == 0) {
                                                myEventsAdapter.notifyDataSetChanged();
                                                myConcertsAdapter.notifyDataSetChanged();
@@ -202,17 +222,22 @@ public class HomeFragment extends Fragment {
                                        });
                            }
                        } else {
+                           // If there are no RSVPd events, hide the progress bars.
                            progressBarMyEvents.setVisibility(View.GONE);
                            progressBarMyConcerts.setVisibility(View.GONE);
                        }
                    } else {
+                       // If user document's don't hide the progress bars.
                        progressBarMyConcerts.setVisibility(View.GONE);
                        progressBarMyConcerts.setVisibility(View.GONE);
                    }
                 });
     }
 
-
+    /**
+     * Creates a simple greeting to the user based on the time of day
+     * @return a simple greeting.
+     */
     private String getGreetingBasedOnTimeOfDay() {
         Calendar calendar = Calendar.getInstance();
         int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
