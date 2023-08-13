@@ -33,7 +33,6 @@ import edu.northeastern.rhythmlounge.User;
 import edu.northeastern.rhythmlounge.UserProfileActivity;
 
 public class DetailedPostActivity extends AppCompatActivity {
-
     private FirebaseFirestore db;
     private TextView usernameTextView;
     private TextView contentTextView;
@@ -282,5 +281,4 @@ public class DetailedPostActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
-
 }
