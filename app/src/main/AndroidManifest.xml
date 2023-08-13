@@ -38,15 +38,15 @@
         </activity>
         <activity android:name=".LoginRegisterAndAccount.RegisterActivity" />
         <activity android:name=".Posts.PostActivity" />
-        <activity android:name=".SelfUserPageFragment" />
+        <!-- <activity android:name=".SelfUserPageFragment" /> -->
         <activity android:name=".OtherUserPageActivity" />
-        <activity android:name=".SearchFragment" />
+        <!-- <activity android:name=".SearchFragment" /> -->
         <activity android:name=".FollowersActivity" />
         <activity android:name=".FollowingActivity" />
         <activity android:name=".LoginRegisterAndAccount.SettingsActivity" />
         <activity android:name=".LoginRegisterAndAccount.ReAuthActivity"/>
-        <activity android:name=".Events.EventsFragment" />
-        <activity android:name=".NotificationsFragment" />
+        <!-- <activity android:name=".Events.EventsFragment" /> -->
+        <!-- <activity android:name=".NotificationsFragment" /> -->
         <activity android:name=".Events.EventDetailsActivity" />
         <activity android:name=".Posts.DetailedPostActivity"/>
         <activity android:name=".Playlists.SelfUserSongListActivity" />
