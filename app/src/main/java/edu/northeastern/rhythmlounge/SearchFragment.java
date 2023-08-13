@@ -2,7 +2,6 @@ package edu.northeastern.rhythmlounge;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -28,6 +27,11 @@ import java.util.List;
 import edu.northeastern.rhythmlounge.Events.Event;
 import edu.northeastern.rhythmlounge.Events.EventSuggestionAdapter;
 
+
+/**
+ * Fragment used to search and display suggestions for users and events.
+ * Provides live searching capabilities for users and events and users.
+ */
 public class SearchFragment extends Fragment {
 
     private RecyclerView userSuggestionRecyclerView, eventSuggestionRecyclerView;
@@ -41,9 +45,8 @@ public class SearchFragment extends Fragment {
 
     private final List<String> eventIds = new ArrayList<>();
     private FirebaseFirestore db;
-    private Handler searchHandler = new Handler();
 
-    private static final long SEARCH_DELAY = 500; // 500ms delay
+    // 500ms delay
 
     public SearchFragment() {
     }
@@ -141,6 +144,11 @@ public class SearchFragment extends Fragment {
                 });
     }
 
+    /**
+     * Searches for events based on the provided search query.
+     * Fetchs maching events by their names, location, or venue in lowercase.
+     * @param query the query for searching events.
+     */
     private void searchEvents(String query) {
 
         query = query.toLowerCase().trim();
@@ -149,27 +157,33 @@ public class SearchFragment extends Fragment {
             return;
         }
 
+        // Searches by event name
         Task<QuerySnapshot> task1 = db.collection("events")
                 .whereGreaterThanOrEqualTo("eventName_lowercase", query)
                 .whereLessThanOrEqualTo("eventName_lowercase", query + "\uf8ff")
                 .limit(10)
                 .get();
 
+        // Searches by event location
         Task<QuerySnapshot> task2 = db.collection("events")
                 .whereGreaterThanOrEqualTo("location_lowercase", query)
                 .whereLessThanOrEqualTo("location_lowercase", query + "\uf8ff")
                 .limit(10)
                 .get();
 
+        // Searches by venue
         Task<QuerySnapshot> task3 = db.collection("events")
                 .whereGreaterThanOrEqualTo("venue_lowercase", query)
                 .whereLessThanOrEqualTo("venue_lowercase", query + "\uf8ff")
                 .limit(10)
                 .get();
 
+        // All combined resules of the tasks.
         Task<List<Object>> combinedTask = Tasks.whenAllSuccess(task1, task2, task3).addOnSuccessListener(objects -> {
+            // Clear previous suggestions
             eventSuggestions.clear();
             eventIds.clear();
+            // Processes each query result and add to suggestions.
             for (Object object : objects) {
                 for (QueryDocumentSnapshot document : (QuerySnapshot) object) {
                         Event event = document.toObject(Event.class);

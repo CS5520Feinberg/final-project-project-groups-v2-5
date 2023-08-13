@@ -73,14 +73,10 @@ public class FollowingActivity extends AppCompatActivity {
                                             followingRecyclerView.setAdapter(userListItemAdapter);
                                         }
                                     })
-                                    .addOnFailureListener(e -> {
-                                        Log.w("FollowingActivity", "There was a problem getting a following user", e);
-                                    });
+                                    .addOnFailureListener(e -> Log.w("FollowingActivity", "There was a problem getting a following user", e));
                         }
                     }
                 })
-                .addOnFailureListener(e -> {
-                    Log.w("FollowingActivity", "There was a problem getting the following list", e);
-                });
+                .addOnFailureListener(e -> Log.w("FollowingActivity", "There was a problem getting the following list", e));
     }
 }

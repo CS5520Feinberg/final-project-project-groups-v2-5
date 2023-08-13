@@ -8,11 +8,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -280,7 +278,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 if (eventData != null) {
                     db.collection("deleted_events").add(eventData).addOnSuccessListener(documentReference -> {
 
-                        handleEventRemoval(eventData);
+                        handleEventRemoval(eventData); // this actually handles the removal of the event.
 
                         eventRef.delete().addOnSuccessListener(void1 -> {
                             Toast.makeText(EventDetailsActivity.this, "Event deleted successfully", Toast.LENGTH_SHORT).show();
@@ -302,12 +300,13 @@ public class EventDetailsActivity extends AppCompatActivity {
         String hostId = (String) eventData.get("eventCreator");
         List<String> rsvps = (List<String>) eventData.get("rsvps");
 
-
+        // Remove the event id from the hosts hosting array.
         if (hostId != null && !hostId.isEmpty()) {
             DocumentReference hostRef = db.collection("users").document(hostId);
             hostRef.update("hosting", FieldValue.arrayRemove(eventId));
         }
 
+        // Need to remove the eventId of the event from each rsvpd user's rsvpd array.
         if (rsvps != null && !rsvps.isEmpty()) {
             for (String userId : rsvps) {
                 DocumentReference userRef = db.collection("users").document(userId);
@@ -410,7 +409,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         updatedData.put("date", date);
         updatedData.put("time", time);
 
-        eventRef.update(updatedData).addOnSuccessListener(void1 -> Toast.makeText(EventDetailsActivity.this, "Event Updated Successfully!", Toast.LENGTH_SHORT).show()).addOnFailureListener(e -> Toast.makeText(EventDetailsActivity.this, "Error updating the event: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        eventRef.update(updatedData)
+                .addOnSuccessListener(void1 -> Toast.makeText(EventDetailsActivity.this, "Event Updated Successfully!", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(EventDetailsActivity.this, "Error updating the event: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     /**
@@ -573,7 +574,7 @@ public class EventDetailsActivity extends AppCompatActivity {
             for (Object object : objects) {
                 DocumentSnapshot documentSnapshot = (DocumentSnapshot) object; // Convert each returned object to a documentsnapshot
                 User user = documentSnapshot.toObject(User.class); // Convert the documentsnapshot to a user object
-                rsvpUsers.add(user); // Add the user object to the list.
+                rsvpUsers.add(user); // Add the user object to the lis.
             }
             setupRSVPRecyclerView(rsvpUsers, userIds);
         });

@@ -10,8 +10,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.renderscript.ScriptGroup;
-import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -36,7 +33,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.ktx.Firebase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -216,9 +212,7 @@ public class CreateEventFragment extends Fragment {
                          double progress = (100.0 * snapshot.getBytesTransferred()) / snapshot.getTotalByteCount();
                          Log.d(TAG, "Upload is " + progress + "% done");
                      })
-                     .addOnPausedListener(snapshot -> {
-                         Log.d(TAG, "Upload is paused");
-                     });
+                     .addOnPausedListener(snapshot -> Log.d(TAG, "Upload is paused"));
          } else {
              Log.d(TAG, "SelectedImageUri is null.");
          }

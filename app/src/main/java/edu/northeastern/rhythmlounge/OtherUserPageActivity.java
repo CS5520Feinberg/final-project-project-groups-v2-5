@@ -2,10 +2,10 @@ package edu.northeastern.rhythmlounge;
 
 import static android.content.ContentValues.TAG;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,7 +38,7 @@ import edu.northeastern.rhythmlounge.Playlists.OtherUserPlaylistAdapter;
  *      - # of followers
  *      - # of following
  *      - profile picture
- *
+ * <p>
  * Features:
  *      - Follow/Unfollow
  *
@@ -46,7 +46,6 @@ import edu.northeastern.rhythmlounge.Playlists.OtherUserPlaylistAdapter;
  */
 public class OtherUserPageActivity extends AppCompatActivity {
 
-    // Current UI elements for displaying information
     private TextView textViewUsername, textViewFollowers, textViewFollowing;
     private ImageView imageViewProfilePic;
     private Button buttonFollowUnfollow;
@@ -57,9 +56,7 @@ public class OtherUserPageActivity extends AppCompatActivity {
 
     private OtherUserPlaylistAdapter playlistAdapter;
 
-    // The current user using the application and the other user they are viewing
     private User currentUser, otherUser;
-
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private ListenerRegistration currentUserListenerRegistration;
@@ -78,11 +75,14 @@ public class OtherUserPageActivity extends AppCompatActivity {
         String currentUserId = getCurrentUserId();
         retrieveCurrentUser(currentUserId);
 
+
         // Get the other user's ID from the intent and retrieve their details
         Intent intent = getIntent();
         String otherUserId = intent.getStringExtra("USER_ID");
         Log.d("OtherUserPageActivity", "Other User ID: " + otherUserId);
+        retrieveOtherUser(otherUserId);
 
+        // If the current user is the same as the other user, navigate back to the homeactivity
         if (currentUserId.equals(otherUserId)) {
             navigateToSelfUserProfile();
             return;
@@ -91,8 +91,6 @@ public class OtherUserPageActivity extends AppCompatActivity {
         initializeViewElements(otherUserId);
 
         // Handle the follow/unfollow button click
-        retrieveCurrentUser(currentUserId);
-        retrieveOtherUser(otherUserId);
         handleFollowUnfollowButtonClick(otherUserId);
 
         // Fetch the user data from Firestore
@@ -133,6 +131,10 @@ public class OtherUserPageActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Initializes and sets up the RecyclerView for displaying another user's playlists.
+     * @param otherUserId the ID of the other user whose playlists should be displayed.
+     */
     private void initializePlaylistRecyclerView(String otherUserId) {
         otherUserPlaylistRecyclerView = findViewById(R.id.recyclerViewPlaylists);
         playlistAdapter = new OtherUserPlaylistAdapter(this, new ArrayList<>(), otherUserId);
@@ -140,6 +142,10 @@ public class OtherUserPageActivity extends AppCompatActivity {
         otherUserPlaylistRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
+    /**
+     * Initializes and sets up the RecyclerView for displaying events the other user is attending.
+     * @param otherUserId the ID of the other user whose attending events.
+     */
     private void initializeAttendingRecyclerView(String otherUserId) {
         otherUserAttendingRecyclerView = findViewById(R.id.otherAttendingRecyclerView);
         otherUserAttendingEventsAdapter = new EventsAdapter(new ArrayList<>());
@@ -148,6 +154,10 @@ public class OtherUserPageActivity extends AppCompatActivity {
         fetchUserEvents(otherUserId);
     }
 
+    /**
+     * Initializes and sets up the RecyclerView for displaying events the other user is hosting.
+     * @param otherUserId the ID of the other user whose hosting events.
+     */
     private void initializeHostingRecyclerView(String otherUserId) {
         otherUserHostingRecyclerView = findViewById(R.id.otherHostingRecyclerView);
         otherUserHostingEventsAdapter = new EventsAdapter(new ArrayList<>());
@@ -156,6 +166,10 @@ public class OtherUserPageActivity extends AppCompatActivity {
         fetchUserEvents(otherUserId);
     }
 
+    /**
+     * Fetches the user's hosting and attending event's IDs and updates the Respective RecyclerView.
+     * @param otherUserId the ID of the other user whose events need to be displayed.
+     */
     private void fetchUserEvents(String otherUserId) {
         DocumentReference userDocRef = db.collection("users").document(otherUserId);
 
@@ -168,6 +182,11 @@ public class OtherUserPageActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Fetches the specific events based on given IDs and updates the RecyclerView using the provided adapter.
+     * @param eventIds A list of event Ids that need to be fetched
+     * @param adapter the adapter used to update the RecyclerView with fetched events.
+     */
     private void fetchEventsAndUpdateRecyclerView(List<String> eventIds, EventsAdapter adapter) {
         if (eventIds == null || eventIds.isEmpty()) return;
 
@@ -189,6 +208,9 @@ public class OtherUserPageActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sets up click listeners for events in both the attending and hosting sections.
+     */
     private void setupEventClickListeners() {
         Log.d(TAG, "Setting up event click listener");
 
@@ -258,6 +280,10 @@ public class OtherUserPageActivity extends AppCompatActivity {
                 });
     }
 
+    /**
+     * Get's the user's playlist documents from firebase.
+     * @param otherUserId the user page you are viewing
+     */
     private void getOtherUserPlaylists(String otherUserId) {
         db.collection("users")
                 .document(otherUserId)
@@ -280,11 +306,12 @@ public class OtherUserPageActivity extends AppCompatActivity {
      *      - # of followers
      *      - # of following
      *      - profile picture
-     *
+     * <p>
      * Handles displaying a default profile picture if the other user has not set one,
      * and updates the follow/unfollow button based on the current user's following status.
      * @param otherUserId the userId of the other user.
      */
+    @SuppressLint("SetTextI18n")
     private void populateUIWithOtherUserDetails(String otherUserId) {
         if (!isFinishing() && otherUser != null) {  // Added isFinishing() check
 
@@ -314,7 +341,7 @@ public class OtherUserPageActivity extends AppCompatActivity {
             finish();
         }
 
-        if (!isFinishing() && currentUser != null && currentUser.getFollowing() != null) {  // Added isFinishing() check
+        if (!isFinishing() && currentUser != null && currentUser.getFollowing() != null) {
             // Update follow/unfollow button based on current user's following status
             if (currentUser.getFollowing().contains(otherUserId)) {
                 buttonFollowUnfollow.setText("Unfollow");
@@ -345,30 +372,33 @@ public class OtherUserPageActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Helps navigate to a users followers.
+     * @param otherUserId
+     */
     private void handleFollowersClick(String otherUserId) {
         Intent intent = new Intent(OtherUserPageActivity.this, FollowersActivity.class);
         intent.putExtra("USER_ID", otherUserId);
         startActivity(intent);
     }
 
+    /**
+     * Helps navigate to the users following.
+     * @param otherUserId
+     */
     private void handleFollowingClick(String otherUserId) {
         Intent intent = new Intent(OtherUserPageActivity.this, FollowingActivity.class);
         intent.putExtra("USER_ID", otherUserId);
         startActivity(intent);
     }
 
-
+    /**
+     * Navigates the current user back to their homeactivity if they stumble to their own page.
+     */
     private void navigateToSelfUserProfile() {
         Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
         finish();
-    }
-
-    public void onFollowersClicked(View view, String otherUserId) {
-
-    }
-
-    public void onFollowingClicked(View view, String otherUserId) {
     }
 
     @Override
