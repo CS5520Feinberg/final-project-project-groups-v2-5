@@ -109,6 +109,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         deleteEventButton = findViewById(R.id.deleteEventButton);
     }
 
+    /**
+     * Updates button edit button and delete button visibility
+     */
     private void updateHostButtonsVisibility() {
         if (isCurrentUserHost) {
             editEventButton.setVisibility(View.VISIBLE);
@@ -224,13 +227,9 @@ public class EventDetailsActivity extends AppCompatActivity {
         try {
             Uri page = Uri.parse(url);
             Intent intent = new Intent(Intent.ACTION_VIEW, page);
-            if (intent.resolveActivity(getPackageManager()) != null) {
-                startActivity(intent);
-            } else {
-                Toast.makeText(this, "Could not get browser to open this link", Toast.LENGTH_SHORT).show();
-            }
+            startActivity(intent);
         } catch (Exception e) {
-            Toast.makeText(this, "Invalid link", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Could not navigate", Toast.LENGTH_SHORT).show();
         }
 
     }
