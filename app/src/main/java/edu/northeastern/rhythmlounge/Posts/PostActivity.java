@@ -2,12 +2,12 @@ package edu.northeastern.rhythmlounge.Posts;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -15,11 +15,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,14 +32,16 @@ public class PostActivity extends AppCompatActivity {
     private PostAdapter postAdapter;
     RecyclerView rvPosts;
     FloatingActionButton fabCreatePost;
+    FloatingActionButton fabRefresh;
     SwipeRefreshLayout swipeRefreshLayout;
     TextView tvEmptyState;
     private Date latestTimestamp = null;
     private FirebaseFirestore db;
-    private static final int PICK_IMAGE_REQUEST = 1;
     public static final int REQUEST_CODE_DETAILED_POST_ACTIVITY = 100;  // Defining the request code
-    private Uri imageUri;
-    private final StorageReference storageRef = FirebaseStorage.getInstance().getReference("uploads");
+    private static final int PAGE_SIZE = 10; // Amount of posts loaded in a single batch
+    private DocumentSnapshot lastVisiblePost; // Keeps track of the last post we fetched
+    private boolean isLastPage = false; // Helps to know if there are no more posts to fetch
+    private boolean isLoading = false; // Helps to ensure multiple fetch requests aren't happening at the same time
 
 
     @Override
@@ -50,6 +51,7 @@ public class PostActivity extends AppCompatActivity {
 
         rvPosts = findViewById(R.id.rv_posts);
         fabCreatePost = findViewById(R.id.fab_create_post);
+        fabRefresh = findViewById(R.id.fab_refresh);
         swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
         tvEmptyState = findViewById(R.id.tv_empty_state);
 
@@ -62,72 +64,77 @@ public class PostActivity extends AppCompatActivity {
         updateEmptyStateVisibility();
 
         // Refresh the page
-        swipeRefreshLayout.setOnRefreshListener(this::fetchPosts);
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            resetPagination();
+            fetchPosts();
+        });
 
         fabCreatePost.setOnClickListener(v -> {
             Intent intent = new Intent(PostActivity.this, CreatePostActivity.class);
             startActivity(intent);
         });
 
+        fabRefresh.setOnClickListener(v -> {
+            // Reset pagination and fetch posts from the beginning
+            resetPagination();
+            fetchPosts();
+        });
+
         db = FirebaseFirestore.getInstance();
+        setupScrollListener();
         fetchPosts();
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private void fetchPosts() {
-        posts.clear(); // Clear the existing list first.
-        latestTimestamp = null; // Reset the timestamp.
-        postAdapter.notifyDataSetChanged(); // Notify the adapter about the cleared list.
+        if (!isLoading) { // Only fetch new posts if it's not currently loading
+            isLoading = true;
 
-        Query query = db.collection("posts")
-                .orderBy("timestamp", Query.Direction.DESCENDING) // Order by most recent
-                .limit(50);
+            Query query = db.collection("posts")
+                    .orderBy("timestamp", Query.Direction.DESCENDING)
+                    .limit(PAGE_SIZE);
 
-        query.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                List<Post> newPosts = new ArrayList<>();
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    Post post = document.toObject(Post.class);
-                    post.setPostId(document.getId());
-                    post.setThumbnailUrl(document.getString("thumbnailUrl"));
+            if (lastVisiblePost != null) {
+                query = query.startAfter(lastVisiblePost);
+            }
 
-                    // Check if this post is not already in the list
-                    boolean isDuplicate = false;
-                    for (Post existingPost : posts) {
-                        if (existingPost.getPostId().equals(post.getPostId())) {
-                            isDuplicate = true;
-                            break;
-                        }
-                    }
-
-                    if (!isDuplicate) {
+            query.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    List<Post> newPosts = new ArrayList<>();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Post post = document.toObject(Post.class);
+                        post.setPostId(document.getId());
                         newPosts.add(post);
                     }
 
-                    // Update the latestTimestamp
-                    Date postTimestamp = post.getTimestamp();
-                    if (latestTimestamp == null || postTimestamp.after(latestTimestamp)) {
-                        latestTimestamp = postTimestamp;
+                    // Check for last item and set the lastVisiblePost
+                    if (newPosts.size() > 0) {
+                        lastVisiblePost = task.getResult().getDocuments().get(task.getResult().size() - 1);
+                        posts.addAll(newPosts);
+                    } else {
+                        isLastPage = true;
                     }
+
+                    postAdapter.notifyDataSetChanged();
+
+                } else {
+                    Toast.makeText(PostActivity.this, "Failed to fetch posts. Please try again later.", Toast.LENGTH_SHORT).show();
                 }
-                posts.addAll(0, newPosts);  // Add the new posts to the beginning of the list
-                postAdapter.notifyDataSetChanged();
-                swipeRefreshLayout.setRefreshing(false);
 
+                swipeRefreshLayout.setRefreshing(false);
+                isLoading = false;
                 updateEmptyStateVisibility();
-
-            } else {
-                Toast.makeText(PostActivity.this, "Failed to fetch posts. Please try again later.", Toast.LENGTH_SHORT).show();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
+            });
+        }
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         // Check if the result comes from DetailedPostActivity and indicates a successful deletion
         if (requestCode == REQUEST_CODE_DETAILED_POST_ACTIVITY && resultCode == RESULT_OK) {
+            resetPagination();
             fetchPosts();
         }
     }
@@ -140,4 +147,36 @@ public class PostActivity extends AppCompatActivity {
         }
     }
 
+    private void setupScrollListener() {
+        RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                int totalItemCount = 0;
+                if (layoutManager != null) {
+                    totalItemCount = layoutManager.getItemCount();
+                }
+                int lastVisibleItem = 0;
+                if (layoutManager != null) {
+                    lastVisibleItem = layoutManager.findLastVisibleItemPosition();
+                }
+
+                if (!isLoading && !isLastPage) {
+                    if (lastVisibleItem + 1 >= totalItemCount) {
+                        // End has been reached, fetch more posts
+                        fetchPosts();
+                    }
+                }
+            }
+        };
+        rvPosts.addOnScrollListener(onScrollListener);
+    }
+
+    private void resetPagination() {
+        lastVisiblePost = null;
+        isLastPage = false;
+        isLoading = false;
+        posts.clear();
+    }
 }

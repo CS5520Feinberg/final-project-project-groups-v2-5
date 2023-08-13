@@ -107,6 +107,7 @@
     <string name="artist">Artist</string>
     <string name="rsvp">RSVP</string>
     <string name="delete">Delete</string>
+    <string name="refresh_posts">refresh posts</string>
 
     <string-array name="heatmaps_datasets_array">
         <item>@string/mycurrentlocation</item>
