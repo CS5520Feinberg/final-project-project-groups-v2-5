@@ -27,8 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import edu.northeastern.rhythmlounge.OtherUserPageActivity;
 import edu.northeastern.rhythmlounge.R;
 import edu.northeastern.rhythmlounge.User;
+import edu.northeastern.rhythmlounge.UserProfileActivity;
 
 public class DetailedPostActivity extends AppCompatActivity {
 
@@ -121,6 +123,15 @@ public class DetailedPostActivity extends AppCompatActivity {
                                 })
                                 .addOnFailureListener(e -> {
                                 });
+
+                        userProfileImageView.setOnClickListener(v -> {
+                            goToUserProfile(post.getUserId());
+                        });
+
+                        usernameTextView.setOnClickListener(v -> {
+                            goToUserProfile(post.getUserId());
+                        });
+
 
                         // Setting the initial state of the like button and like count
                         if(post.getLikedByUsers() != null && post.getLikedByUsers().contains(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())) {
@@ -256,6 +267,20 @@ public class DetailedPostActivity extends AppCompatActivity {
                     commentCountTextView.setText(String.valueOf(commentList.size()));
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, "Error fetching comments", Toast.LENGTH_SHORT).show());
+    }
+
+    private void goToUserProfile(String userId) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null && userId.equals(currentUser.getUid())) {
+            // Navigate to SelfUserPageFragment through UserProfileActivity
+            Intent intent = new Intent(DetailedPostActivity.this, UserProfileActivity.class);
+            startActivity(intent);
+        } else {
+            // Navigate to other user's page
+            Intent intent = new Intent(DetailedPostActivity.this, OtherUserPageActivity.class);
+            intent.putExtra("USER_ID", userId);
+            startActivity(intent);
+        }
     }
 
 }

@@ -197,6 +197,4 @@ public class SearchFragment extends Fragment {
             eventSuggestionRecyclerView.setVisibility(View.VISIBLE);
         });
     }
-
-
 }

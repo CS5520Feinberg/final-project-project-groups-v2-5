@@ -53,6 +53,7 @@
         <activity android:name=".Playlists.OtherUserSongListActivity"/>
         <activity android:name=".Posts.WriteCommentActivity"/>
         <activity android:name=".Posts.CreatePostActivity"/>
+        <activity android:name=".UserProfileActivity" />
 
         <meta-data
             android:name="com.google.android.gms.version"
