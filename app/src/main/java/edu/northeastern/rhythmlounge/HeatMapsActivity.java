@@ -27,7 +27,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -66,25 +65,18 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Scanner;
 
 import edu.northeastern.rhythmlounge.Events.Event;
 import edu.northeastern.rhythmlounge.Events.EventDetailsActivity;
 import edu.northeastern.rhythmlounge.Events.EventsAdapter;
+import edu.northeastern.rhythmlounge.HeatMapAdapters.HeatMapSpinnerAdapter;
+import edu.northeastern.rhythmlounge.HeatMapAdapters.HeatMapSpinnerEventAdapter;
 import edu.northeastern.rhythmlounge.HeatMapSpinnerInventory.SpinnerData;
-import edu.northeastern.rhythmlounge.HeatMapSpinnerInventory.SpinnerOptions;
-import edu.northeastern.rhythmlounge.HeatMapSpinnerInventory.SpinnerOptions_Events;
 
 /**
  * Class to implement HeatMaps using Google MAPs SDK
