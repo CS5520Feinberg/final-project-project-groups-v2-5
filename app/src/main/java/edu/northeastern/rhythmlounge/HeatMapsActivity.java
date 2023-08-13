@@ -65,6 +65,8 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
+import org.checkerframework.checker.units.qual.A;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,6 +78,7 @@ import edu.northeastern.rhythmlounge.Events.EventDetailsActivity;
 import edu.northeastern.rhythmlounge.Events.EventsAdapter;
 import edu.northeastern.rhythmlounge.HeatMapAdapters.HeatMapSpinnerAdapter;
 import edu.northeastern.rhythmlounge.HeatMapAdapters.HeatMapSpinnerEventAdapter;
+import edu.northeastern.rhythmlounge.HeatMapAdapters.HeatMapSpinnerUserAdapter;
 import edu.northeastern.rhythmlounge.HeatMapSpinnerInventory.SpinnerData;
 
 /**
@@ -100,7 +103,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     private EditText mSearchText;
     private FirebaseAuth mAuth;
     private ImageView mGps, mSearchmaps;
-    int selectedPosition;
+    int selectedPosition, selectedPosition2;
 
     private static final int ALT_HEATMAP_RADIUS = 10;
 
@@ -138,7 +141,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     private boolean mDefaultOpacity = true;
 
     private boolean mIsRestore;
-    private boolean flag_isopen, flag_isopen2,flag_isopen3  = false;
+    private boolean flag_isopen, flag_isopen2, flag_isopen3, flag_isopen4 = false;
     private CameraPosition savedCameraPosition;
     private int selectedSpinnerPosition = -1;
     /**
@@ -179,15 +182,18 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
     private Button showdetailsButton;
     private ProgressBar loadingIndicator;
-    private Spinner spinner_heatmap, spinner_events;
+    private Spinner spinner_heatmap, spinner_events, spinner_users;
 
     private HeatMapSpinnerAdapter mAdapter;
     private HeatMapSpinnerEventAdapter mAdapter_Events;
+
+    private HeatMapSpinnerUserAdapter mAdapter_Users;
     private MapViewModel mapViewModel;
     private List<DocumentSnapshot> spinnerOptions_Events = new ArrayList<>();
-    private boolean isAutomatiallySelected = true;
+    private List<DocumentSnapshot> spinnerOptions_Users = new ArrayList<>();
+    private boolean isAutomatiallySelected, isAutomatiallySelectedUsers = true;
     private boolean onRestartFlag = false;
-    private boolean atAllEvents = false;
+    private boolean atAllEvents, atMyFollowers, atMyLocation = false;
 
     //-------------------------------------------- Map Initialization -----------------------------------------------------
 
@@ -226,6 +232,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
         super.onCreate(savedInstanceState);
         mIsRestore = savedInstanceState != null;
+        atMyLocation = true;
 
         setContentView(R.layout.activity_heat_maps);
         loadingIndicator = findViewById(R.id.loadingIndicator);
@@ -266,6 +273,10 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         mAdapter_Events = new HeatMapSpinnerEventAdapter(HeatMapsActivity.this, spinnerOptions_Events);
         spinner_events.setAdapter(mAdapter_Events);
 
+        spinner_users = findViewById(R.id.customspinner_users);
+        mAdapter_Users = new HeatMapSpinnerUserAdapter(HeatMapsActivity.this, spinnerOptions_Users);
+        spinner_users.setAdapter(mAdapter_Users);
+
 
         showdetailsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -287,8 +298,9 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         mSearchmaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!atAllEvents) {
+                if (atMyLocation) {
                     spinner_events.setVisibility(View.GONE);
+                    spinner_users.setVisibility(View.GONE);
                     if (!flag_isopen2) {
                         searchbarMap.setVisibility(View.VISIBLE);
                         flag_isopen2 = true;
@@ -297,7 +309,21 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                         flag_isopen2 = false;
                     }
 
-                } else {
+                } else if (atMyFollowers) {
+                    spinner_events.setVisibility(View.GONE);
+                    searchbarMap.setVisibility(View.GONE);
+                    if (!flag_isopen4) {
+                        spinner_users.setVisibility(View.VISIBLE);
+                        flag_isopen4 = true;
+                    } else {
+                        spinner_users.setVisibility(View.GONE);
+                        flag_isopen4 = false;
+                    }
+
+                }
+                // All EVENTS
+                else {
+                    spinner_users.setVisibility(View.GONE);
                     searchbarMap.setVisibility(View.GONE);
                     if (!flag_isopen3) {
                         spinner_events.setVisibility(View.VISIBLE);
@@ -306,8 +332,6 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                         spinner_events.setVisibility(View.GONE);
                         flag_isopen3 = false;
                     }
-
-
                 }
             }
         });
@@ -361,8 +385,11 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
             public void onClick(View v) {
                 Log.d(TAG, "onClick: Clicked GPS ICON");
                 atAllEvents = false;
+                atMyFollowers = false;
+                atMyLocation = true;
                 showdetailsButton.setVisibility(View.GONE);
                 spinner_events.setVisibility(View.GONE);
+                spinner_users.setVisibility(View.GONE);
                 getDeviceLocation();
 
             }
@@ -590,6 +617,8 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                         // ------------------------------------ SHOW FRIENDS/FOLLOWERS -------------------------------------------------
                         if (parent.getItemAtPosition(position).toString().equals("2")) {
                             atAllEvents = false;
+                            atMyFollowers = true;
+                            atMyLocation = false;
                             showdetailsButton.setVisibility(View.GONE);
                             searchbarMap.setVisibility(View.GONE);
                             spinner_events.setVisibility(View.GONE);
@@ -597,8 +626,6 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                                 mClusterManager2.clearItems();
                                 mClusterManager2.cluster();
                             }
-
-
 
 
                             Toast.makeText(parent.getContext(), text + "HI FRIENDS", Toast.LENGTH_SHORT).show();
@@ -617,8 +644,11 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
                         else if (parent.getItemAtPosition(position).toString().equals("1")) {
                             atAllEvents = true;
+                            atMyFollowers = false;
+                            atMyLocation = false;
                             showdetailsButton.setVisibility(View.VISIBLE);
                             searchbarMap.setVisibility(View.GONE);
+                            spinner_users.setVisibility(View.GONE);
 
                             if (!mClusterMarkers.isEmpty()) {
                                 mClusterManager.clearItems();
@@ -646,9 +676,20 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                         // ------------------------------------ SHOW MY LOCATION ----------------------------------------------------------
 
                         else {
+                            atMyLocation = true;
                             atAllEvents = false;
-                            showdetailsButton.setVisibility(View.GONE);
+                            atMyFollowers = false;
+                            showdetailsButton.setVisibility(View.VISIBLE);
                             spinner_events.setVisibility(View.GONE);
+                            spinner_users.setVisibility(View.GONE);
+
+                            if (!flag_isopen2) {
+                                searchbarMap.setVisibility(View.VISIBLE);
+                                flag_isopen2 = true;
+                            } else {
+                                searchbarMap.setVisibility(View.GONE);
+                                flag_isopen2 = false;
+                            }
 
                             mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
                             mOverlay.setVisible(true);
@@ -676,6 +717,9 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
         mAdapter_Events = new HeatMapSpinnerEventAdapter(HeatMapsActivity.this, spinnerOptions_Events);
         spinner_events.setAdapter(mAdapter_Events);
+
+        mAdapter_Users = new HeatMapSpinnerUserAdapter(HeatMapsActivity.this, spinnerOptions_Users);
+        spinner_users.setAdapter(mAdapter_Users);
 
 
         spinner_events.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -715,12 +759,40 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                 isAutomatiallySelected = false;
             }
 
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
 
+
+        spinner_users.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                if (!isAutomatiallySelectedUsers) {
+                    DocumentSnapshot selectedSnapshot = (DocumentSnapshot) parent.getItemAtPosition(position);
+
+                    selectedPosition2 = position;
+
+                    // Extract data from the DocumentSnapshot
+                    String user_id = selectedSnapshot.getId();
+
+
+                    Intent intent = new Intent(HeatMapsActivity.this, OtherUserPageActivity.class);
+                    intent.putExtra("USER_ID", user_id);
+                    startActivity(intent);
+                }
+                isAutomatiallySelectedUsers = false;
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     public void changeRadius(View view) {
@@ -936,6 +1008,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void getFollowingUserList() {
+        spinnerOptions_Users.clear();
 
         String currentUserId = getIntent().getStringExtra("USER_ID");
         Task<DocumentSnapshot> usersRef = mDb
@@ -951,7 +1024,28 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                     // For each follower, fetch their user location
                     for (String followerId : followerIds) {
                         getUserLocation(followerId);
+
+                        mDb.collection("users").document(followerId).get()
+                                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            DocumentSnapshot documentSnapshot = task.getResult();
+                                            if (documentSnapshot.exists()) {
+                                                spinnerOptions_Users.add(documentSnapshot);
+                                            } else {
+                                                // Document snapshot of the user doesn't exist
+                                            }
+                                        } else {
+                                            // An error occurred while fetching the document snapshot
+                                        }
+                                    }
+                                });
+
                     }
+                    Log.d(TAG, "getFollowingUserList: ADAPTER VALUES USERS" + spinnerOptions_Users);
+
+
                 })
                 .addOnFailureListener(e -> {
                     Log.w("FollowersActivity", "There was a problem getting the following list", e);
