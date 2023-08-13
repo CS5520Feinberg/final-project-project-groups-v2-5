@@ -117,7 +117,7 @@ public class ReAuthActivity extends AppCompatActivity {
                     // Get list of events the user is hosting.
                     List<String> hosting = (List<String>) userData.get("hosting");
 
-                    // for each event the user is hosting, we need to move it to "deleted_events"
+                    // for each event the user is hosting, we need to move it to "deleted_events" and handle references to the users created events.
                     if (hosting != null) {
                         for (String eventID : hosting) {
                             DocumentReference eventDoc = eventsRef.document(eventID);
@@ -125,10 +125,21 @@ public class ReAuthActivity extends AppCompatActivity {
                             DocumentSnapshot eventSnapshot = transaction.get(eventDoc);
 
                             if (eventSnapshot.exists()) {
+                                // Basically, move the event data to deleted_events to retain the data.
                                 Map<String, Object> eventData = Objects.requireNonNull(eventSnapshot.getData());
                                 eventData.put("deleted_at", FieldValue.serverTimestamp());
                                 transaction.set(deletedEventDoc, eventData);
                                 transaction.delete(eventDoc);
+
+                                // Need to get the rsvps field from the event and remove the event id from all the users that rsvpd
+                                // for the deleted users deleted events.
+                                List<String> rsvps = (List<String>) eventData.get("rsvps");
+                                if (rsvps != null && !rsvps.isEmpty()) {
+                                    for (String userId : rsvps) {
+                                        DocumentReference userRef = db.collection("users").document(userId);
+                                        transaction.update(userRef, "rsvpd", FieldValue.arrayRemove(eventID));
+                                    }
+                                }
                             }
                         }
                     }
