@@ -37,7 +37,6 @@ public class PostActivity extends AppCompatActivity {
     TextView tvEmptyState;
     private Date latestTimestamp = null;
     private FirebaseFirestore db;
-
     private static final int PICK_IMAGE_REQUEST = 1;
     public static final int REQUEST_CODE_DETAILED_POST_ACTIVITY = 100;  // Defining the request code
     private Uri imageUri;
@@ -60,11 +59,8 @@ public class PostActivity extends AppCompatActivity {
         rvPosts.setLayoutManager(new LinearLayoutManager(this));
         rvPosts.setAdapter(postAdapter);
 
-        if (posts.isEmpty()) {
-            tvEmptyState.setVisibility(View.VISIBLE);
-        } else {
-            tvEmptyState.setVisibility(View.GONE);
-        }
+        updateEmptyStateVisibility();
+
         // Refresh the page
         swipeRefreshLayout.setOnRefreshListener(this::fetchPosts);
 
@@ -116,17 +112,13 @@ public class PostActivity extends AppCompatActivity {
                 }
                 posts.addAll(0, newPosts);  // Add the new posts to the beginning of the list
                 postAdapter.notifyDataSetChanged();
-
-                if (posts.isEmpty()) {
-                    tvEmptyState.setVisibility(View.VISIBLE);
-                } else {
-                    tvEmptyState.setVisibility(View.GONE);
-                }
-
                 swipeRefreshLayout.setRefreshing(false);
 
+                updateEmptyStateVisibility();
+
             } else {
-                Toast.makeText(PostActivity.this, "Error fetching posts.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(PostActivity.this, "Failed to fetch posts. Please try again later.", Toast.LENGTH_SHORT).show();
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
@@ -139,4 +131,13 @@ public class PostActivity extends AppCompatActivity {
             fetchPosts();
         }
     }
+
+    private void updateEmptyStateVisibility() {
+        if (posts.isEmpty()) {
+            tvEmptyState.setVisibility(View.VISIBLE);
+        } else {
+            tvEmptyState.setVisibility(View.GONE);
+        }
+    }
+
 }

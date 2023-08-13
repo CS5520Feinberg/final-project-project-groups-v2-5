@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -86,6 +87,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 })
                 .addOnFailureListener(e -> {
                     Log.e("FirebaseError", "Error fetching user profile picture", e);
+                    Toast.makeText(context, "Error displaying some user images.", Toast.LENGTH_SHORT).show();
                     holder.userProfilePicImageView.setImageResource(R.drawable.avatar); // Set default image on failure
                 });
     }
