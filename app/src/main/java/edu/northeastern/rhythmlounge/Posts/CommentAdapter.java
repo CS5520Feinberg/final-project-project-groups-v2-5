@@ -104,7 +104,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
                         Log.d("CommentAdapter", "CommentID: " + comment.getCommentId() + ", PostID: " + comment.getPostId());
                     })
                     .addOnFailureListener(e -> Log.e("CommentAdapter", "Error fetching user details: " + e.getMessage()));
-            }
+        }
     }
 
     @Override
@@ -255,16 +255,16 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.CommentV
         DocumentReference postRef = db.collection("posts").document(postId);
 
         db.runTransaction((Transaction.Function<Void>) transaction -> {
-            DocumentSnapshot snapshot = transaction.get(postRef);
+                    DocumentSnapshot snapshot = transaction.get(postRef);
 
-            // Get the current comment count
+                    // Get the current comment count
                     Long count = snapshot.getLong("commentCount");
                     long currentCount = (count != null) ? count : 0;
                     if (currentCount > 0) {
-                transaction.update(postRef, "commentCount", currentCount - 1);
-            }
-            return null;
-        })
+                        transaction.update(postRef, "commentCount", currentCount - 1);
+                    }
+                    return null;
+                })
                 .addOnSuccessListener(aVoid -> Log.d("CommentAdapter", "Comment count decremented!"))
                 .addOnFailureListener(e -> Log.e("CommentAdapter", "Error decrementing comment count", e));
     }

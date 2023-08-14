@@ -123,13 +123,9 @@ public class DetailedPostActivity extends AppCompatActivity {
                                 .addOnFailureListener(e -> {
                                 });
 
-                        userProfileImageView.setOnClickListener(v -> {
-                            goToUserProfile(post.getUserId());
-                        });
+                        userProfileImageView.setOnClickListener(v -> goToUserProfile(post.getUserId()));
 
-                        usernameTextView.setOnClickListener(v -> {
-                            goToUserProfile(post.getUserId());
-                        });
+                        usernameTextView.setOnClickListener(v -> goToUserProfile(post.getUserId()));
 
 
                         // Setting the initial state of the like button and like count
