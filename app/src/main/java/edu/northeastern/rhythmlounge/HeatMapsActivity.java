@@ -481,6 +481,14 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void getDeviceLocation() {
+        if (!mClusterMarkers2.isEmpty()) {
+            mClusterManager2.clearItems();
+            mClusterManager2.cluster();
+        }
+        if (!mClusterMarkers.isEmpty()) {
+            mClusterManager.clearItems();
+            mClusterManager.cluster();
+        }
         ArrayList<LatLng> currentLatLon = new ArrayList<>();
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         try {
@@ -530,8 +538,15 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
         }
         spinner_heatmap = findViewById(R.id.customspinner);
-        mAdapter = new HeatMapSpinnerAdapter(HeatMapsActivity.this, SpinnerData.getSpinnerOptions());
-        spinner_heatmap.setAdapter(mAdapter);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mAdapter = new HeatMapSpinnerAdapter(HeatMapsActivity.this, SpinnerData.getSpinnerOptions());
+                spinner_heatmap.setAdapter(mAdapter);
+            }
+        });
+
+
     }
 
     public void changeRadius(View view) {
@@ -999,13 +1014,9 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                     UserLocation userLocation = task.getResult().toObject(UserLocation.class);
                     // Process the user location or add it to your userArrayList
                     userArrayList.add(userLocation);
-
                     // You can access user's GeoPoint using userLocation.getGeoPoint()
                     GeoPoint geoPoint = userLocation.getGeoPoint();
-
                     geoPoints.add(geoPoint);
-                    double latitude = geoPoint.getLatitude();
-                    double longitude = geoPoint.getLongitude();
                 }
             }
         });
