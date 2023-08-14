@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
@@ -73,9 +74,20 @@ public class UserListItemAdapter extends RecyclerView.Adapter<UserListItemAdapte
         holder.itemView.setOnClickListener(v -> {
             int pos = holder.getAdapterPosition();
             if (pos != RecyclerView.NO_POSITION) {
-                Intent intent = new Intent(context, OtherUserPageActivity.class);
-                intent.putExtra("USER_ID", userIds.get(pos));
-                context.startActivity(intent);
+                FirebaseAuth mAuth = FirebaseAuth.getInstance();
+                String currentUserId = mAuth.getCurrentUser().getUid();
+                String selectedUserId = userIds.get(pos);
+
+                // If the current user is the selected user navigate back home
+                if (currentUserId.equals(selectedUserId)) {
+                    Intent intent = new Intent(context, HomeActivity.class);
+                    context.startActivity(intent);
+                } else {
+                    // Otherwise navigate to the user page of the selected individual
+                    Intent intent = new Intent(context, OtherUserPageActivity.class);
+                    intent.putExtra("USER_ID", selectedUserId);
+                    context.startActivity(intent);
+                }
             }
         });
     }
