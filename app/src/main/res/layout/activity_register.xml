@@ -26,7 +26,7 @@
 
         <EditText
             android:id="@+id/editTextRegisterEmail"
-            android:layout_width="0dp"
+            android:layout_width="256dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:fontFamily="@font/manrope_light"
@@ -41,7 +41,7 @@
 
         <EditText
             android:id="@+id/editTextRegisterPassword"
-            android:layout_width="0dp"
+            android:layout_width="256dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:autofillHints=""
@@ -56,7 +56,7 @@
 
         <EditText
             android:id="@+id/editTextRegisterUsername"
-            android:layout_width="0dp"
+            android:layout_width="256dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:fontFamily="@font/manrope_light"
@@ -71,7 +71,7 @@
 
         <Button
             android:id="@+id/buttonRegister"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="36dp"
             android:fontFamily="@font/manrope_bold"
@@ -84,7 +84,7 @@
 
         <Button
             android:id="@+id/buttonGoToLogin"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:fontFamily="@font/manrope_bold"
