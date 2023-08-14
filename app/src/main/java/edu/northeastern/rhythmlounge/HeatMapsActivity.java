@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -34,8 +35,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -65,8 +64,6 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.heatmaps.Gradient;
 import com.google.maps.android.heatmaps.HeatmapTileProvider;
 
-import org.checkerframework.checker.units.qual.A;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -86,7 +83,7 @@ import edu.northeastern.rhythmlounge.HeatMapSpinnerInventory.SpinnerData;
  * The first part of the code is to initialise the map and get current devices' location
  * The second part of the code is to overlay HeatMap tile
  */
-public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCallback, AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "Activity____HeatMaps";
     private static final String FINE_LOCATION = android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -94,7 +91,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     private static final int ERROR_DIALOGUE_REQ = 9001;
     private static final int LOCATION_PERMISSION_REQ_CODE = 1234;
     private static final int PERMISSIONS_REQUEST_ENABLE_GPS = 9002;
-    private static final float DEFAULT_ZOOM = 10;
+    private static final float DEFAULT_ZOOM = 15;
     private Boolean mLocationPermissionGranted = false;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -103,14 +100,13 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     private EditText mSearchText;
     private FirebaseAuth mAuth;
     private ImageView mGps, mSearchmaps;
-    int selectedPosition, selectedPosition2;
-
+    private boolean isSpinnerTouched_events, isSpinnerTouched_users = false;
     private static final int ALT_HEATMAP_RADIUS = 10;
 
     /**
      * Alternative opacity of heatmap overlay
      */
-    private static final double ALT_HEATMAP_OPACITY = 0.4;
+    private static final double ALT_HEATMAP_OPACITY = 0.7;
 
     /**
      * Alternative heatmap gradient (blue -> red)
@@ -143,13 +139,8 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     private boolean mIsRestore;
     private boolean flag_isopen, flag_isopen2, flag_isopen3, flag_isopen4 = false;
     private CameraPosition savedCameraPosition;
-    private int selectedSpinnerPosition = -1;
-    /**
-     * Maps name of data set to data (list of LatLngs)
-     * Also maps to the URL of the data set for attribution
-     */
-    private final HashMap<String, HeatMapsActivity.DataSet> mLists = new HashMap<>();
 
+    private final HashMap<String, HeatMapsActivity.DataSet> mLists = new HashMap<>();
     private FirebaseFirestore mDb;
     private UserLocation mUserLocation;
     private SupportMapFragment supportMapFragment;
@@ -202,8 +193,13 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         Log.d(TAG, "onMapReady: Am i Here?");
         mMap = googleMap;
         if (savedCameraPosition != null) {
-            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(savedCameraPosition));
-        }
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mMap.moveCamera(CameraUpdateFactory.newCameraPosition(savedCameraPosition));
+                }
+            });
+            }
         //Toast.makeText(HeatMapsActivity.this, "Map is ready", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onMapReady: Map is ready");
 
@@ -224,7 +220,6 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
             isMapReady = true;
             loadingIndicator.setVisibility(View.GONE);
         }
-
     }
 
     @Override
@@ -263,19 +258,6 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         showdetailsButton.setVisibility(View.VISIBLE);
         myEventsList = new ArrayList<>();
         myEventsAdapter = new EventsAdapter(myEventsList);
-
-        if (savedInstanceState != null) {
-            selectedPosition = savedInstanceState.getInt("selectedPosition", 0);
-            //spinner_events.setSelection(selectedPosition);
-        }
-
-        spinner_events = findViewById(R.id.customspinner_events);
-        mAdapter_Events = new HeatMapSpinnerEventAdapter(HeatMapsActivity.this, spinnerOptions_Events);
-        spinner_events.setAdapter(mAdapter_Events);
-
-        spinner_users = findViewById(R.id.customspinner_users);
-        mAdapter_Users = new HeatMapSpinnerUserAdapter(HeatMapsActivity.this, spinnerOptions_Users);
-        spinner_users.setAdapter(mAdapter_Users);
 
 
         showdetailsButton.setOnClickListener(new View.OnClickListener() {
@@ -322,7 +304,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
                 }
                 // All EVENTS
-                else {
+                else if (atAllEvents) {
                     spinner_users.setVisibility(View.GONE);
                     searchbarMap.setVisibility(View.GONE);
                     if (!flag_isopen3) {
@@ -342,8 +324,14 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
             savedCameraPosition = savedInstanceState.getParcelable("camera_position");
         }
 
-        initMap();
-        init();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                initMap();
+                init();
+            }
+        });
+
 
 
         if (supportMapFragment == null) {
@@ -352,10 +340,45 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                     .replace(R.id.heatmap3, supportMapFragment)
                     .commit();
         }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                getDeviceLocation();
+                getFollowingUserList();
+                getEventsWLocation();
+            }
+        });
 
-        getDeviceLocation();
-        getFollowingUserList();
-        getEventsWLocation();
+
+        spinner_events = findViewById(R.id.customspinner_events);
+        mAdapter_Events = new HeatMapSpinnerEventAdapter(HeatMapsActivity.this, spinnerOptions_Events);
+        spinner_events.setAdapter(mAdapter_Events);
+
+        spinner_events.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                isSpinnerTouched_events = true;
+                return false;
+            }
+        });
+
+        spinner_users = findViewById(R.id.customspinner_users);
+        mAdapter_Users = new HeatMapSpinnerUserAdapter(HeatMapsActivity.this, spinnerOptions_Users);
+        spinner_users.setAdapter(mAdapter_Users);
+
+        spinner_users.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                Log.d(TAG, "onTouch: I'm TOUCHED SPINNER");
+                isSpinnerTouched_users = true;
+                return false;
+            }
+        });
+
+
+        spinner_users.setOnItemSelectedListener(this);
+        spinner_events.setOnItemSelectedListener(this);
+        spinner_heatmap.setOnItemSelectedListener(this);
     }
 
     /**
@@ -367,17 +390,26 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         isMapReady = true;
         Log.d(TAG, "init: Initializing Widgets");
         mSearchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                Log.d(TAG, "onEditorAction: "+event.getAction()+event.getKeyCode());
                 if (actionId == EditorInfo.IME_ACTION_SEARCH
                         || actionId == EditorInfo.IME_ACTION_DONE
                         || event.getAction() == KeyEvent.ACTION_DOWN
-                        || event.getAction() == KeyEvent.KEYCODE_ENTER) {
+                        || event.getAction() == KeyEvent.KEYCODE_ENTER
+                        || event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                    Log.d(TAG, "onEditorAction: "+event.getAction()+event.getKeyCode());
                     //Execute method for searching
                     geoLocate();
+                    Log.d(TAG, "onEditorAction: "+event.getAction()+event.getKeyCode());
+                    return true;
+
                 }
+                Log.d(TAG, "onEditorAction: "+event.getAction()+event.getKeyCode());
                 return false;
             }
+
         });
 
         mGps.setOnClickListener(new View.OnClickListener() {
@@ -415,9 +447,13 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         if (list.size() > 0) {
             Address address = list.get(0);
             Log.d(TAG, "geoLocate: Found a location:" + address.toString());
-
-            moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), DEFAULT_ZOOM, address.getAddressLine(0));
-        }
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    moveCamera(new LatLng(address.getLatitude(), address.getLongitude()), 10, address.getAddressLine(0));
+                }
+            });
+            }
     }
 
     private GeoPoint geoLocator(String addressInput) {
@@ -454,10 +490,16 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
             public void onMapReady(@NonNull GoogleMap googleMap) {
                 loadingIndicator.setVisibility(View.VISIBLE);
                 mMap = googleMap;
-                CameraPosition cameraPosition = mapViewModel.getCameraPosition();
-                if (cameraPosition != null) {
-                    mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        CameraPosition cameraPosition = mapViewModel.getCameraPosition();
+                        if (cameraPosition != null) {
+                            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        }
+                    }
+                });
+
 
                 //Toast.makeText(HeatMapsActivity.this, "Map is ready", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "onMapReady: Map is ready");
@@ -504,10 +546,16 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     private void moveCamera(LatLng latLng, float zoom, String title) {
         Log.d(TAG, "moveCamera: Moving the camera to: Lat:" + latLng.latitude + "Lon: " + latLng.longitude);
         loadingIndicator.setVisibility(View.VISIBLE);
-        if (mMap != null) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
-            loadingIndicator.setVisibility(View.GONE);
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mMap != null) {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+                    loadingIndicator.setVisibility(View.GONE);
+                }
+            }
+        });
+
         Log.d(TAG, "moveCamera: Am I the probelm?");
 
         MarkerOptions options = new MarkerOptions()
@@ -528,7 +576,12 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                         Log.d(TAG, "onComplete: Found Location");
                         Location currentLocation = task.getResult();
                         currentLatLon.add(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
-                        moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, "My Location");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()), DEFAULT_ZOOM, "My Location");
+                            }
+                        });
                         Log.d(TAG, "getDeviceLocation: Do i COme here again?");
                     } else {
                         Log.d(TAG, "onComplete: Unable to get Current Location");
@@ -579,221 +632,6 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         spinner_heatmap = findViewById(R.id.customspinner);
         mAdapter = new HeatMapSpinnerAdapter(HeatMapsActivity.this, SpinnerData.getSpinnerOptions());
         spinner_heatmap.setAdapter(mAdapter);
-        spinner_heatmap.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String text = parent.getItemAtPosition(position).toString();
-                Log.d(TAG, "HI1 onItemSelected: " + text);
-
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                int width = getResources().getDisplayMetrics().widthPixels;
-                int height = getResources().getDisplayMetrics().heightPixels;
-                int padding = (int) (width * 0.15);
-
-                List<LatLng> dataPoints = new ArrayList<>();
-                dataPoints.add(new LatLng(37.7749, -122.4194));
-
-
-                for (GeoPoint geoPoint : geoPoints) {
-                    double latitude = geoPoint.getLatitude();
-                    double longitude = geoPoint.getLongitude();
-                    LatLng latLng = new LatLng(latitude, longitude);
-                    dataPoints.add(latLng);
-                }
-
-                event_dataPoints.add(new LatLng(37.7749, -122.4194));
-
-                Log.d(TAG, "onItemSelected: Im here with datapoints+" + event_dataPoints);
-
-                if (mMap != null) {
-                    if (mProvider == null) {
-                        mProvider = new HeatmapTileProvider.Builder().data(event_dataPoints).build();
-                        mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
-                    } else {
-                        if (mOverlay.isVisible()) {
-                            mOverlay.clearTileCache();
-                            mOverlay.setVisible(false);
-                        }
-
-                        // ------------------------------------ SHOW FRIENDS/FOLLOWERS -------------------------------------------------
-                        if (parent.getItemAtPosition(position).toString().equals("2")) {
-                            atAllEvents = false;
-                            atMyFollowers = true;
-                            atMyLocation = false;
-                            showdetailsButton.setVisibility(View.GONE);
-                            searchbarMap.setVisibility(View.GONE);
-                            spinner_events.setVisibility(View.GONE);
-                            if (!mClusterMarkers2.isEmpty()) {
-                                mClusterManager2.clearItems();
-                                mClusterManager2.cluster();
-                            }
-
-
-                            //Toast.makeText(parent.getContext(), text + "HI FRIENDS", Toast.LENGTH_SHORT).show();
-                            for (int i = 0; i < dataPoints.size(); i++) {
-                                builder.include(dataPoints.get(i));
-                                LatLngBounds bounds = builder.build();
-                                // to animate camera with some padding and bound -cover- all markers
-                                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
-                                mMap.animateCamera(cu);
-                            }
-                            getFollowingUserList();
-                            addMapMarkers();
-                        }
-
-                        // ------------------------------------ SHOW ALL EVENTS ----------------------------------------------------------
-
-                        else if (parent.getItemAtPosition(position).toString().equals("1")) {
-                            atAllEvents = true;
-                            atMyFollowers = false;
-                            atMyLocation = false;
-                            showdetailsButton.setVisibility(View.VISIBLE);
-                            searchbarMap.setVisibility(View.GONE);
-                            spinner_users.setVisibility(View.GONE);
-
-                            if (!mClusterMarkers.isEmpty()) {
-                                mClusterManager.clearItems();
-                                mClusterManager.cluster();
-                            }
-                            getEventsWLocation();
-                            mProvider.setData(event_dataPoints);
-                            for (int i = 0; i < event_dataPoints.size(); i++) {
-
-                                builder.include(event_dataPoints.get(i));
-                                LatLngBounds bounds = builder.build();
-                                // to animate camera with some padding and bound -cover- all markers
-                                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
-                                mMap.animateCamera(cu);
-                            }
-                            mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
-                            mOverlay.setVisible(true);
-                            mOverlay.clearTileCache();
-
-                            //Toast.makeText(parent.getContext(), text + "HI EVENTS", Toast.LENGTH_SHORT).show();
-                            Log.d(TAG, "onItemSelected:USERARRAYLOIST " + userArrayList);
-                            Log.d(TAG, "onItemSelected:GEOPOINTS " + geoPoints);
-                        }
-
-                        // ------------------------------------ SHOW MY LOCATION ----------------------------------------------------------
-
-                        else {
-                            atMyLocation = true;
-                            atAllEvents = false;
-                            atMyFollowers = false;
-                            showdetailsButton.setVisibility(View.VISIBLE);
-                            spinner_events.setVisibility(View.GONE);
-                            spinner_users.setVisibility(View.GONE);
-
-                            if (!flag_isopen2) {
-                                searchbarMap.setVisibility(View.VISIBLE);
-                                flag_isopen2 = true;
-                            } else {
-                                searchbarMap.setVisibility(View.GONE);
-                                flag_isopen2 = false;
-                            }
-
-                            mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
-                            mOverlay.setVisible(true);
-                            mOverlay.clearTileCache();
-
-                            if (!mClusterMarkers.isEmpty()) {
-                                mClusterManager.clearItems();
-                                mClusterManager.cluster();
-                            }
-                            //Toast.makeText(parent.getContext(), text + "MY LOCATION", Toast.LENGTH_SHORT).show();
-                            getDeviceLocation();
-                        }
-
-                    }
-                }
-            }
-
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-
-        mAdapter_Events = new HeatMapSpinnerEventAdapter(HeatMapsActivity.this, spinnerOptions_Events);
-        spinner_events.setAdapter(mAdapter_Events);
-
-        mAdapter_Users = new HeatMapSpinnerUserAdapter(HeatMapsActivity.this, spinnerOptions_Users);
-        spinner_users.setAdapter(mAdapter_Users);
-
-
-        spinner_events.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                if (!isAutomatiallySelected) {
-                    DocumentSnapshot selectedSnapshot = (DocumentSnapshot) parent.getItemAtPosition(position);
-
-                    selectedPosition = position;
-
-                    // Extract data from the DocumentSnapshot
-                    String s_eventId = selectedSnapshot.getId();
-                    String s_eventName = selectedSnapshot.getString("eventName");
-                    String s_location = selectedSnapshot.getString("location");
-                    String s_venue = selectedSnapshot.getString("venue");
-                    String s_description = selectedSnapshot.getString("description");
-                    String s_outside_link = selectedSnapshot.getString("outside_link");
-                    String s_date = selectedSnapshot.getString("date");
-                    String s_time = selectedSnapshot.getString("time");
-                    String s_imageURL = selectedSnapshot.getString("imageURL");
-
-
-                    Intent intent = new Intent(HeatMapsActivity.this, EventDetailsActivity.class);
-                    intent.putExtra("eventId", s_eventId); // Pass eventId to the next activity if needed
-                    intent.putExtra("event_name", s_eventName);
-                    intent.putExtra("location", s_location);
-                    intent.putExtra("venue", s_venue);
-                    intent.putExtra("description", s_description);
-                    intent.putExtra("outside_link", s_outside_link);
-                    intent.putExtra("date", s_date);
-                    intent.putExtra("time", s_time);
-                    intent.putExtra("imageURL", s_imageURL);
-                    Log.d("EventsFragment", "Passing eventId: " + s_eventId);
-                    startActivity(intent);
-                }
-                isAutomatiallySelected = false;
-            }
-
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-
-        spinner_users.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                if (!isAutomatiallySelectedUsers) {
-                    DocumentSnapshot selectedSnapshot = (DocumentSnapshot) parent.getItemAtPosition(position);
-
-                    selectedPosition2 = position;
-
-                    // Extract data from the DocumentSnapshot
-                    String user_id = selectedSnapshot.getId();
-
-
-                    Intent intent = new Intent(HeatMapsActivity.this, OtherUserPageActivity.class);
-                    intent.putExtra("USER_ID", user_id);
-                    startActivity(intent);
-                }
-                isAutomatiallySelectedUsers = false;
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
     public void changeRadius(View view) {
@@ -826,6 +664,222 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         mDefaultOpacity = !mDefaultOpacity;
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        if (parent.getId() == findViewById(R.id.customspinner).getId()) {
+            handleHeatmapSpinnerItemSelected(parent, position);
+        } else if (parent.getId() == findViewById(R.id.customspinner_events).getId() && isSpinnerTouched_events) {
+            handleEventsSpinnerItemSelected(parent, position);
+        } else if (parent.getId() == findViewById(R.id.customspinner_users).getId() && isSpinnerTouched_users) {
+            //Toast.makeText(this,"Hi, I'm here at 12:53 AM" + isSpinnerTouched_users, Toast.LENGTH_SHORT);
+            //Toast.makeText(this,"Hi, Am I called at 12:53 AM" + isSpinnerTouched_users, Toast.LENGTH_SHORT);
+            handleUsersSpinnerItemSelected(parent, position);
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    private void handleHeatmapSpinnerItemSelected(AdapterView<?> parent, int position) {
+        String text = parent.getItemAtPosition(position).toString();
+        Log.d(TAG, "HI1 onItemSelected: " + text);
+
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        int width = getResources().getDisplayMetrics().widthPixels;
+        int height = getResources().getDisplayMetrics().heightPixels;
+        int padding = (int) (width * 0.15);
+
+        List<LatLng> dataPoints = new ArrayList<>();
+        dataPoints.add(new LatLng(37.7749, -122.4194));
+
+
+        for (GeoPoint geoPoint : geoPoints) {
+            double latitude = geoPoint.getLatitude();
+            double longitude = geoPoint.getLongitude();
+            LatLng latLng = new LatLng(latitude, longitude);
+            dataPoints.add(latLng);
+        }
+
+        event_dataPoints.add(new LatLng(37.7749, -122.4194));
+
+        Log.d(TAG, "onItemSelected: Im here with datapoints+" + event_dataPoints);
+
+        if (mMap != null) {
+            if (mProvider == null) {
+                mProvider = new HeatmapTileProvider.Builder().data(event_dataPoints).build();
+                mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+            } else {
+                if (mOverlay.isVisible()) {
+                    mOverlay.clearTileCache();
+                    mOverlay.setVisible(false);
+                }
+
+                // ------------------------------------ SHOW FRIENDS/FOLLOWERS -------------------------------------------------
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {if (parent.getItemAtPosition(position).toString().equals("2")) {
+                        atAllEvents = false;
+                        atMyFollowers = true;
+                        atMyLocation = false;
+                        showdetailsButton.setVisibility(View.GONE);
+                        searchbarMap.setVisibility(View.GONE);
+                        spinner_events.setVisibility(View.GONE);
+                        if (!mClusterMarkers2.isEmpty()) {
+                            mClusterManager2.clearItems();
+                            mClusterManager2.cluster();
+                        }
+
+
+                        //Toast.makeText(parent.getContext(), text + "HI FRIENDS", Toast.LENGTH_SHORT).show();
+                        for (int i = 0; i < dataPoints.size(); i++) {
+                            builder.include(dataPoints.get(i));
+                            LatLngBounds bounds = builder.build();
+                            // to animate camera with some padding and bound -cover- all markers
+                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+                            mMap.animateCamera(cu);
+                        }
+                        getFollowingUserList();
+                        addMapMarkers();
+                    }
+
+                // ------------------------------------ SHOW ALL EVENTS ----------------------------------------------------------
+
+                else if (parent.getItemAtPosition(position).toString().equals("1")) {
+                    atAllEvents = true;
+                    atMyFollowers = false;
+                    atMyLocation = false;
+                    showdetailsButton.setVisibility(View.VISIBLE);
+                    searchbarMap.setVisibility(View.GONE);
+                    spinner_users.setVisibility(View.GONE);
+                    int initialposition = spinner_events.getSelectedItemPosition();
+                    spinner_events.setSelection(initialposition, false);
+
+                    if (!mClusterMarkers.isEmpty()) {
+                        mClusterManager.clearItems();
+                        mClusterManager.cluster();
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getEventsWLocation();
+                        }
+                    });
+
+                    mProvider.setData(event_dataPoints);
+                    for (int i = 0; i < event_dataPoints.size(); i++) {
+
+                        builder.include(event_dataPoints.get(i));
+                        LatLngBounds bounds = builder.build();
+                        // to animate camera with some padding and bound -cover- all markers
+                        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
+                        mMap.animateCamera(cu);
+                    }
+                    mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+                    mOverlay.setVisible(true);
+                    mOverlay.clearTileCache();
+
+                    //Toast.makeText(parent.getContext(), text + "HI EVENTS", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "onItemSelected:USERARRAYLOIST " + userArrayList);
+                    Log.d(TAG, "onItemSelected:GEOPOINTS " + geoPoints);
+                }
+
+                // ------------------------------------ SHOW MY LOCATION ----------------------------------------------------------
+
+                else {
+                    atMyLocation = true;
+                    atAllEvents = false;
+                    atMyFollowers = false;
+                    showdetailsButton.setVisibility(View.VISIBLE);
+                    spinner_events.setVisibility(View.GONE);
+                    spinner_users.setVisibility(View.GONE);
+
+                    if (!flag_isopen2) {
+                        searchbarMap.setVisibility(View.VISIBLE);
+                        flag_isopen2 = true;
+                    } else {
+                        searchbarMap.setVisibility(View.GONE);
+                        flag_isopen2 = false;
+                    }
+
+                    mOverlay = getMap().addTileOverlay(new TileOverlayOptions().tileProvider(mProvider));
+                    mOverlay.setVisible(true);
+                    mOverlay.clearTileCache();
+
+                    if (!mClusterMarkers.isEmpty()) {
+                        mClusterManager.clearItems();
+                        mClusterManager.cluster();
+                    }
+                    //Toast.makeText(parent.getContext(), text + "MY LOCATION", Toast.LENGTH_SHORT).show();
+                    getDeviceLocation();
+                }
+                    }
+                });
+
+            }
+        }
+    }
+
+    private void handleEventsSpinnerItemSelected(AdapterView<?> parent, int position) {
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!isAutomatiallySelected) {
+                    DocumentSnapshot selectedSnapshot = (DocumentSnapshot) parent.getItemAtPosition(position);
+
+//            selectedPosition = position;
+
+                    // Extract data from the DocumentSnapshot
+                    String s_eventId = selectedSnapshot.getId();
+                    String s_eventName = selectedSnapshot.getString("eventName");
+                    String s_location = selectedSnapshot.getString("location");
+                    String s_venue = selectedSnapshot.getString("venue");
+                    String s_description = selectedSnapshot.getString("description");
+                    String s_outside_link = selectedSnapshot.getString("outside_link");
+                    String s_date = selectedSnapshot.getString("date");
+                    String s_time = selectedSnapshot.getString("time");
+                    String s_imageURL = selectedSnapshot.getString("imageURL");
+
+
+                    Intent intent = new Intent(HeatMapsActivity.this, EventDetailsActivity.class);
+                    intent.putExtra("eventId", s_eventId); // Pass eventId to the next activity if needed
+                    intent.putExtra("event_name", s_eventName);
+                    intent.putExtra("location", s_location);
+                    intent.putExtra("venue", s_venue);
+                    intent.putExtra("description", s_description);
+                    intent.putExtra("outside_link", s_outside_link);
+                    intent.putExtra("date", s_date);
+                    intent.putExtra("time", s_time);
+                    intent.putExtra("imageURL", s_imageURL);
+                    Log.d("EventsFragment", "Passing eventId: " + s_eventId);
+                    startActivity(intent);
+                    //Toast.makeText(this, "This Activity is open", Toast.LENGTH_SHORT).show();
+                }
+                isAutomatiallySelected = false;
+            }
+        });
+
+    }
+
+    private void handleUsersSpinnerItemSelected(AdapterView<?> parent, int position) {
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    DocumentSnapshot selectedSnapshot = (DocumentSnapshot) parent.getItemAtPosition(position);
+                    String user_id = selectedSnapshot.getId();
+                    Intent intent = new Intent(HeatMapsActivity.this, OtherUserPageActivity.class);
+                    intent.putExtra("USER_ID", user_id);
+                    startActivity(intent);
+                }
+            });
+
+    }
+
+
     private static class DataSet {
         private final ArrayList<LatLng> mDataset;
 
@@ -836,6 +890,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         public ArrayList<LatLng> getData() {
             return mDataset;
         }
+
     }
 
     protected GoogleMap getMap() {
@@ -944,7 +999,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                 //permissionGranted = true;
                 if (ContextCompat.checkSelfPermission(HeatMapsActivity.this,
                         Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
                     initMap();
                     mLocationPermissionGranted = true;
                 }
@@ -1034,12 +1089,11 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                                             DocumentSnapshot documentSnapshot = task.getResult();
                                             if (documentSnapshot.exists()) {
                                                 spinnerOptions_Users.add(documentSnapshot);
-                                            } else {
-                                                // Document snapshot of the user doesn't exist
+                                                mAdapter_Users.notifyDataSetChanged();
                                             }
-                                        } else {
-                                            // An error occurred while fetching the document snapshot
+
                                         }
+
                                     }
                                 });
 
@@ -1066,6 +1120,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         spinnerOptions_Events.add(document);
+                        mAdapter_Events.notifyDataSetChanged();
                         Event event = document.toObject(Event.class);
                         String name = event.getEventName();
                         String location = event.getLocation();
@@ -1243,8 +1298,6 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         if (mMap != null) {
             mapViewModel.setCameraPosition(mMap.getCameraPosition());
             outState.putParcelable("camera_position", mMap.getCameraPosition());
-            selectedPosition = spinner_events.getSelectedItemPosition();
-            outState.putInt("selectedPosition", selectedPosition);
 
         }
     }
