@@ -94,7 +94,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
     private static final int ERROR_DIALOGUE_REQ = 9001;
     private static final int LOCATION_PERMISSION_REQ_CODE = 1234;
     private static final int PERMISSIONS_REQUEST_ENABLE_GPS = 9002;
-    private static final float DEFAULT_ZOOM = 15;
+    private static final float DEFAULT_ZOOM = 10;
     private Boolean mLocationPermissionGranted = false;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
@@ -204,7 +204,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         if (savedCameraPosition != null) {
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(savedCameraPosition));
         }
-        Toast.makeText(HeatMapsActivity.this, "Map is ready", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(HeatMapsActivity.this, "Map is ready", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "onMapReady: Map is ready");
 
         if (mLocationPermissionGranted) {
@@ -387,7 +387,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                 atAllEvents = false;
                 atMyFollowers = false;
                 atMyLocation = true;
-                showdetailsButton.setVisibility(View.GONE);
+                showdetailsButton.setVisibility(View.VISIBLE);
                 spinner_events.setVisibility(View.GONE);
                 spinner_users.setVisibility(View.GONE);
                 getDeviceLocation();
@@ -429,6 +429,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
         try {
             list = geocoder.getFromLocationName(searchString, 1);
         } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
         if (list.size() > 0) {
@@ -458,7 +459,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                     mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 }
 
-                Toast.makeText(HeatMapsActivity.this, "Map is ready", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(HeatMapsActivity.this, "Map is ready", Toast.LENGTH_SHORT).show();
                 Log.d(TAG, "onMapReady: Map is ready");
 
                 if (mLocationPermissionGranted) {
@@ -628,7 +629,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                             }
 
 
-                            Toast.makeText(parent.getContext(), text + "HI FRIENDS", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(parent.getContext(), text + "HI FRIENDS", Toast.LENGTH_SHORT).show();
                             for (int i = 0; i < dataPoints.size(); i++) {
                                 builder.include(dataPoints.get(i));
                                 LatLngBounds bounds = builder.build();
@@ -668,7 +669,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                             mOverlay.setVisible(true);
                             mOverlay.clearTileCache();
 
-                            Toast.makeText(parent.getContext(), text + "HI EVENTS", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(parent.getContext(), text + "HI EVENTS", Toast.LENGTH_SHORT).show();
                             Log.d(TAG, "onItemSelected:USERARRAYLOIST " + userArrayList);
                             Log.d(TAG, "onItemSelected:GEOPOINTS " + geoPoints);
                         }
@@ -699,7 +700,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                                 mClusterManager.clearItems();
                                 mClusterManager.cluster();
                             }
-                            Toast.makeText(parent.getContext(), text + "MY LOCATION", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(parent.getContext(), text + "MY LOCATION", Toast.LENGTH_SHORT).show();
                             getDeviceLocation();
                         }
 
@@ -865,7 +866,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
             Dialog dialog = GoogleApiAvailability.getInstance().getErrorDialog(HeatMapsActivity.this, available, ERROR_DIALOGUE_REQ);
             dialog.show();
         } else {
-            Toast.makeText(this, "You can't make map requests", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "You can't make map requests", Toast.LENGTH_SHORT).show();
         }
         return false;
     }
@@ -949,7 +950,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
                 }
             } else {
                 //permissionGranted = false;
-                Toast.makeText(this, "Location permission not granted. Please try again.", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "Location permission not granted. Please try again.", Toast.LENGTH_SHORT).show();
                 finish();
             }
         }
