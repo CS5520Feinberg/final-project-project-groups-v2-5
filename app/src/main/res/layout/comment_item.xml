@@ -6,33 +6,43 @@
     android:padding="8dp"
     android:gravity="center_vertical">
 
-    <!-- Profile Picture -->
-    <ImageView
-        android:id="@+id/comment_profile_image"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginEnd="8dp"
-        android:src="@drawable/avatar"
-        android:contentDescription="@string/user_profile_image"
-        android:scaleType="centerCrop"
-        android:clipToOutline="true"
-        android:background="@android:color/white"
-        android:elevation="2dp"
-        android:outlineProvider="bounds"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="UnusedAttribute" />
-
-    <!-- Username -->
-    <TextView
-        android:id="@+id/comment_username"
+    <LinearLayout
+        android:id="@+id/profile_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:textStyle="bold"
-        android:textColor="#333"
-        app:layout_constraintStart_toEndOf="@id/comment_profile_image"
-        app:layout_constraintTop_toTopOf="@id/comment_profile_image" />
+        android:layout_marginEnd="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Profile Picture -->
+        <ImageView
+            android:id="@+id/comment_profile_image"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/avatar"
+            android:contentDescription="@string/user_profile_image"
+            android:scaleType="centerCrop"
+            android:clipToOutline="true"
+            android:background="@android:color/white"
+            android:elevation="2dp"
+            android:outlineProvider="bounds"
+            tools:ignore="UnusedAttribute" />
+
+        <!-- Username -->
+        <TextView
+            android:id="@+id/comment_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="6dp"
+            android:textStyle="bold"
+            android:textColor="#333"
+            android:gravity="center_vertical" />
+
+    </LinearLayout>
 
     <!-- Time Ago -->
     <TextView
@@ -41,9 +51,11 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="@string/_0h_ago"
-        app:layout_constraintStart_toEndOf="@id/comment_username"
-        app:layout_constraintTop_toTopOf="@id/comment_username"
-        app:layout_constraintBottom_toBottomOf="@id/comment_username" />
+        android:textSize="12sp"
+        android:textColor="#888"
+        app:layout_constraintStart_toEndOf="@id/profile_container"
+        app:layout_constraintTop_toTopOf="@id/profile_container"
+        app:layout_constraintBottom_toBottomOf="@id/profile_container" />
 
     <!-- Delete Button -->
     <ImageButton
@@ -67,8 +79,8 @@
         android:textColor="#555"
         android:layout_marginTop="4dp"
         android:layout_marginStart="4dp"
-        app:layout_constraintStart_toStartOf="@id/comment_username"
+        app:layout_constraintStart_toStartOf="@id/profile_container"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/comment_username" />
+        app:layout_constraintTop_toBottomOf="@id/profile_container" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
