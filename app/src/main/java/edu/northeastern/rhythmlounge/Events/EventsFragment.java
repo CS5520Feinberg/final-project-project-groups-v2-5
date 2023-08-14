@@ -141,8 +141,6 @@ public class EventsFragment extends Fragment implements EventsAdapter.OnItemClic
                         recyclerViewOtherEvents.setAdapter(initializeAdapter(otherEvents));
                     }
                 });
-
-
     }
 
     /**
