@@ -375,6 +375,7 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
             showdetailsButton.setVisibility(View.VISIBLE);
             spinner_events.setVisibility(View.GONE);
             spinner_users.setVisibility(View.GONE);
+            spinner_heatmap.setSelection(0);
             getDeviceLocation();
 
         });
@@ -538,12 +539,9 @@ public class HeatMapsActivity extends AppCompatActivity implements OnMapReadyCal
 
         }
         spinner_heatmap = findViewById(R.id.customspinner);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                mAdapter = new HeatMapSpinnerAdapter(HeatMapsActivity.this, SpinnerData.getSpinnerOptions());
-                spinner_heatmap.setAdapter(mAdapter);
-            }
+        runOnUiThread(() -> {
+            mAdapter = new HeatMapSpinnerAdapter(HeatMapsActivity.this, SpinnerData.getSpinnerOptions());
+            spinner_heatmap.setAdapter(mAdapter);
         });
 
 
